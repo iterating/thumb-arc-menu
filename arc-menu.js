@@ -6,12 +6,8 @@ class ArcMenu {
         this.isActive = false;
         this.startX = 0;
         this.startY = 0;
-        this.lastX = 0;
-        this.arcDirection = null;
-        this.VERTICAL_THRESHOLD = 30;  // Increased to 30px for better sampling
-        this.xPositions = [];  // Track X positions during vertical movement
+        this.pathPoints = [];  // Store movement points
         this.buttons = [];
-        this.expectedRightward = null;
         
         // Sample menu items (can be customized)
         this.menuItems = [
@@ -52,25 +48,9 @@ class ArcMenu {
         const touch = e.touches[0];
         this.startX = touch.clientX;
         this.startY = touch.clientY;
-        
-        // Get action bar position
-        const actionBarRect = this.actionBar.getBoundingClientRect();
-        const startFromLeft = this.startX < (actionBarRect.left + actionBarRect.width / 2);
-        
-        // If starting from left side, expect rightward movement (right-handed)
-        // If starting from right side, expect leftward movement (left-handed)
-        this.expectedRightward = startFromLeft;
-        
-        this.lastX = this.startX;
-        this.arcDirection = null;
-        this.xPositions = [this.startX];
+        this.pathPoints = [{x: this.startX, y: this.startY}];
         this.isActive = true;
-        console.log('Start:', { 
-            x: this.startX, 
-            y: this.startY,
-            startFromLeft,
-            expectedMovement: this.expectedRightward ? 'rightward' : 'leftward'
-        });
+        console.log('Start:', { x: this.startX, y: this.startY });
         
         // Create arc buttons
         this.createArcButtons();
@@ -82,42 +62,18 @@ class ArcMenu {
         const touch = e.touches[0];
         const currentX = touch.clientX;
         const currentY = touch.clientY;
-        const verticalMove = this.startY - currentY;
+
+        // Add point to path if it's far enough from last point
+        const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+        const dx = currentX - lastPoint.x;
+        const dy = currentY - lastPoint.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
         
-        // Track X positions during vertical movement
-        if (this.arcDirection === null) {
-            this.xPositions.push(currentX);
-            
-            if (verticalMove > (this.VERTICAL_THRESHOLD * 0.5)) {
-                console.log('Move:', {
-                    verticalMove,
-                    threshold: this.VERTICAL_THRESHOLD,
-                    xChange: currentX - this.startX,
-                    expectedMovement: this.expectedRightward ? 'rightward' : 'leftward'
-                });
-            }
+        if (distance > 10) { // Sample every 10px of movement
+            this.pathPoints.push({x: currentX, y: currentY});
+            console.log('New point:', {x: currentX, y: currentY, points: this.pathPoints.length});
         }
 
-        // Determine arc direction after vertical threshold is met
-        if (this.arcDirection === null && verticalMove >= this.VERTICAL_THRESHOLD) {
-            const xStart = this.xPositions[0];
-            const xEnd = this.xPositions[this.xPositions.length - 1];
-            const movedRightward = xEnd - xStart > 0;
-            
-            // If movement matches expected direction, use that
-            // Otherwise, fall back to the movement direction
-            this.arcDirection = (Math.abs(xEnd - xStart) > 20) ? 
-                movedRightward : // Strong horizontal movement, use that
-                this.expectedRightward; // Weak movement, use expected direction
-            
-            console.log('Direction determined:', {
-                direction: this.arcDirection ? 'RIGHT' : 'LEFT',
-                startFromLeft: this.expectedRightward,
-                totalXChange: xEnd - xStart,
-                usedExpectedDirection: Math.abs(xEnd - xStart) <= 20
-            });
-        }
-        
         this.positionButtons(currentX, currentY);
     }
 
@@ -140,43 +96,84 @@ class ArcMenu {
         this.arcMenu.innerHTML = '';
         this.buttons = [];
 
-        // Create new buttons
+        // Create new buttons, all starting at the same position
         this.menuItems.forEach((item, index) => {
             const button = document.createElement('button');
             button.className = 'arc-button';
             button.innerHTML = item.icon;
             button.setAttribute('aria-label', item.label);
+            button.style.transform = 'scale(0)'; // Start invisible
             this.arcMenu.appendChild(button);
             this.buttons.push(button);
         });
     }
 
-    positionButtons(currentX, currentY) {
-        // If direction not yet determined, use a neutral position
-        if (this.arcDirection === null) {
-            return;
-        }
+    // Calculate control point for quadratic bezier curve
+    calculateControlPoint() {
+        if (this.pathPoints.length < 3) return null;
+
+        // Use first, middle and last points to determine curve
+        const start = this.pathPoints[0];
+        const end = this.pathPoints[this.pathPoints.length - 1];
+        const mid = this.pathPoints[Math.floor(this.pathPoints.length / 2)];
+
+        // Find control point using perpendicular bisector method
+        const dx = end.x - start.x;
+        const dy = end.y - start.y;
+        const midX = (start.x + end.x) / 2;
+        const midY = (start.y + end.y) / 2;
         
-        // Calculate the arc parameters
-        const radius = 150; // Arc radius
-        const totalAngle = 120; // Total angle of the arc in degrees
-        const angleStep = totalAngle / (this.buttons.length - 1);
-        // When moving right (this.arcDirection is true), arc should curve left (-120)
-        // When moving left (this.arcDirection is false), arc should curve right (-60)
-        const startAngle = this.arcDirection ? -120 : -60;
+        // Calculate perpendicular vector
+        const perpX = -dy;
+        const perpY = dx;
+        
+        // Distance from mid point to actual middle point determines curve intensity
+        const intensity = Math.sqrt(
+            Math.pow(mid.x - midX, 2) + 
+            Math.pow(mid.y - midY, 2)
+        ) * 2;
+        
+        // Normalize perpendicular vector and scale by intensity
+        const len = Math.sqrt(perpX * perpX + perpY * perpY);
+        const controlX = midX + (perpX / len) * intensity;
+        const controlY = midY + (perpY / len) * intensity;
+        
+        return {x: controlX, y: controlY};
+    }
 
-        // Position each button along the arc
+    // Get point on quadratic bezier curve at t (0-1)
+    getPointOnCurve(t, start, control, end) {
+        const t1 = 1 - t;
+        return {
+            x: t1 * t1 * start.x + 2 * t1 * t * control.x + t * t * end.x,
+            y: t1 * t1 * start.y + 2 * t1 * t * control.y + t * t * end.y
+        };
+    }
+
+    positionButtons(currentX, currentY) {
+        if (!this.isActive || this.pathPoints.length < 3) return;
+
+        const control = this.calculateControlPoint();
+        if (!control) return;
+
+        const start = this.pathPoints[0];
+        const end = this.pathPoints[this.pathPoints.length - 1];
+        
+        // Position buttons along the curve
         this.buttons.forEach((button, index) => {
-            // When moving right, use negative index to curve left
-            // When moving left, use positive index to curve right
-            const angle = (startAngle + (this.arcDirection ? -index : index) * angleStep) * Math.PI / 180;
-            const x = this.startX + radius * Math.cos(angle);
-            const y = this.startY + radius * Math.sin(angle);
+            // Calculate position along curve (0 to 1)
+            const t = index / (this.buttons.length - 1);
+            const pos = this.getPointOnCurve(t, start, control, end);
+            
+            // Scale based on distance from start
+            const dx = pos.x - start.x;
+            const dy = pos.y - start.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const scale = Math.min(1, Math.max(0, (distance - 20) / 50));
 
-            // Apply position and show button
-            button.style.left = `${x - 25}px`; // 25 is half the button width
-            button.style.top = `${y - 25}px`;
-            button.style.transform = 'scale(1)';
+            button.style.left = `${pos.x - 25}px`;
+            button.style.top = `${pos.y - 25}px`;
+            button.style.transform = `scale(${scale})`;
         });
     }
 }
