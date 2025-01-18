@@ -9,6 +9,16 @@ class ArcMenu {
         this.pathPoints = [];  // Store movement points
         this.debugPoints = [];  // Store debug elements
         this.buttons = [];
+        this.arcDirection = 1; // Default arc direction
+        this.maxArcRadius = 400; // Increased from 200 to allow wider arcs
+        
+        // Get viewport dimensions
+        this.updateViewportDimensions = () => {
+            this.viewportWidth = window.innerWidth;
+            this.viewportHeight = window.innerHeight;
+        };
+        this.updateViewportDimensions();
+        window.addEventListener('resize', this.updateViewportDimensions);
         
         // Create debug indicator
         this.debugIndicator = document.createElement('div');
@@ -111,22 +121,98 @@ class ArcMenu {
         const dy = currentY - lastPoint.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        // Only add points if we're not moving downward significantly
-        const isMovingDown = currentY > lastPoint.y;
-        if (distance > 10 && !isMovingDown) {
+        // Determine arc direction on first move
+        if (this.pathPoints.length === 1) {
+            this.arcDirection = Math.sign(currentX - this.startX) || 1;
+        }
+
+        // Check if point is too far from start
+        const distanceFromStart = Math.sqrt(
+            Math.pow(currentX - this.startX, 2) + 
+            Math.pow(currentY - this.startY, 2)
+        );
+        if (distanceFromStart > this.maxArcRadius) {
+            return; // Don't add points beyond max radius
+        }
+
+        // Check if the new point would create too sharp an angle
+        let isValidAngle = true;
+        if (this.pathPoints.length >= 2) {
+            const prevPoint = this.pathPoints[this.pathPoints.length - 2];
+            const prevDx = lastPoint.x - prevPoint.x;
+            const prevDy = lastPoint.y - prevPoint.y;
+            
+            // Calculate angle between previous segment and new segment
+            const dot = (prevDx * dx + prevDy * dy);
+            const prevLength = Math.sqrt(prevDx * prevDx + prevDy * prevDy);
+            const cosAngle = dot / (prevLength * distance);
+            
+            // Reject if angle is greater than ~60 degrees
+            isValidAngle = cosAngle > 0.5;
+        }
+
+        // Only add points if moving in valid direction and angle
+        // Allow any movement that isn't significantly downward
+        const isMovingDown = dy > distance * 0.2; // Allow slight downward movement (about 11 degrees)
+        
+        if (distance > 10 && !isMovingDown && isValidAngle) {
             this.pathPoints.push({x: currentX, y: currentY});
             if (this.debug) {
                 this.createDebugPoint(currentX, currentY);
             }
         }
 
-        // Position buttons along an ideal arc regardless of actual path
-        const arcStartX = this.pathPoints[0].x;
-        const arcStartY = this.pathPoints[0].y;
-        const horizontalDistance = Math.abs(currentX - arcStartX);
-        const idealY = arcStartY - horizontalDistance; // 45-degree arc
-        
-        this.positionButtons(currentX, idealY);
+        // Get the total path length for button positioning
+        let totalLength = 0;
+        const segments = [];
+        for (let i = 1; i < this.pathPoints.length; i++) {
+            const segDx = this.pathPoints[i].x - this.pathPoints[i-1].x;
+            const segDy = this.pathPoints[i].y - this.pathPoints[i-1].y;
+            const length = Math.sqrt(segDx * segDx + segDy * segDy);
+            totalLength += length;
+            segments.push({ start: i-1, end: i, length });
+        }
+
+        // Position buttons along the path
+        this.buttons.forEach((button, index) => {
+            const targetDistance = (index / (this.buttons.length - 1)) * totalLength;
+            
+            // Find segment containing this position
+            let currentDist = 0;
+            let segmentIndex = 0;
+            while (segmentIndex < segments.length && currentDist + segments[segmentIndex].length < targetDistance) {
+                currentDist += segments[segmentIndex].length;
+                segmentIndex++;
+            }
+
+            let x, y;
+            if (segmentIndex >= segments.length) {
+                const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+                x = lastPoint.x;
+                y = lastPoint.y;
+            } else {
+                const segment = segments[segmentIndex];
+                const segmentPos = (targetDistance - currentDist) / segment.length;
+                const start = this.pathPoints[segment.start];
+                const end = this.pathPoints[segment.end];
+                x = start.x + (end.x - start.x) * segmentPos;
+                y = start.y + (end.y - start.y) * segmentPos;
+            }
+
+            // Keep buttons within viewport bounds (with 50px margin)
+            const margin = 50;
+            x = Math.max(margin, Math.min(this.viewportWidth - margin, x));
+            y = Math.max(margin, Math.min(this.viewportHeight - margin, y));
+
+            const buttonDx = x - this.startX;
+            const buttonDy = y - this.startY;
+            const buttonDistance = Math.sqrt(buttonDx * buttonDx + buttonDy * buttonDy);
+            const scale = Math.min(1, Math.max(0, (buttonDistance - 20) / 50));
+
+            button.style.left = `${x - 25}px`;
+            button.style.top = `${y - 25}px`;
+            button.style.transform = `scale(${scale})`;
+        });
     }
 
     handleTouchEnd() {
@@ -191,63 +277,6 @@ class ArcMenu {
         document.body.appendChild(point);
         this.debugPoints.push(point);
         return point;
-    }
-
-    positionButtons(currentX, currentY) {
-        if (!this.isActive || this.pathPoints.length < 3) return;
-
-        // Get the total path length
-        let totalLength = 0;
-        const segments = [];
-        for (let i = 1; i < this.pathPoints.length; i++) {
-            const dx = this.pathPoints[i].x - this.pathPoints[i-1].x;
-            const dy = this.pathPoints[i].y - this.pathPoints[i-1].y;
-            const length = Math.sqrt(dx * dx + dy * dy);
-            totalLength += length;
-            segments.push({ start: i-1, end: i, length });
-        }
-
-        // Position buttons along the actual path
-        this.buttons.forEach((button, index) => {
-            // Calculate desired distance along path for this button
-            const targetDistance = (index / (this.buttons.length - 1)) * totalLength;
-            
-            // Find the segment containing this position
-            let currentDist = 0;
-            let segmentIndex = 0;
-            while (segmentIndex < segments.length && currentDist + segments[segmentIndex].length < targetDistance) {
-                currentDist += segments[segmentIndex].length;
-                segmentIndex++;
-            }
-
-            // If we're at the end, use the last point
-            if (segmentIndex >= segments.length) {
-                const lastPoint = this.pathPoints[this.pathPoints.length - 1];
-                button.style.left = `${lastPoint.x - 25}px`;
-                button.style.top = `${lastPoint.y - 25}px`;
-                return;
-            }
-
-            // Calculate position within the segment
-            const segment = segments[segmentIndex];
-            const segmentPos = (targetDistance - currentDist) / segment.length;
-            const start = this.pathPoints[segment.start];
-            const end = this.pathPoints[segment.end];
-
-            // Interpolate position
-            const x = start.x + (end.x - start.x) * segmentPos;
-            const y = start.y + (end.y - start.y) * segmentPos;
-
-            // Scale based on distance from start
-            const dx = x - this.pathPoints[0].x;
-            const dy = y - this.pathPoints[0].y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            const scale = Math.min(1, Math.max(0, (distance - 20) / 50));
-
-            button.style.left = `${x - 25}px`;
-            button.style.top = `${y - 25}px`;
-            button.style.transform = `scale(${scale})`;
-        });
     }
 }
 
