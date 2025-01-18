@@ -166,6 +166,49 @@ class ArcMenu {
             return;
         }
 
+        // Always add the point if we're in debug mode and moving
+        if (this.debug) {
+            const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+            const dx = currentX - lastPoint.x;
+            const dy = currentY - lastPoint.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance > 5) {  // Only add if moved more than 5 pixels
+                this.pathPoints.push({x: currentX, y: currentY});
+                this.createDebugPoint(currentX, currentY, 'red');
+                
+                // If we have enough points, calculate the best fit circle
+                if (this.pathPoints.length >= 3) {
+                    const points = this.pathPoints;
+                    let sumX = 0, sumY = 0;
+                    
+                    // Calculate center as average of points
+                    points.forEach(point => {
+                        sumX += point.x;
+                        sumY += point.y;
+                    });
+                    
+                    const n = points.length;
+                    const centerX = sumX / n;
+                    const centerY = sumY / n;
+                    
+                    // Calculate average radius
+                    let radius = 0;
+                    points.forEach(point => {
+                        const dx = point.x - centerX;
+                        const dy = point.y - centerY;
+                        radius += Math.sqrt(dx * dx + dy * dy);
+                    });
+                    radius /= n;
+                    
+                    console.log(`%cBest circle: center(${centerX.toFixed(0)}, ${centerY.toFixed(0)}) radius(${radius.toFixed(0)}), ${this.arcDirection > 0 ? 'right' : 'left'} hand`, 'color: #00ff00; font-weight: bold');
+                    
+                    // Create a debug point for the center
+                    this.createDebugPoint(centerX, centerY, 'blue');
+                }
+            }
+        }
+
         // If we somehow lost our points, restore the start point
         if (this.pathPoints.length === 0) {
             this.pathPoints.push({x: this.startX, y: this.startY});
