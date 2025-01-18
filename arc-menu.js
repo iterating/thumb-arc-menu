@@ -11,6 +11,7 @@ class ArcMenu {
         this.buttons = [];
         this.arcDirection = 1; // Default arc direction
         this.maxArcRadius = 400; // Increased from 200 to allow wider arcs
+        this.projectedCircle = null; // Store calculated circle parameters
         
         // Get viewport dimensions
         this.updateViewportDimensions = () => {
@@ -156,39 +157,24 @@ class ArcMenu {
             this.arcDirection = Math.sign(currentX - this.startX) || 1;
         }
 
-        // Check if point is too far from start
-        const distanceFromStart = Math.sqrt(
-            Math.pow(currentX - this.startX, 2) + 
-            Math.pow(currentY - this.startY, 2)
-        );
-        if (distanceFromStart > this.maxArcRadius) {
-            return; // Don't add points beyond max radius
-        }
-
-        // Check if the new point would create too sharp an angle
-        let isValidAngle = true;
-        if (this.pathPoints.length >= 2) {
-            const prevPoint = this.pathPoints[this.pathPoints.length - 2];
-            const prevDx = lastPoint.x - prevPoint.x;
-            const prevDy = lastPoint.y - prevPoint.y;
-            
-            // Calculate angle between previous segment and new segment
-            const dot = (prevDx * dx + prevDy * dy);
-            const prevLength = Math.sqrt(prevDx * prevDx + prevDy * prevDy);
-            const cosAngle = dot / (prevLength * distance);
-            
-            // Reject if angle is greater than ~60 degrees
-            isValidAngle = cosAngle > 0.5;
-        }
-
-        // Only add points if moving in valid direction and angle
-        // Allow any movement that isn't significantly downward
-        const isMovingDown = dy > distance * 0.2; // Allow slight downward movement (about 11 degrees)
-        
-        if (distance > 10 && !isMovingDown && isValidAngle) {
+        // Only add points if moving enough distance
+        if (distance > 10) {
             this.pathPoints.push({x: currentX, y: currentY});
             if (this.debug) {
                 this.createDebugPoint(currentX, currentY);
+            }
+
+            // Calculate best-fit circle after we have enough points
+            if (this.pathPoints.length >= 5) {
+                this.projectedCircle = this.calculateBestFitCircle();
+                if (this.projectedCircle && this.debug) {
+                    // Show circle center in orange
+                    this.createDebugPoint(
+                        this.projectedCircle.center.x, 
+                        this.projectedCircle.center.y, 
+                        '#FF6B00'  // Bright orange
+                    );
+                }
             }
         }
 
@@ -323,6 +309,72 @@ class ArcMenu {
         document.body.appendChild(point);
         this.debugPoints.push(point);
         return point;
+    }
+
+    // Calculate best-fit circle from points
+    calculateBestFitCircle() {
+        if (this.pathPoints.length < 3) return null;
+
+        // Step 1: Calculate centroid of points
+        let sumX = 0, sumY = 0;
+        this.pathPoints.forEach(p => {
+            sumX += p.x;
+            sumY += p.y;
+        });
+        const meanX = sumX / this.pathPoints.length;
+        const meanY = sumY / this.pathPoints.length;
+
+        // Step 2: Shift coordinates to mean
+        const shiftedPoints = this.pathPoints.map(p => ({
+            x: p.x - meanX,
+            y: p.y - meanY
+        }));
+
+        // Step 3: Calculate the matrices for least squares fit
+        let suu = 0, suv = 0, svv = 0, suuu = 0, suvv = 0, svuu = 0, svvv = 0;
+        shiftedPoints.forEach(p => {
+            const u = p.x;
+            const v = p.y;
+            const uu = u * u;
+            const vv = v * v;
+            suu += uu;
+            suv += u * v;
+            svv += vv;
+            suuu += u * uu;
+            suvv += u * vv;
+            svuu += v * uu;
+            svvv += v * vv;
+        });
+
+        // Step 4: Solve the system of equations
+        const A = [[suu, suv], [suv, svv]];
+        const B = [-(suuu + suvv) / 2, -(svuu + svvv) / 2];
+
+        // Calculate determinant
+        const det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
+        if (Math.abs(det) < 1e-10) return null;
+
+        // Solve for center
+        const centerX = (A[1][1] * B[0] - A[0][1] * B[1]) / det;
+        const centerY = (A[0][0] * B[1] - A[1][0] * B[0]) / det;
+
+        // Step 5: Calculate radius
+        let radius = 0;
+        shiftedPoints.forEach(p => {
+            const dx = p.x - centerX;
+            const dy = p.y - centerY;
+            radius += Math.sqrt(dx * dx + dy * dy);
+        });
+        radius /= this.pathPoints.length;
+
+        // Transform center back to original coordinates
+        return {
+            center: {
+                x: centerX + meanX,
+                y: centerY + meanY
+            },
+            radius: radius
+        };
     }
 }
 
