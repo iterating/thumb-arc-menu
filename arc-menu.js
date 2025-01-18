@@ -196,6 +196,11 @@ class ArcMenu {
     handleTouchMove(e) {
         if (!this.isActive) return;
 
+        // Throttle updates to every 16ms (roughly 60fps)
+        const now = performance.now();
+        if (now - this.lastUpdateTime < 16) return;
+        this.lastUpdateTime = now;
+
         // Handle both mouse and touch events properly
         const currentX = e.clientX || (e.touches && e.touches[0].clientX);
         const currentY = e.clientY || (e.touches && e.touches[0].clientY);
@@ -221,57 +226,240 @@ class ArcMenu {
             }
         }
 
-        // If we somehow lost our points, restore the start point
-        if (this.pathPoints.length === 0) {
-            this.pathPoints.push({x: this.startX, y: this.startY});
-            if (this.debug) {
-                this.createDebugPoint(this.startX, this.startY, 'green');
-            }
+        // Only add points if we've moved enough
+        if (this.pathPoints.length > 0) {
+            const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+            const dx = currentX - lastPoint.x;
+            const dy = currentY - lastPoint.y;
+            // Skip if we haven't moved at least 5 pixels
+            if (dx * dx + dy * dy < 25) return;
         }
 
-        const lastPoint = this.pathPoints[this.pathPoints.length - 1];
-        const dx = currentX - lastPoint.x;
-        const dy = currentY - lastPoint.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        // Only add points if significant movement
-        if (distance > 5) {
-            this.pathPoints.push({x: currentX, y: currentY});
-            if (this.debug) {
-                this.createDebugPoint(currentX, currentY, 'red', 'debug-point-raw');
-            }
-
-            // Wait for enough points before determining direction
-            if (this.arcDirection === null && this.pathPoints.length >= this.minPointsForDirection) {
-                // Count how many points move left vs right
-                let leftCount = 0;
-                let rightCount = 0;
-                
-                for (let i = 1; i < this.pathPoints.length; i++) {
-                    const dx = this.pathPoints[i].x - this.pathPoints[i-1].x;
-                    if (dx < 0) leftCount++;
-                    if (dx > 0) rightCount++;
-                }
-                
-                this.arcDirection = leftCount > rightCount ? -1 : 1;
-                if (this.debug) {
-                    console.log(`Direction set to: ${this.arcDirection > 0 ? 'RIGHT' : 'LEFT'} (${this.arcDirection})`);
-                }
-            }
-
-            // Throttle circle fitting
-            const now = Date.now();
-            if (this.pathPoints.length >= 3 && now - this.lastFitTime >= this.fitThrottleMs) {
-                this.lastFitTime = now;
-                if (this.debug) {
-                    console.log(`Current arcDirection before fitting: ${this.arcDirection}`);
-                }
-                this.updateCircleFit(currentX, currentY);
-            }
+        // Add point to path
+        this.pathPoints.push({x: currentX, y: currentY});
+        
+        // Keep only last N points for performance
+        if (this.pathPoints.length > 50) {
+            this.pathPoints = this.pathPoints.slice(-50);
         }
 
-        // Always update button positions
-        this.updateButtonPositions();
+        // Add debug point
+        if (this.debug) {
+            this.createDebugPoint(currentX, currentY);
+        }
+
+        // Detect arc direction if not set
+        if (this.arcDirection === null && this.pathPoints.length > 5) {
+            const dx = currentX - this.startX;
+            this.arcDirection = Math.sign(dx);
+        }
+
+        // Update button positions with requestAnimationFrame
+        if (!this.updateScheduled) {
+            this.updateScheduled = true;
+            requestAnimationFrame(() => {
+                // Only update circle fit every 3 frames for performance
+                if (this.frameCount % 3 === 0) {
+                    this.updateCircleFit(currentX, currentY);
+                }
+                this.frameCount = (this.frameCount || 0) + 1;
+                
+                this.updateButtonPositions();
+                this.updateScheduled = false;
+            });
+        }
+    }
+
+    updateButtonPositions() {
+        // Cache frequently accessed properties
+        const buttons = this.buttons;
+        const buttonCount = buttons.length;
+        if (buttonCount === 0) return;
+
+        // Use fitted points if available, otherwise fall back to raw points
+        const pointsToUse = (this.fittedPoints && this.fittedPoints.length >= 2) ? this.fittedPoints : this.pathPoints;
+        if (pointsToUse.length < 2) return;
+
+        // Pre-calculate segments for performance
+        const segments = [];
+        let totalLength = 0;
+        
+        // Use fewer points for length calculation
+        const stride = Math.max(1, Math.floor(pointsToUse.length / 10));
+        for (let i = stride; i < pointsToUse.length; i += stride) {
+            const prev = pointsToUse[i - stride];
+            const curr = pointsToUse[i];
+            const segDx = curr.x - prev.x;
+            const segDy = curr.y - prev.y;
+            const length = Math.sqrt(segDx * segDx + segDy * segDy);
+            totalLength += length;
+            segments.push({ start: i - stride, end: i, length });
+        }
+
+        // Calculate button size once
+        const buttonSize = Math.min(50, Math.max(35, totalLength / (buttonCount * 2)));
+        const halfButtonSize = buttonSize / 2;
+        const initialOffset = buttonSize;
+        const remainingLength = totalLength - initialOffset;
+
+        // Create a document fragment for batch updates
+        const fragment = document.createDocumentFragment();
+        
+        // Update all buttons at once
+        buttons.forEach((button, index) => {
+            const targetDistance = initialOffset + (index / (buttonCount - 1)) * remainingLength;
+            
+            let currentDist = 0;
+            let segmentIndex = 0;
+            while (segmentIndex < segments.length && currentDist + segments[segmentIndex].length < targetDistance) {
+                currentDist += segments[segmentIndex].length;
+                segmentIndex++;
+            }
+
+            let x, y;
+            if (segmentIndex >= segments.length) {
+                const lastPoint = pointsToUse[pointsToUse.length - 1];
+                x = lastPoint.x;
+                y = lastPoint.y;
+            } else {
+                const segment = segments[segmentIndex];
+                const segmentPos = (targetDistance - currentDist) / segment.length;
+                const start = pointsToUse[segment.start];
+                const end = pointsToUse[segment.end];
+                x = start.x + (end.x - start.x) * segmentPos;
+                y = start.y + (end.y - start.y) * segmentPos;
+            }
+
+            // Clip to viewport bounds
+            const topMargin = buttonSize * 0.6;
+            const bottomMargin = 80;
+            const sideMargin = buttonSize * 0.6;
+            
+            const clippedX = Math.max(sideMargin, Math.min(this.viewportWidth - sideMargin, x));
+            const clippedY = Math.max(topMargin, Math.min(this.viewportHeight - bottomMargin, y));
+
+            // Batch style updates
+            const style = button.style;
+            style.cssText = `
+                position: fixed;
+                width: ${buttonSize}px;
+                height: ${buttonSize}px;
+                left: ${clippedX - halfButtonSize}px;
+                top: ${clippedY - halfButtonSize}px;
+                transform: scale(${Math.min(1, Math.max(0, (this.getDistance(x, y, this.startX, this.startY) - (index === 0 ? 5 : 15)) / 35))});
+            `;
+
+            fragment.appendChild(button);
+        });
+
+        // Single DOM update
+        this.arcMenu.appendChild(fragment);
+    }
+
+    handleTouchEnd() {
+        console.log('Touch/Mouse end handler called, isActive:', this.isActive);
+        if (!this.isActive) return;
+        this.isActive = false;
+
+        // Show the action bar again if it was hidden
+        if (this.config.hideActionBar) {
+            this.actionBar.style.opacity = '1';
+        }
+
+        // Add final debug point in purple
+        if (this.debug && this.pathPoints.length > 0) {
+            const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+            this.createDebugPoint(lastPoint.x, lastPoint.y, '#800080', 'debug-point-end');
+        }
+
+        // Cleanup
+        this.buttons.forEach(button => {
+            button.style.transform = 'scale(0)';
+            setTimeout(() => button.remove(), 200);
+        });
+        this.buttons = [];
+        this.pathPoints = [];     // Clear path points
+        this.fittedPoints = [];   // Clear fitted points
+        this.lockedCircleState = null; // Reset locked circle state
+        
+        // Hide connecting line and debug arc
+        this.connectingPath.style.opacity = '0';
+        this.debugArcPath.style.opacity = '0';
+        
+        // Clear debug points immediately on release
+        if (this.debug) {
+            this.clearDebugPoints();
+        }
+    }
+
+    createArcButtons() {
+        // Clear existing buttons
+        this.arcMenu.innerHTML = '';
+        this.buttons = [];
+
+        // Create new buttons, all starting at the same position
+        this.menuItems.forEach((item, index) => {
+            const button = document.createElement('button');
+            button.className = 'arc-button';
+            button.innerHTML = item.icon;
+            button.setAttribute('aria-label', item.label);
+            button.style.transform = 'scale(0)'; // Start invisible
+            button.style.position = 'fixed';     // Ensure fixed positioning
+            button.style.display = 'flex';       // Ensure flex display
+            button.style.alignItems = 'center';  // Center content
+            button.style.justifyContent = 'center'; // Center content
+            button.style.zIndex = '10000';       // Ensure buttons are on top
+            this.arcMenu.appendChild(button);
+            this.buttons.push(button);
+            
+            if (this.debug) {
+                console.log(`Created button ${index}: ${item.icon} (${item.label})`);
+            }
+        });
+    }
+
+    clearDebugPoints() {
+        this.debugPoints.forEach(point => {
+            if (point && point.parentNode) {
+                point.remove();
+            }
+        });
+        this.debugPoints = [];
+    }
+
+    clearDebugPointsByClass(className) {
+        this.debugPoints = this.debugPoints.filter(point => {
+            if (point && point.className === className) {
+                if (point.parentNode) {
+                    point.remove();
+                }
+                return false;
+            }
+            return true;
+        });
+    }
+
+    createDebugPoint(x, y, color = 'red', className = 'debug-point') {
+        const point = document.createElement('div');
+        point.className = className;
+        point.style.cssText = `
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: ${color};
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            left: ${x - 5}px;
+            top: ${y - 5}px;
+        `;
+        document.body.appendChild(point);
+        this.debugPoints.push(point);
+        return point;
+    }
+
+    getDistance(x1, y1, x2, y2) {
+        return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
     updateCircleFit(currentX, currentY) {
@@ -447,188 +635,6 @@ class ArcMenu {
         if (this.debug) {
             this.createDebugPoint(this.circleState.centerX, this.circleState.centerY, 'blue', 'debug-point-center');
         }
-    }
-
-    updateButtonPositions() {
-        // Get the total path length for button positioning
-        let totalLength = 0;
-        const segments = [];
-        
-        // Use fitted points if available, otherwise fall back to raw points
-        const pointsToUse = (this.fittedPoints && this.fittedPoints.length >= 2) ? this.fittedPoints : this.pathPoints;
-        
-        for (let i = 1; i < pointsToUse.length; i++) {
-            const segDx = pointsToUse[i].x - pointsToUse[i-1].x;
-            const segDy = pointsToUse[i].y - pointsToUse[i-1].y;
-            const length = Math.sqrt(segDx * segDx + segDy * segDy);
-            totalLength += length;
-            segments.push({ start: i-1, end: i, length });
-        }
-
-        // Calculate button size based on total path length
-        const buttonSize = Math.min(50, Math.max(35, totalLength / (this.buttons.length * 2)));
-
-        if (this.debug) {
-            console.log(`Positioning ${this.buttons.length} buttons along path length ${totalLength.toFixed(0)}px`);
-        }
-
-        // Position buttons along the path
-        this.buttons.forEach((button, index) => {
-            // Start distributing buttons after a small initial offset to avoid the start point
-            // and distribute remaining space among n-1 gaps
-            const initialOffset = buttonSize; // Start one button-size away from start
-            const targetDistance = initialOffset + ((index) / (this.buttons.length - 1)) * (totalLength - initialOffset);
-            
-            let currentDist = 0;
-            let segmentIndex = 0;
-            while (segmentIndex < segments.length && currentDist + segments[segmentIndex].length < targetDistance) {
-                currentDist += segments[segmentIndex].length;
-                segmentIndex++;
-            }
-
-            let x, y;
-            if (segmentIndex >= segments.length) {
-                const lastPoint = pointsToUse[pointsToUse.length - 1];
-                x = lastPoint.x;
-                y = lastPoint.y;
-            } else {
-                const segment = segments[segmentIndex];
-                const segmentPos = (targetDistance - currentDist) / segment.length;
-                const start = pointsToUse[segment.start];
-                const end = pointsToUse[segment.end];
-                x = start.x + (end.x - start.x) * segmentPos;
-                y = start.y + (end.y - start.y) * segmentPos;
-            }
-
-            // Reduce bottom margin to prevent hiding buttons behind menu bar
-            const topMargin = buttonSize * 0.6;
-            const bottomMargin = 80; // Leave room for menu bar
-            const sideMargin = buttonSize * 0.6;
-            
-            const clippedX = Math.max(sideMargin, Math.min(this.viewportWidth - sideMargin, x));
-            const clippedY = Math.max(topMargin, Math.min(this.viewportHeight - bottomMargin, y));
-
-            if (this.debug) {
-                console.log(`Button ${index} (${this.menuItems[index].icon}): original(${x.toFixed(0)},${y.toFixed(0)}) clipped(${clippedX.toFixed(0)},${clippedY.toFixed(0)})`);
-            }
-
-            button.style.width = `${buttonSize}px`;
-            button.style.height = `${buttonSize}px`;
-            button.style.left = `${clippedX - buttonSize/2}px`;
-            button.style.top = `${clippedY - buttonSize/2}px`;
-            
-            // Adjust scale animation to start sooner for first button
-            const scaleThreshold = index === 0 ? 5 : 15; // Smaller threshold for first button
-            const scaleRange = 35;
-            const scale = Math.min(1, Math.max(0, (this.getDistance(x, y, this.startX, this.startY) - scaleThreshold) / scaleRange));
-            button.style.transform = `scale(${scale})`;
-        });
-    }
-
-    handleTouchEnd() {
-        console.log('Touch/Mouse end handler called, isActive:', this.isActive);
-        if (!this.isActive) return;
-        this.isActive = false;
-
-        // Show the action bar again if it was hidden
-        if (this.config.hideActionBar) {
-            this.actionBar.style.opacity = '1';
-        }
-
-        // Add final debug point in purple
-        if (this.debug && this.pathPoints.length > 0) {
-            const lastPoint = this.pathPoints[this.pathPoints.length - 1];
-            this.createDebugPoint(lastPoint.x, lastPoint.y, '#800080', 'debug-point-end');
-        }
-
-        // Cleanup
-        this.buttons.forEach(button => {
-            button.style.transform = 'scale(0)';
-            setTimeout(() => button.remove(), 200);
-        });
-        this.buttons = [];
-        this.pathPoints = [];     // Clear path points
-        this.fittedPoints = [];   // Clear fitted points
-        this.lockedCircleState = null; // Reset locked circle state
-        
-        // Hide connecting line and debug arc
-        this.connectingPath.style.opacity = '0';
-        this.debugArcPath.style.opacity = '0';
-        
-        // Clear debug points immediately on release
-        if (this.debug) {
-            this.clearDebugPoints();
-        }
-    }
-
-    createArcButtons() {
-        // Clear existing buttons
-        this.arcMenu.innerHTML = '';
-        this.buttons = [];
-
-        // Create new buttons, all starting at the same position
-        this.menuItems.forEach((item, index) => {
-            const button = document.createElement('button');
-            button.className = 'arc-button';
-            button.innerHTML = item.icon;
-            button.setAttribute('aria-label', item.label);
-            button.style.transform = 'scale(0)'; // Start invisible
-            button.style.position = 'fixed';     // Ensure fixed positioning
-            button.style.display = 'flex';       // Ensure flex display
-            button.style.alignItems = 'center';  // Center content
-            button.style.justifyContent = 'center'; // Center content
-            button.style.zIndex = '10000';       // Ensure buttons are on top
-            this.arcMenu.appendChild(button);
-            this.buttons.push(button);
-            
-            if (this.debug) {
-                console.log(`Created button ${index}: ${item.icon} (${item.label})`);
-            }
-        });
-    }
-
-    clearDebugPoints() {
-        this.debugPoints.forEach(point => {
-            if (point && point.parentNode) {
-                point.remove();
-            }
-        });
-        this.debugPoints = [];
-    }
-
-    clearDebugPointsByClass(className) {
-        this.debugPoints = this.debugPoints.filter(point => {
-            if (point && point.className === className) {
-                if (point.parentNode) {
-                    point.remove();
-                }
-                return false;
-            }
-            return true;
-        });
-    }
-
-    createDebugPoint(x, y, color = 'red', className = 'debug-point') {
-        const point = document.createElement('div');
-        point.className = className;
-        point.style.cssText = `
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background-color: ${color};
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            left: ${x - 5}px;
-            top: ${y - 5}px;
-        `;
-        document.body.appendChild(point);
-        this.debugPoints.push(point);
-        return point;
-    }
-
-    getDistance(x1, y1, x2, y2) {
-        return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 }
 
