@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+package-lock.json
+
+# Syncfusion
+syncfusion/
+**/syncfusion/
+
+# Build outputs
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
