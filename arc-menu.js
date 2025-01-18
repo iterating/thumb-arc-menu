@@ -8,12 +8,47 @@ class ArcMenu {
         this.config = {
             debug: false,
             hideActionBar: true,  // New parameter
+            holdDuration: 400,    // Hold duration in ms before menu activates
             ...config
         };
 
         // Debug mode
         this.debug = this.config.debug;
         
+        // Add click handlers to action bar buttons - only trigger on quick taps
+        const actionMessages = {
+            '📱': 'Phone menu opened!',
+            '📍': 'Location services activated!',
+            '📷': 'Camera ready to snap!',
+            '⚙️': 'Settings panel opened!',
+            '➕': 'Ready to add new item!'
+        };
+        
+        actionBar.querySelectorAll('.action-item').forEach(button => {
+            button.addEventListener('click', (e) => {
+                if (!this.isActive) { // Only show alert if menu isn't active
+                    e.stopPropagation(); // Prevent event from bubbling
+                    alert(actionMessages[button.textContent] || 'Button clicked!');
+                }
+            });
+        });
+        
+        // Add click handlers to action bar buttons
+        actionBar.querySelectorAll('.action-item').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                pressTimer = setTimeout(() => {
+                    pressTimer = null;
+                }, this.config.holdDuration);
+            });
+            button.addEventListener('touchend', (e) => {
+                // Only show alert if it was a quick tap (no hold timer)
+                if (!pressTimer) {
+                    alert(actionMessages[button.textContent] || 'Button clicked!');
+                }
+                e.preventDefault(); // Prevent any default button behavior
+            });
+        });
+
         this.arcMenu = document.getElementById('arc-menu');
         this.isActive = false;
         this.startX = 0;
@@ -122,11 +157,11 @@ class ArcMenu {
         
         // Sample menu items (can be customized)
         this.menuItems = [
-            { icon: '🔍', label: 'Search' },
-            { icon: '⭐', label: 'Favorite' },
-            { icon: '✏️', label: 'Edit' },
-            { icon: '🗑️', label: 'Delete' },
-            { icon: '📤', label: 'Share' }
+            { icon: '🔍', label: 'Search', onClick: () => alert('Search clicked! Time to find something...') },
+            { icon: '⭐', label: 'Favorite', onClick: () => alert('Added to favorites! Good choice!') },
+            { icon: '✏️', label: 'Edit', onClick: () => alert('Edit mode activated! Make your changes...') },
+            { icon: '🗑️', label: 'Delete', onClick: () => alert('Delete selected! Gone but not forgotten...') },
+            { icon: '📤', label: 'Share', onClick: () => alert('Share menu opened! Spread the word!') }
         ];
 
         // Debug mode - toggle with 'D' key
@@ -144,53 +179,164 @@ class ArcMenu {
     }
 
     init() {
+        let startX, startY;
+        let isMouseDown = false;
+        const DRAG_THRESHOLD = 10; // pixels to move before considering it a drag
+        
+        const resetState = () => {
+            this.isActive = false;
+            startX = null;
+            startY = null;
+            isMouseDown = false;
+            // Ensure action bar is visible on reset
+            if (this.config.hideActionBar) {
+                this.actionBar.style.opacity = '1';
+                this.actionBar.style.transition = 'opacity 0.2s';
+            }
+        };
+        
         // Initialize touch event listeners with passive option
-        this.actionBar.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
-        document.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: true });
-        document.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (!this.isActive) {
+                const dx = e.touches[0].clientX - startX;
+                const dy = e.touches[0].clientY - startY;
+                if (Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD) {
+                    this.isActive = true;
+                    this.startX = startX;
+                    this.startY = startY;
+                    this.pathPoints = [];
+                    this.fittedPoints = [];
+                    this.arcDirection = null;
+                    this.lockedCircleState = null;
+                    
+                    if (this.config.hideActionBar) {
+                        this.actionBar.style.opacity = '0';
+                        this.actionBar.style.transition = 'opacity 0.2s';
+                    }
+                    
+                    this.buttons.forEach(button => button.remove());
+                    this.buttons = [];
+                    
+                    if (this.debug) {
+                        this.clearDebugPoints();
+                        this.createDebugPoint(startX, startY, 'green');
+                    }
+                }
+            }
+            if (this.isActive) {
+                this.handleTouchMove(e);
+            }
+        }, { passive: true });
+        
+        document.addEventListener('touchend', (e) => {
+            this.handleTouchEnd();
+            resetState();
+        }, { passive: true });
         
         // Add mouse event listeners
-        this.actionBar.addEventListener('mousedown', (e) => {
-            console.log('Mouse down detected', e);
-            this.handleTouchStart({ touches: [e] });
+        document.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            startX = e.clientX;
+            startY = e.clientY;
         });
+        
         document.addEventListener('mousemove', (e) => {
+            if (!isMouseDown) return; // Only track movement if mouse is down
+            
+            if (!this.isActive) {
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                if (Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD) {
+                    this.isActive = true;
+                    this.startX = startX;
+                    this.startY = startY;
+                    this.pathPoints = [];
+                    this.fittedPoints = [];
+                    this.arcDirection = null;
+                    this.lockedCircleState = null;
+                    
+                    if (this.config.hideActionBar) {
+                        this.actionBar.style.opacity = '0';
+                        this.actionBar.style.transition = 'opacity 0.2s';
+                    }
+                    
+                    this.buttons.forEach(button => button.remove());
+                    this.buttons = [];
+                    
+                    if (this.debug) {
+                        this.clearDebugPoints();
+                        this.createDebugPoint(startX, startY, 'green');
+                    }
+                }
+            }
             if (this.isActive) {
-                // console.log('Mouse move detected', e);
-                this.handleTouchMove({ touches: [e] });
+                this.handleTouchMove({ touches: [{ clientX: e.clientX, clientY: e.clientY }] });
             }
         });
+        
         document.addEventListener('mouseup', (e) => {
             console.log('Mouse up detected', e);
             this.handleTouchEnd();
+            resetState();
         });
     }
 
     handleTouchStart(e) {
-        this.isActive = true;
+        // Don't activate arc menu if touching a button or interactive element
+        const target = e.target || e.touches?.[0]?.target;
+        if (target && (target.tagName === 'BUTTON' || target.closest('button') || target.closest('a'))) {
+            return;
+        }
+
         const touch = e.touches[0];
-        this.startX = touch.clientX;
-        this.startY = touch.clientY;
-        this.pathPoints = [];
-        this.fittedPoints = [];
-        this.arcDirection = null;  // Reset direction on new touch
-        this.lockedCircleState = null; // Reset locked circle state
+        if (!touch) return; // Exit if no touch data
+
+        const startX = touch.clientX;
+        const startY = touch.clientY;
         
-        // Hide the action bar during drag if configured
-        if (this.config.hideActionBar) {
-            this.actionBar.style.opacity = '0';
-            this.actionBar.style.transition = 'opacity 0.2s';
-        }
-        
-        // Clear any existing buttons
-        this.buttons.forEach(button => button.remove());
-        this.buttons = [];
-        
-        // Clear debug points
-        if (this.debug) {
-            this.clearDebugPoints();
-            this.createDebugPoint(this.startX, this.startY, 'green');
-        }
+        // Create hold timer
+        this.holdTimer = setTimeout(() => {
+            this.isActive = true;
+            this.startX = startX;
+            this.startY = startY;
+            this.pathPoints = [];
+            this.fittedPoints = [];
+            this.arcDirection = null;  // Reset direction on new touch
+            this.lockedCircleState = null; // Reset locked circle state
+            
+            // Hide the action bar during drag if configured
+            if (this.config.hideActionBar) {
+                this.actionBar.style.opacity = '0';
+                this.actionBar.style.transition = 'opacity 0.2s';
+            }
+            
+            // Clear any existing buttons
+            this.buttons.forEach(button => button.remove());
+            this.buttons = [];
+            
+            // Clear debug points
+            if (this.debug) {
+                this.clearDebugPoints();
+                this.createDebugPoint(this.startX, this.startY, 'green');
+            }
+        }, this.config.holdDuration);
+
+        // Add cancel handlers
+        const cancelHold = () => {
+            if (this.holdTimer) {
+                clearTimeout(this.holdTimer);
+                this.holdTimer = null;
+            }
+            document.removeEventListener('touchend', cancelHold);
+            document.removeEventListener('touchmove', cancelHold);
+        };
+        document.addEventListener('touchend', cancelHold);
+        document.addEventListener('touchmove', cancelHold);
     }
 
     handleTouchMove(e) {
@@ -359,7 +505,10 @@ class ArcMenu {
     handleTouchEnd() {
         console.log('Touch/Mouse end handler called, isActive:', this.isActive);
         if (!this.isActive) return;
-        this.isActive = false;
+        
+        this.isActive = false;  // Reset active state
+        this.startX = null;  // Reset start position
+        this.startY = null;
 
         // Show the action bar again if it was hidden
         if (this.config.hideActionBar) {
@@ -409,6 +558,21 @@ class ArcMenu {
             button.style.alignItems = 'center';  // Center content
             button.style.justifyContent = 'center'; // Center content
             button.style.zIndex = '10000';       // Ensure buttons are on top
+            button.style.cursor = 'pointer';     // Show pointer cursor
+            
+            // Add both click and touchend handlers
+            const handleInteraction = (e) => {
+                console.log(`Button ${item.label} clicked/touched`);
+                e.preventDefault();
+                e.stopPropagation();
+                this.isActive = false; // Deactivate menu
+                this.handleTouchEnd(); // Clean up
+                item.onClick?.();
+            };
+            
+            button.addEventListener('click', handleInteraction);
+            button.addEventListener('touchend', handleInteraction);
+            
             this.arcMenu.appendChild(button);
             this.buttons.push(button);
             
