@@ -1,7 +1,19 @@
 // ArcMenu class to handle the thumb arc interaction
 class ArcMenu {
-    constructor() {
-        this.actionBar = document.querySelector('.action-bar');
+    constructor(actionBar, config = {}) {
+        // Store references to DOM elements
+        this.actionBar = actionBar;
+        
+        // Configuration with defaults
+        this.config = {
+            debug: false,
+            hideActionBar: true,  // New parameter
+            ...config
+        };
+
+        // Debug mode
+        this.debug = this.config.debug;
+        
         this.arcMenu = document.getElementById('arc-menu');
         this.isActive = false;
         this.startX = 0;
@@ -117,7 +129,6 @@ class ArcMenu {
         ];
 
         // Debug mode - toggle with 'D' key
-        this.debug = false;
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'd') {
                 this.debug = !this.debug;
@@ -164,9 +175,11 @@ class ArcMenu {
         this.arcDirection = null;  // Reset direction on new touch
         this.lockedCircleState = null; // Reset locked circle state
         
-        // Hide the action bar during drag
-        this.actionBar.style.opacity = '0';
-        this.actionBar.style.transition = 'opacity 0.2s';
+        // Hide the action bar during drag if configured
+        if (this.config.hideActionBar) {
+            this.actionBar.style.opacity = '0';
+            this.actionBar.style.transition = 'opacity 0.2s';
+        }
         
         // Clear any existing buttons
         this.buttons.forEach(button => button.remove());
@@ -513,8 +526,10 @@ class ArcMenu {
         if (!this.isActive) return;
         this.isActive = false;
 
-        // Show the action bar again
-        this.actionBar.style.opacity = '1';
+        // Show the action bar again if it was hidden
+        if (this.config.hideActionBar) {
+            this.actionBar.style.opacity = '1';
+        }
 
         // Add final debug point in purple
         if (this.debug && this.pathPoints.length > 0) {
@@ -615,5 +630,5 @@ class ArcMenu {
 
 // Initialize the arc menu when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    new ArcMenu();
+    new ArcMenu(document.querySelector('.action-bar'));
 });
