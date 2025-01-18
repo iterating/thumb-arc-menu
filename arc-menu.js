@@ -361,57 +361,57 @@ class ArcMenu {
             return null;
         }
 
-        // Use more points - first 50% instead of 30%
+        // Use first 50% of points
         const numPointsToUse = Math.max(3, Math.floor(this.pathPoints.length * 0.5));
         const earlyPoints = this.pathPoints.slice(0, numPointsToUse);
         
-        console.log('Using early points:', {
-            total: this.pathPoints.length,
-            using: numPointsToUse,
-            points: earlyPoints
-        });
-
         // Get three key points: start, middle, end (of early points)
         const startPoint = earlyPoints[0];
         const endPoint = earlyPoints[earlyPoints.length - 1];
         
-        // Find the point with maximum curvature
-        let maxCurvature = 0;
+        // Find point with maximum perpendicular distance from start-end line
+        const dx = endPoint.x - startPoint.x;
+        const dy = endPoint.y - startPoint.y;
+        const lineLength = Math.sqrt(dx * dx + dy * dy);
+        if (lineLength < 1) {
+            console.log('Line too short');
+            return null;
+        }
+        
+        // Normalize direction vector
+        const dirX = dx / lineLength;
+        const dirY = dy / lineLength;
+        
+        // Perpendicular direction (rotated 90 degrees)
+        const perpX = -dirY;
+        const perpY = dirX;
+        
+        // Find middle point with max distance from line
+        let maxDist = 0;
         let middlePoint = null;
         
-        // Look at groups of 3 consecutive points
+        // Only look at early points for finding middle point
         for (let i = 1; i < earlyPoints.length - 1; i++) {
-            const prev = earlyPoints[i - 1];
-            const curr = earlyPoints[i];
-            const next = earlyPoints[i + 1];
-            
-            // Calculate vectors between points
-            const v1x = curr.x - prev.x;
-            const v1y = curr.y - prev.y;
-            const v2x = next.x - curr.x;
-            const v2y = next.y - curr.y;
-            
-            // Calculate the angle between vectors
-            const dot = v1x * v2x + v1y * v2y;
-            const cross = v1x * v2y - v1y * v2x;
-            const angle = Math.abs(Math.atan2(cross, dot));
-            
-            // Larger angle = sharper curve
-            if (angle > maxCurvature) {
-                maxCurvature = angle;
-                middlePoint = curr;
+            const point = earlyPoints[i];
+            // Vector from start to point
+            const vpx = point.x - startPoint.x;
+            const vpy = point.y - startPoint.y;
+            // Perpendicular distance = dot product with perpendicular vector
+            const dist = Math.abs(vpx * perpX + vpy * perpY);
+            if (dist > maxDist) {
+                maxDist = dist;
+                middlePoint = point;
             }
         }
         
-        // Accept any curvature greater than 1 degree
-        const minAngle = Math.PI / 180;  // 1 degree in radians
-        if (!middlePoint || maxCurvature < minAngle) {
-            console.log('No curve found:', { maxCurvature: maxCurvature * 180 / Math.PI });
+        // Lower threshold to 1 pixel
+        if (!middlePoint || maxDist < 1) {
+            console.log('No good middle point found:', { maxDist });
             return null;
         }
 
         console.log('Found curve:', { 
-            maxCurvature: maxCurvature * 180 / Math.PI,
+            maxDist: maxDist,
             middle: middlePoint
         });
 
