@@ -6,9 +6,19 @@ class ArcMenu {
         this.isActive = false;
         this.startX = 0;
         this.startY = 0;
-        this.pathPoints = [];  // Store movement points
+        this.pathPoints = [];  // Raw user input points
+        this.fittedPoints = []; // Points that lie on the circle
         this.debugPoints = [];  // Store debug elements
         this.buttons = [];
+        this.lastFitTime = 0;  // Timestamp of last circle fit
+        this.fitThrottleMs = 100; // Only fit every 100ms
+        this.circleState = {
+            centerX: null,
+            centerY: null,
+            radius: null,
+            startAngle: null,
+            endAngle: null
+        };
         this.arcDirection = 1; // Default arc direction
         this.maxArcRadius = 400; // Increased from 200 to allow wider arcs
         this.projectedCircle = null; // Store calculated circle parameters
@@ -159,54 +169,11 @@ class ArcMenu {
         const currentX = touch.clientX;
         const currentY = touch.clientY;
 
-        // Ignore points outside viewport (with small margin)
+        // Only clip raw input points, not calculated points
         const margin = 10;
         if (currentX < margin || currentX > this.viewportWidth - margin ||
             currentY < margin || currentY > this.viewportHeight - margin) {
             return;
-        }
-
-        // Always add the point if we're in debug mode and moving
-        if (this.debug) {
-            const lastPoint = this.pathPoints[this.pathPoints.length - 1];
-            const dx = currentX - lastPoint.x;
-            const dy = currentY - lastPoint.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance > 5) {  // Only add if moved more than 5 pixels
-                this.pathPoints.push({x: currentX, y: currentY});
-                this.createDebugPoint(currentX, currentY, 'red');
-                
-                // If we have enough points, calculate the best fit circle
-                if (this.pathPoints.length >= 3) {
-                    const points = this.pathPoints;
-                    let sumX = 0, sumY = 0;
-                    
-                    // Calculate center as average of points
-                    points.forEach(point => {
-                        sumX += point.x;
-                        sumY += point.y;
-                    });
-                    
-                    const n = points.length;
-                    const centerX = sumX / n;
-                    const centerY = sumY / n;
-                    
-                    // Calculate average radius
-                    let radius = 0;
-                    points.forEach(point => {
-                        const dx = point.x - centerX;
-                        const dy = point.y - centerY;
-                        radius += Math.sqrt(dx * dx + dy * dy);
-                    });
-                    radius /= n;
-                    
-                    console.log(`%cBest circle: center(${centerX.toFixed(0)}, ${centerY.toFixed(0)}) radius(${radius.toFixed(0)}), ${this.arcDirection > 0 ? 'right' : 'left'} hand`, 'color: #00ff00; font-weight: bold');
-                    
-                    // Create a debug point for the center
-                    this.createDebugPoint(centerX, centerY, 'blue');
-                }
-            }
         }
 
         // If we somehow lost our points, restore the start point
@@ -222,74 +189,143 @@ class ArcMenu {
         const dy = currentY - lastPoint.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        // On first substantial movement, determine the arc direction
-        if (this.pathPoints.length === 1 && distance > 10) {
-            const directionX = currentX - this.startX;
-            this.arcDirection = Math.sign(directionX) || 1;
-            
-            // Initialize the sector angle range based on initial direction
-            this.currentAngle = Math.atan2(dy, dx);
-            this.startAngle = this.currentAngle;
-            
-            // Set allowed angle range (120 degrees total)
-            this.minAngle = this.startAngle - Math.PI / 3;
-            this.maxAngle = this.startAngle + Math.PI / 3;
-        }
-
-        // Enforce arc constraints
-        if (this.arcDirection && distance > 5) {
-            const proposedAngle = Math.atan2(dy, dx);
-            
-            // Normalize angles to handle the -PI to PI transition
-            let normalizedProposed = proposedAngle;
-            let normalizedMin = this.minAngle;
-            let normalizedMax = this.maxAngle;
-            
-            if (this.arcDirection > 0) {
-                // For rightward movement, angle should increase
-                if (proposedAngle < this.currentAngle - Math.PI) {
-                    normalizedProposed += 2 * Math.PI;
-                }
-                if (normalizedProposed < normalizedMin || normalizedProposed > normalizedMax) {
-                    return;
-                }
-            } else {
-                // For leftward movement, angle should decrease
-                if (proposedAngle > this.currentAngle + Math.PI) {
-                    normalizedProposed -= 2 * Math.PI;
-                }
-                if (normalizedProposed > normalizedMax || normalizedProposed < normalizedMin) {
-                    return;
-                }
-            }
-            
-            // Update current angle if valid
-            this.currentAngle = proposedAngle;
-            
-            // Add the point since it's valid
+        // Only add points if significant movement
+        if (distance > 5) {
             this.pathPoints.push({x: currentX, y: currentY});
             if (this.debug) {
-                this.createDebugPoint(currentX, currentY);
+                this.createDebugPoint(currentX, currentY, 'red', 'debug-point-raw');
+            }
+
+            // Throttle circle fitting
+            const now = Date.now();
+            if (this.pathPoints.length >= 3 && now - this.lastFitTime >= this.fitThrottleMs) {
+                this.lastFitTime = now;
+                this.updateCircleFit(currentX, currentY);
             }
         }
 
+        // Always update button positions
+        this.updateButtonPositions();
+    }
+
+    updateCircleFit(currentX, currentY) {
+        if (this.debug) {
+            this.clearDebugPointsByClass('debug-point-fitted');
+        }
+
+        const points = this.pathPoints;
+        
+        // Take three points: start, middle, and end
+        const startPoint = points[0];
+        const midPoint = points[Math.floor(points.length / 2)];
+        const endPoint = points[points.length - 1];
+        
+        // Calculate perpendicular bisectors of two chords
+        // First chord: start to mid
+        const mx1 = (startPoint.x + midPoint.x) / 2;
+        const my1 = (startPoint.y + midPoint.y) / 2;
+        const dx1 = midPoint.x - startPoint.x;
+        const dy1 = midPoint.y - startPoint.y;
+        
+        // Second chord: mid to end
+        const mx2 = (midPoint.x + endPoint.x) / 2;
+        const my2 = (midPoint.y + endPoint.y) / 2;
+        const dx2 = endPoint.x - midPoint.x;
+        const dy2 = endPoint.y - midPoint.y;
+        
+        // Perpendicular vectors
+        const px1 = -dy1;
+        const py1 = dx1;
+        const px2 = -dy2;
+        const py2 = dx2;
+        
+        // Find intersection of perpendicular bisectors
+        // Using parametric equations:
+        // (mx1 + t*px1, my1 + t*py1) = (mx2 + s*px2, my2 + s*py2)
+        const t = ((mx2 - mx1) * py2 + (my1 - my2) * px2) / (px1 * py2 - py1 * px2);
+        
+        // Calculate center
+        const centerX = mx1 + t * px1;
+        const centerY = my1 + t * py1;
+        
+        // Calculate radius as distance to any point
+        const radius = Math.sqrt(
+            (centerX - startPoint.x) * (centerX - startPoint.x) +
+            (centerY - startPoint.y) * (centerY - startPoint.y)
+        );
+        
+        // Update circle state
+        this.circleState = {
+            centerX,
+            centerY,
+            radius,
+            startAngle: Math.atan2(startPoint.y - centerY, startPoint.x - centerX),
+            endAngle: Math.atan2(currentY - centerY, currentX - centerX)
+        };
+
+        this.updateFittedPoints();
+    }
+
+    updateFittedPoints() {
+        // Generate fitted points
+        this.fittedPoints = [];
+        const numPoints = 20; // Increased number of points for smoother arc
+        
+        // Make sure we go the right direction around the circle
+        let startAngle = this.circleState.startAngle;
+        let endAngle = this.circleState.endAngle;
+        
+        // Normalize angles to 0-2π range
+        while (startAngle < 0) startAngle += 2 * Math.PI;
+        while (endAngle < 0) endAngle += 2 * Math.PI;
+        
+        // Determine direction based on arcDirection
+        if (this.arcDirection < 0 && endAngle > startAngle) {
+            endAngle -= 2 * Math.PI;
+        } else if (this.arcDirection > 0 && startAngle > endAngle) {
+            endAngle += 2 * Math.PI;
+        }
+        
+        const angleRange = endAngle - startAngle;
+        
+        for (let i = 0; i < numPoints; i++) {
+            const t = i / (numPoints - 1);
+            const angle = startAngle + (angleRange * t);
+            const x = this.circleState.centerX + this.circleState.radius * Math.cos(angle);
+            const y = this.circleState.centerY + this.circleState.radius * Math.sin(angle);
+            this.fittedPoints.push({x, y});
+            
+            if (this.debug) {
+                this.createDebugPoint(x, y, '#00ff00', 'debug-point-fitted');
+            }
+        }
+        
+        if (this.debug) {
+            console.log(`%cBest circle: center(${this.circleState.centerX.toFixed(0)}, ${this.circleState.centerY.toFixed(0)}) radius(${this.circleState.radius.toFixed(0)}), ${this.arcDirection > 0 ? 'right' : 'left'} hand`, 'color: #00ff00; font-weight: bold');
+            this.createDebugPoint(this.circleState.centerX, this.circleState.centerY, 'blue', 'debug-point-center');
+        }
+    }
+
+    updateButtonPositions() {
         // Get the total path length for button positioning
         let totalLength = 0;
         const segments = [];
-        for (let i = 1; i < this.pathPoints.length; i++) {
-            const segDx = this.pathPoints[i].x - this.pathPoints[i-1].x;
-            const segDy = this.pathPoints[i].y - this.pathPoints[i-1].y;
+        
+        // Use fitted points if available, otherwise fall back to raw points
+        const pointsToUse = (this.fittedPoints && this.fittedPoints.length >= 2) ? this.fittedPoints : this.pathPoints;
+        
+        for (let i = 1; i < pointsToUse.length; i++) {
+            const segDx = pointsToUse[i].x - pointsToUse[i-1].x;
+            const segDy = pointsToUse[i].y - pointsToUse[i-1].y;
             const length = Math.sqrt(segDx * segDx + segDy * segDy);
             totalLength += length;
             segments.push({ start: i-1, end: i, length });
         }
 
         // Position buttons along the path
-        let buttonPositions = [];
         this.buttons.forEach((button, index) => {
             const targetDistance = (index / (this.buttons.length - 1)) * totalLength;
             
-            // Find segment containing this position
             let currentDist = 0;
             let segmentIndex = 0;
             while (segmentIndex < segments.length && currentDist + segments[segmentIndex].length < targetDistance) {
@@ -299,62 +335,28 @@ class ArcMenu {
 
             let x, y;
             if (segmentIndex >= segments.length) {
-                const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+                const lastPoint = pointsToUse[pointsToUse.length - 1];
                 x = lastPoint.x;
                 y = lastPoint.y;
             } else {
                 const segment = segments[segmentIndex];
                 const segmentPos = (targetDistance - currentDist) / segment.length;
-                const start = this.pathPoints[segment.start];
-                const end = this.pathPoints[segment.end];
+                const start = pointsToUse[segment.start];
+                const end = pointsToUse[segment.end];
                 x = start.x + (end.x - start.x) * segmentPos;
                 y = start.y + (end.y - start.y) * segmentPos;
             }
 
-            // Keep buttons within viewport bounds (with 50px margin)
+            // Only clip the buttons to stay on screen, not the path points
             const margin = 50;
-            x = Math.max(margin, Math.min(this.viewportWidth - margin, x));
-            y = Math.max(margin, Math.min(this.viewportHeight - margin, y));
+            const clippedX = Math.max(margin, Math.min(this.viewportWidth - margin, x));
+            const clippedY = Math.max(margin, Math.min(this.viewportHeight - margin, y));
 
-            buttonPositions.push({x, y});
-
-            const buttonDx = x - this.startX;
-            const buttonDy = y - this.startY;
-            const buttonDistance = Math.sqrt(buttonDx * buttonDx + buttonDy * buttonDy);
-            const scale = Math.min(1, Math.max(0, (buttonDistance - 20) / 50));
-
-            button.style.left = `${x - 25}px`;
-            button.style.top = `${y - 25}px`;
+            button.style.left = `${clippedX - 25}px`;
+            button.style.top = `${clippedY - 25}px`;
+            const scale = Math.min(1, Math.max(0, (this.getDistance(x, y, this.startX, this.startY) - 20) / 50));
             button.style.transform = `scale(${scale})`;
         });
-
-        // Update connecting line
-        if (buttonPositions.length >= 2) {
-            // Start the path at the first point
-            let pathD = `M ${buttonPositions[0].x} ${buttonPositions[0].y}`;
-            
-            // For each segment, calculate a smooth curve
-            for (let i = 1; i < buttonPositions.length; i++) {
-                const current = buttonPositions[i];
-                const prev = buttonPositions[i - 1];
-                
-                if (i < buttonPositions.length - 1) {
-                    // Calculate control point as midpoint between prev and next
-                    const next = buttonPositions[i + 1];
-                    const controlX = current.x;
-                    const controlY = current.y;
-                    
-                    // Use quadratic Bézier curve (Q) for smoother transition
-                    pathD += ` Q ${controlX} ${controlY}, ${(current.x + next.x) / 2} ${(current.y + next.y) / 2}`;
-                } else {
-                    // For the last segment, just curve to the final point
-                    pathD += ` Q ${current.x} ${current.y}, ${current.x} ${current.y}`;
-                }
-            }
-            
-            this.connectingPath.setAttribute('d', pathD);
-            this.connectingPath.style.opacity = '1';
-        }
     }
 
     handleTouchEnd() {
@@ -403,13 +405,29 @@ class ArcMenu {
     }
 
     clearDebugPoints() {
-        this.debugPoints.forEach(point => point.remove());
+        this.debugPoints.forEach(point => {
+            if (point && point.parentNode) {
+                point.remove();
+            }
+        });
         this.debugPoints = [];
     }
 
-    createDebugPoint(x, y, color = 'red') {
+    clearDebugPointsByClass(className) {
+        this.debugPoints = this.debugPoints.filter(point => {
+            if (point && point.className === className) {
+                if (point.parentNode) {
+                    point.remove();
+                }
+                return false;
+            }
+            return true;
+        });
+    }
+
+    createDebugPoint(x, y, color = 'red', className = 'debug-point') {
         const point = document.createElement('div');
-        point.className = 'debug-point';
+        point.className = className;
         point.style.cssText = `
             position: fixed;
             width: 10px;
@@ -424,6 +442,10 @@ class ArcMenu {
         document.body.appendChild(point);
         this.debugPoints.push(point);
         return point;
+    }
+
+    getDistance(x1, y1, x2, y2) {
+        return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
     // Removed calculateBestFitCircle and updateDebugArc methods
