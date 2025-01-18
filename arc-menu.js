@@ -179,6 +179,7 @@ class ArcMenu {
     }
 
     init() {
+        // Track mouse state and movement threshold
         let startX, startY;
         let isMouseDown = false;
         const DRAG_THRESHOLD = 10; // pixels to move before considering it a drag
