@@ -15,6 +15,7 @@ class ArcMenu {
         
         // Prevent text selection during arc drawing
         this.arcMenu.style.userSelect = 'none';
+        this.actionBar.style.userSelect = 'none';
         
         // Get viewport dimensions
         this.updateViewportDimensions = () => {
@@ -361,13 +362,19 @@ class ArcMenu {
             return null;
         }
 
-        // Use first 50% of points
-        const numPointsToUse = Math.max(3, Math.floor(this.pathPoints.length * 0.5));
+        // Only use first 30% of points for circle calculation
+        const numPointsToUse = Math.max(3, Math.floor(this.pathPoints.length * 0.3));
         const earlyPoints = this.pathPoints.slice(0, numPointsToUse);
         
+        console.log('Using early points:', {
+            total: this.pathPoints.length,
+            using: numPointsToUse,
+            points: earlyPoints
+        });
+
         // Get three key points: start, middle, end (of early points)
         const startPoint = earlyPoints[0];
-        const endPoint = earlyPoints[earlyPoints.length - 1];
+        const endPoint = this.pathPoints[this.pathPoints.length - 1];
         
         // Find point with maximum perpendicular distance from start-end line
         const dx = endPoint.x - startPoint.x;
