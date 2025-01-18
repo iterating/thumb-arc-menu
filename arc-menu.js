@@ -53,6 +53,7 @@ class ArcMenu {
         this.minAngle = null; // Minimum allowed angle
         this.maxAngle = null; // Maximum allowed angle
         this.minPointsForDirection = 10;  // Wait for 10 points before deciding direction
+        this.lastCheckedPointIndex = 0;  // Track which points we've already checked
         
         // Prevent text selection during arc drawing
         this.arcMenu.style.userSelect = 'none';
@@ -155,7 +156,7 @@ class ArcMenu {
         });
         document.addEventListener('mousemove', (e) => {
             if (this.isActive) {
-                console.log('Mouse move detected', e);
+                // console.log('Mouse move detected', e);
                 this.handleTouchMove({ touches: [e] });
             }
         });
@@ -310,38 +311,39 @@ class ArcMenu {
             return;
         }
 
-        // Try fitting with all points first
-        this.fitCircleToPoints(points);
+        // Take a subset of points for initial fitting - more at start, fewer later
+        const stride = Math.max(1, Math.floor(points.length / 20)); // Use 5% of points
+        const sampledPoints = points.filter((_, i) => 
+            i === 0 || // Always include start point
+            i === points.length - 1 || // Always include end point
+            i % stride === 0 // Sample points in between
+        );
+
+        // Do initial fit with sampled points
+        this.fitCircleToPoints(sampledPoints);
         if (!this.circleState.radius) return;
 
-        // Now verify how many points actually fit this circle
-        let goodPoints = [];
-        let badPoints = [];
+        // Quick check of last few points against current fit
+        const lastFewPoints = points.slice(-5);
+        let needsRefit = false;
         
-        for (let i = 0; i < points.length; i++) {
-            const point = points[i];
+        for (const point of lastFewPoints) {
             const dx = point.x - this.circleState.centerX;
             const dy = point.y - this.circleState.centerY;
             const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
             const deviation = Math.abs(distanceFromCenter - this.circleState.radius);
             
-            if (deviation <= this.maxDeviation) {
-                goodPoints.push(point);
-            } else {
-                badPoints.push(point);
+            if (deviation > this.maxDeviation) {
+                needsRefit = true;
+                break;
             }
         }
 
-        // If we have more bad points than good points, try fitting with just the good points
-        if (badPoints.length > goodPoints.length && goodPoints.length >= 3) {
-            if (this.debug) {
-                console.log(`Found ${badPoints.length} bad points vs ${goodPoints.length} good points, refitting with good points only`);
-            }
-            this.fitCircleToPoints(goodPoints);
+        // Only do a full refit if recent points don't match well
+        if (needsRefit) {
+            this.fitCircleToPoints(points);
+            if (!this.circleState.radius) return;
         }
-
-        // Update fitted points for visualization
-        this.updateFittedPoints();
 
         // If we've drawn enough points and have a good circle fit, lock it
         if (this.pathPoints.length > 10 && this.circleState && !this.lockedCircleState) {
@@ -351,6 +353,8 @@ class ArcMenu {
             }
             this.createArcButtons(); // Create buttons once we lock the circle
         }
+
+        this.updateFittedPoints();
     }
 
     fitCircleToPoints(points, endPoint) {
