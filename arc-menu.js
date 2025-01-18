@@ -226,20 +226,23 @@ class ArcMenu {
                 return;
             }
 
-            // Check for wild movements outside curve boundaries
-            const dx = currentX - this.circleState.centerX;
-            const dy = currentY - this.circleState.centerY;
-            const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
-            const deviation = Math.abs(distanceFromCenter - this.circleState.radius);
-            
-            // If deviation is more than 2x the maxDeviation, switch to action mode
-            if (deviation > this.maxDeviation * 2) {
-                if (this.debug) {
-                    console.log('Wild movement detected - deviation:', deviation);
+            // Only check for wild movements after we have enough points for a stable circle
+            if (this.pathPoints.length > 15) {
+                // Check for wild movements outside curve boundaries
+                const dx = currentX - this.circleState.centerX;
+                const dy = currentY - this.circleState.centerY;
+                const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
+                const deviation = Math.abs(distanceFromCenter - this.circleState.radius);
+                
+                // If deviation is more than 2x the maxDeviation, switch to action mode
+                if (deviation > this.maxDeviation * 2) {
+                    if (this.debug) {
+                        console.log('Wild movement detected - deviation:', deviation);
+                    }
+                    // For now, just close the menu. Later we can implement specific actions
+                    this.handleTouchEnd();
+                    return;
                 }
-                // For now, just close the menu. Later we can implement specific actions
-                this.handleTouchEnd();
-                return;
             }
         }
 
