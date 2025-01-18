@@ -430,8 +430,8 @@ class ArcMenu {
             segments.push({ start: i-1, end: i, length });
         }
 
-        // Calculate button size based on total path length
-        const buttonSize = Math.min(50, Math.max(30, totalLength / (this.buttons.length * 2)));
+        // Calculate button size based on total path length, but with a higher minimum
+        const buttonSize = Math.min(50, Math.max(35, totalLength / (this.buttons.length * 2)));
 
         // Position buttons along the path
         this.buttons.forEach((button, index) => {
@@ -458,8 +458,8 @@ class ArcMenu {
                 y = start.y + (end.y - start.y) * segmentPos;
             }
 
-            // Only clip the buttons to stay on screen, not the path points
-            const margin = buttonSize;
+            // Adjust margin based on button size to prevent excessive clamping
+            const margin = buttonSize * 0.6;  // Only clamp when really close to edge
             const clippedX = Math.max(margin, Math.min(this.viewportWidth - margin, x));
             const clippedY = Math.max(margin, Math.min(this.viewportHeight - margin, y));
 
@@ -467,7 +467,11 @@ class ArcMenu {
             button.style.height = `${buttonSize}px`;
             button.style.left = `${clippedX - buttonSize/2}px`;
             button.style.top = `${clippedY - buttonSize/2}px`;
-            const scale = Math.min(1, Math.max(0, (this.getDistance(x, y, this.startX, this.startY) - 20) / 50));
+            
+            // Adjust scale animation to start sooner and complete faster
+            const scaleThreshold = 15;  // Reduced from 20
+            const scaleRange = 35;      // Reduced from 50
+            const scale = Math.min(1, Math.max(0, (this.getDistance(x, y, this.startX, this.startY) - scaleThreshold) / scaleRange));
             button.style.transform = `scale(${scale})`;
         });
     }
