@@ -37,6 +37,29 @@ class ArcMenu {
         this.debugIndicator.textContent = 'DEBUG MODE';
         document.body.appendChild(this.debugIndicator);
         
+        // Create SVG element for the connecting line
+        this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        this.svg.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+        `;
+        this.connectingPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this.connectingPath.style.cssText = `
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.3);
+            stroke-width: 2;
+            filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+            opacity: 0;
+            transition: opacity 0.2s;
+        `;
+        this.svg.appendChild(this.connectingPath);
+        document.body.appendChild(this.svg);
+        
         // Sample menu items (can be customized)
         this.menuItems = [
             { icon: '🔍', label: 'Search' },
@@ -181,6 +204,7 @@ class ArcMenu {
         }
 
         // Position buttons along the path
+        let buttonPositions = [];
         this.buttons.forEach((button, index) => {
             const targetDistance = (index / (this.buttons.length - 1)) * totalLength;
             
@@ -211,6 +235,8 @@ class ArcMenu {
             x = Math.max(margin, Math.min(this.viewportWidth - margin, x));
             y = Math.max(margin, Math.min(this.viewportHeight - margin, y));
 
+            buttonPositions.push({x, y});
+
             const buttonDx = x - this.startX;
             const buttonDy = y - this.startY;
             const buttonDistance = Math.sqrt(buttonDx * buttonDx + buttonDy * buttonDy);
@@ -220,6 +246,16 @@ class ArcMenu {
             button.style.top = `${y - 25}px`;
             button.style.transform = `scale(${scale})`;
         });
+
+        // Update connecting line
+        if (buttonPositions.length >= 2) {
+            let pathD = `M ${buttonPositions[0].x} ${buttonPositions[0].y}`;
+            for (let i = 1; i < buttonPositions.length; i++) {
+                pathD += ` L ${buttonPositions[i].x} ${buttonPositions[i].y}`;
+            }
+            this.connectingPath.setAttribute('d', pathD);
+            this.connectingPath.style.opacity = '1';
+        }
     }
 
     handleTouchEnd() {
@@ -239,6 +275,9 @@ class ArcMenu {
             setTimeout(() => button.remove(), 200);
         });
         this.buttons = [];
+        
+        // Hide connecting line
+        this.connectingPath.style.opacity = '0';
         
         // Clear debug points after a delay
         if (this.debug) {
