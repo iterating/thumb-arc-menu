@@ -14,6 +14,14 @@ class ArcMenu {
         this.projectedCircle = null; // Store calculated circle parameters
         this.circleStartPoint = null;
         this.circleEndPoint = null;
+        this.maxY = null;
+        this.minY = null;
+        this.maxDistance = null; // Maximum distance from start point
+        this.arcDirection = null; // Arc direction (1 for right, -1 for left)
+        this.currentAngle = null; // Current angle of movement
+        this.startAngle = null; // Starting angle of movement
+        this.minAngle = null; // Minimum allowed angle
+        this.maxAngle = null; // Maximum allowed angle
         
         // Prevent text selection during arc drawing
         this.arcMenu.style.userSelect = 'none';
@@ -170,14 +178,52 @@ class ArcMenu {
         const dx = currentX - lastPoint.x;
         const dy = currentY - lastPoint.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        // Determine arc direction on first move
-        if (this.pathPoints.length === 1) {
-            this.arcDirection = Math.sign(currentX - this.startX) || 1;
+
+        // On first substantial movement, determine the arc direction
+        if (this.pathPoints.length === 1 && distance > 10) {
+            const directionX = currentX - this.startX;
+            this.arcDirection = Math.sign(directionX) || 1;
+            
+            // Initialize the sector angle range based on initial direction
+            this.currentAngle = Math.atan2(dy, dx);
+            this.startAngle = this.currentAngle;
+            
+            // Set allowed angle range (120 degrees total)
+            this.minAngle = this.startAngle - Math.PI / 3;
+            this.maxAngle = this.startAngle + Math.PI / 3;
         }
 
-        // Lower threshold for adding points from 10 to 5 pixels
-        if (distance > 5) {
+        // Enforce arc constraints
+        if (this.arcDirection && distance > 5) {
+            const proposedAngle = Math.atan2(dy, dx);
+            
+            // Normalize angles to handle the -PI to PI transition
+            let normalizedProposed = proposedAngle;
+            let normalizedMin = this.minAngle;
+            let normalizedMax = this.maxAngle;
+            
+            if (this.arcDirection > 0) {
+                // For rightward movement, angle should increase
+                if (proposedAngle < this.currentAngle - Math.PI) {
+                    normalizedProposed += 2 * Math.PI;
+                }
+                if (normalizedProposed < normalizedMin || normalizedProposed > normalizedMax) {
+                    return;
+                }
+            } else {
+                // For leftward movement, angle should decrease
+                if (proposedAngle > this.currentAngle + Math.PI) {
+                    normalizedProposed -= 2 * Math.PI;
+                }
+                if (normalizedProposed > normalizedMax || normalizedProposed < normalizedMin) {
+                    return;
+                }
+            }
+            
+            // Update current angle if valid
+            this.currentAngle = proposedAngle;
+            
+            // Add the point since it's valid
             this.pathPoints.push({x: currentX, y: currentY});
             if (this.debug) {
                 this.createDebugPoint(currentX, currentY);
@@ -241,10 +287,28 @@ class ArcMenu {
 
         // Update connecting line
         if (buttonPositions.length >= 2) {
+            // Start the path at the first point
             let pathD = `M ${buttonPositions[0].x} ${buttonPositions[0].y}`;
+            
+            // For each segment, calculate a smooth curve
             for (let i = 1; i < buttonPositions.length; i++) {
-                pathD += ` L ${buttonPositions[i].x} ${buttonPositions[i].y}`;
+                const current = buttonPositions[i];
+                const prev = buttonPositions[i - 1];
+                
+                if (i < buttonPositions.length - 1) {
+                    // Calculate control point as midpoint between prev and next
+                    const next = buttonPositions[i + 1];
+                    const controlX = current.x;
+                    const controlY = current.y;
+                    
+                    // Use quadratic Bézier curve (Q) for smoother transition
+                    pathD += ` Q ${controlX} ${controlY}, ${(current.x + next.x) / 2} ${(current.y + next.y) / 2}`;
+                } else {
+                    // For the last segment, just curve to the final point
+                    pathD += ` Q ${current.x} ${current.y}, ${current.x} ${current.y}`;
+                }
             }
+            
             this.connectingPath.setAttribute('d', pathD);
             this.connectingPath.style.opacity = '1';
         }
