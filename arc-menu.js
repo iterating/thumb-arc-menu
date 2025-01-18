@@ -38,7 +38,7 @@ class ArcMenu {
         this.debugIndicator.textContent = 'DEBUG MODE';
         document.body.appendChild(this.debugIndicator);
         
-        // Create SVG element for the connecting line
+        // Create SVG element for the connecting line and debug arc
         this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.svg.style.cssText = `
             position: fixed;
@@ -58,7 +58,19 @@ class ArcMenu {
             opacity: 0;
             transition: opacity 0.2s;
         `;
+        
+        // Add debug arc path
+        this.debugArcPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this.debugArcPath.style.cssText = `
+            fill: none;
+            stroke: #FF6B00;
+            stroke-width: 2;
+            stroke-dasharray: 5,5;
+            opacity: 0;
+        `;
+        
         this.svg.appendChild(this.connectingPath);
+        this.svg.appendChild(this.debugArcPath);
         document.body.appendChild(this.svg);
         
         // Sample menu items (can be customized)
@@ -168,12 +180,17 @@ class ArcMenu {
             if (this.pathPoints.length >= 5) {
                 this.projectedCircle = this.calculateBestFitCircle();
                 if (this.projectedCircle && this.debug) {
-                    // Show circle center in orange
+                    // Show the middle point we used in purple
+                    const middleIndex = Math.floor(this.pathPoints.length / 2);
+                    const middlePoint = this.pathPoints[middleIndex];
                     this.createDebugPoint(
-                        this.projectedCircle.center.x, 
-                        this.projectedCircle.center.y, 
-                        '#FF6B00'  // Bright orange
+                        middlePoint.x,
+                        middlePoint.y,
+                        '#800080'  // Purple
                     );
+                    
+                    // Update the debug arc
+                    this.updateDebugArc();
                 }
             }
         }
@@ -262,8 +279,9 @@ class ArcMenu {
         });
         this.buttons = [];
         
-        // Hide connecting line
+        // Hide connecting line and debug arc
         this.connectingPath.style.opacity = '0';
+        this.debugArcPath.style.opacity = '0';
         
         // Clear debug points after a delay
         if (this.debug) {
@@ -295,86 +313,153 @@ class ArcMenu {
 
     createDebugPoint(x, y, color = 'red') {
         const point = document.createElement('div');
+        point.className = 'debug-point';
         point.style.cssText = `
             position: fixed;
-            width: 6px;
-            height: 6px;
-            background: ${color};
+            width: 10px;
+            height: 10px;
+            background-color: ${color};
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            left: ${x - 3}px;
-            top: ${y - 3}px;
+            left: ${x - 5}px;
+            top: ${y - 5}px;
         `;
         document.body.appendChild(point);
         this.debugPoints.push(point);
         return point;
     }
 
-    // Calculate best-fit circle from points
+    // Calculate circle using three points method
     calculateBestFitCircle() {
         if (this.pathPoints.length < 3) return null;
 
-        // Step 1: Calculate centroid of points
-        let sumX = 0, sumY = 0;
-        this.pathPoints.forEach(p => {
-            sumX += p.x;
-            sumY += p.y;
+        // Get three key points: start, middle, end
+        const startPoint = this.pathPoints[0];
+        const endPoint = this.pathPoints[this.pathPoints.length - 1];
+        
+        // Find point with maximum perpendicular distance from start-end line
+        const dx = endPoint.x - startPoint.x;
+        const dy = endPoint.y - startPoint.y;
+        const lineLength = Math.sqrt(dx * dx + dy * dy);
+        if (lineLength < 1) return null;
+        
+        // Normalize direction vector
+        const dirX = dx / lineLength;
+        const dirY = dy / lineLength;
+        
+        // Perpendicular direction (rotated 90 degrees)
+        const perpX = -dirY;
+        const perpY = dirX;
+        
+        // Find middle point with max distance from line
+        let maxDist = 0;
+        let middlePoint = null;
+        
+        for (let i = 1; i < this.pathPoints.length - 1; i++) {
+            const point = this.pathPoints[i];
+            // Vector from start to point
+            const vpx = point.x - startPoint.x;
+            const vpy = point.y - startPoint.y;
+            // Perpendicular distance = dot product with perpendicular vector
+            const dist = Math.abs(vpx * perpX + vpy * perpY);
+            if (dist > maxDist) {
+                maxDist = dist;
+                middlePoint = point;
+            }
+        }
+        
+        if (!middlePoint || maxDist < 10) return null;
+
+        // Calculate circle using three points method
+        // First, find perpendicular bisectors of two chords
+        
+        // Midpoint of first chord (start to middle)
+        const mid1X = (startPoint.x + middlePoint.x) / 2;
+        const mid1Y = (startPoint.y + middlePoint.y) / 2;
+        
+        // Midpoint of second chord (middle to end)
+        const mid2X = (middlePoint.x + endPoint.x) / 2;
+        const mid2Y = (middlePoint.y + endPoint.y) / 2;
+        
+        // Perpendicular direction of first chord
+        const chord1Dx = middlePoint.x - startPoint.x;
+        const chord1Dy = middlePoint.y - startPoint.y;
+        const perp1X = -chord1Dy;
+        const perp1Y = chord1Dx;
+        
+        // Perpendicular direction of second chord
+        const chord2Dx = endPoint.x - middlePoint.x;
+        const chord2Dy = endPoint.y - middlePoint.y;
+        const perp2X = -chord2Dy;
+        const perp2Y = chord2Dx;
+        
+        // Find intersection of perpendicular bisectors
+        // Using parametric equations:
+        // mid1 + t*perp1 = mid2 + s*perp2
+        const denominator = perp1X * perp2Y - perp1Y * perp2X;
+        if (Math.abs(denominator) < 1e-10) return null;
+        
+        const t = ((mid2X - mid1X) * perp2Y - (mid2Y - mid1Y) * perp2X) / denominator;
+        
+        // Center is the intersection point
+        const centerX = mid1X + t * perp1X;
+        const centerY = mid1Y + t * perp1Y;
+        
+        // Calculate radius as distance to any point
+        const radius = Math.sqrt(
+            Math.pow(centerX - startPoint.x, 2) + 
+            Math.pow(centerY - startPoint.y, 2)
+        );
+
+        // Log values for debugging
+        console.log('Circle calculation:', {
+            center: {x: centerX, y: centerY},
+            radius,
+            maxDist,
+            points: {
+                start: startPoint,
+                middle: middlePoint,
+                end: endPoint
+            }
         });
-        const meanX = sumX / this.pathPoints.length;
-        const meanY = sumY / this.pathPoints.length;
 
-        // Step 2: Shift coordinates to mean
-        const shiftedPoints = this.pathPoints.map(p => ({
-            x: p.x - meanX,
-            y: p.y - meanY
-        }));
-
-        // Step 3: Calculate the matrices for least squares fit
-        let suu = 0, suv = 0, svv = 0, suuu = 0, suvv = 0, svuu = 0, svvv = 0;
-        shiftedPoints.forEach(p => {
-            const u = p.x;
-            const v = p.y;
-            const uu = u * u;
-            const vv = v * v;
-            suu += uu;
-            suv += u * v;
-            svv += vv;
-            suuu += u * uu;
-            suvv += u * vv;
-            svuu += v * uu;
-            svvv += v * vv;
-        });
-
-        // Step 4: Solve the system of equations
-        const A = [[suu, suv], [suv, svv]];
-        const B = [-(suuu + suvv) / 2, -(svuu + svvv) / 2];
-
-        // Calculate determinant
-        const det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
-        if (Math.abs(det) < 1e-10) return null;
-
-        // Solve for center
-        const centerX = (A[1][1] * B[0] - A[0][1] * B[1]) / det;
-        const centerY = (A[0][0] * B[1] - A[1][0] * B[0]) / det;
-
-        // Step 5: Calculate radius
-        let radius = 0;
-        shiftedPoints.forEach(p => {
-            const dx = p.x - centerX;
-            const dy = p.y - centerY;
-            radius += Math.sqrt(dx * dx + dy * dy);
-        });
-        radius /= this.pathPoints.length;
-
-        // Transform center back to original coordinates
         return {
-            center: {
-                x: centerX + meanX,
-                y: centerY + meanY
-            },
+            center: {x: centerX, y: centerY},
             radius: radius
         };
+    }
+
+    // Calculate and draw the debug arc
+    updateDebugArc() {
+        if (!this.projectedCircle || !this.debug) {
+            this.debugArcPath.style.opacity = '0';
+            return;
+        }
+
+        const startPoint = this.pathPoints[0];
+        const endPoint = this.pathPoints[this.pathPoints.length - 1];
+        const center = this.projectedCircle.center;
+        const radius = this.projectedCircle.radius;
+
+        // Calculate angles from center to start and end points
+        const startAngle = Math.atan2(startPoint.y - center.y, startPoint.x - center.x);
+        const endAngle = Math.atan2(endPoint.y - center.y, endPoint.x - center.x);
+
+        // Determine which arc to draw (short or long way around)
+        let deltaAngle = endAngle - startAngle;
+        if (Math.abs(deltaAngle) > Math.PI) {
+            deltaAngle = deltaAngle - Math.sign(deltaAngle) * 2 * Math.PI;
+        }
+
+        // Create SVG arc path
+        const d = [
+            `M ${startPoint.x} ${startPoint.y}`,
+            `A ${radius} ${radius} 0 ${Math.abs(deltaAngle) > Math.PI ? '1' : '0'} ${deltaAngle > 0 ? '1' : '0'} ${endPoint.x} ${endPoint.y}`
+        ].join(' ');
+
+        this.debugArcPath.setAttribute('d', d);
+        this.debugArcPath.style.opacity = '1';
     }
 }
 
