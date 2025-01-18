@@ -200,7 +200,7 @@ class ArcMenu {
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         // Check if user is backtracking
-        if (this.arcDirection !== null && this.pathPoints.length > 5 && this.circleState.radius) {
+        if (!this.lockedCircleState && this.arcDirection !== null && this.pathPoints.length > 5 && this.circleState.radius) {
             // Calculate current angle from circle center
             const currentAngle = Math.atan2(currentY - this.circleState.centerY, currentX - this.circleState.centerX);
             
