@@ -15,6 +15,9 @@ class ArcMenu {
         this.minPointsForFit = 5;     // Reduced from 10 to 5
         this.maxDeviation = 30;       // Increased from 20 to 30
         this.deviationThreshold = 0.5; // Increased from 0.3 to 0.5
+        this.buttonSize = 50;         // Default button size
+        this.minButtonSize = 30;      // Minimum button size when scaling down
+        this.buttonPadding = 10;      // Minimum padding between buttons
         this.goodPointCount = 0;
         this.badPointCount = 0;
         this.circleState = {
@@ -427,6 +430,9 @@ class ArcMenu {
             segments.push({ start: i-1, end: i, length });
         }
 
+        // Calculate button size based on total path length
+        const buttonSize = Math.min(50, Math.max(30, totalLength / (this.buttons.length * 2)));
+
         // Position buttons along the path
         this.buttons.forEach((button, index) => {
             const targetDistance = (index / (this.buttons.length - 1)) * totalLength;
@@ -453,12 +459,14 @@ class ArcMenu {
             }
 
             // Only clip the buttons to stay on screen, not the path points
-            const margin = 50;
+            const margin = buttonSize;
             const clippedX = Math.max(margin, Math.min(this.viewportWidth - margin, x));
             const clippedY = Math.max(margin, Math.min(this.viewportHeight - margin, y));
 
-            button.style.left = `${clippedX - 25}px`;
-            button.style.top = `${clippedY - 25}px`;
+            button.style.width = `${buttonSize}px`;
+            button.style.height = `${buttonSize}px`;
+            button.style.left = `${clippedX - buttonSize/2}px`;
+            button.style.top = `${clippedY - buttonSize/2}px`;
             const scale = Math.min(1, Math.max(0, (this.getDistance(x, y, this.startX, this.startY) - 20) / 50));
             button.style.transform = `scale(${scale})`;
         });
