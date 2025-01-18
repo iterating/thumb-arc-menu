@@ -24,6 +24,7 @@ class ArcMenu {
             startAngle: null,
             endAngle: null
         };
+        this.lockedCircleState = null; // Store the locked circle parameters
         this.maxArcRadius = 400; // Maximum radius
         this.projectedCircle = null; // Store calculated circle parameters
         this.circleStartPoint = null;
@@ -158,13 +159,11 @@ class ArcMenu {
         this.pathPoints = [];
         this.fittedPoints = [];
         this.arcDirection = null;  // Reset direction on new touch
+        this.lockedCircleState = null; // Reset locked circle state
         
         // Clear any existing buttons
         this.buttons.forEach(button => button.remove());
         this.buttons = [];
-        
-        // Create arc buttons
-        this.createArcButtons();
         
         // Clear debug points
         if (this.debug) {
@@ -280,6 +279,12 @@ class ArcMenu {
 
         // Update fitted points for visualization
         this.updateFittedPoints();
+
+        // If we've drawn enough points and have a good circle fit, lock it
+        if (this.pathPoints.length > 10 && this.circleState) {
+            this.lockedCircleState = { ...this.circleState };
+            this.createArcButtons(); // Create buttons once we lock the circle
+        }
     }
 
     fitCircleToPoints(points, endPoint) {
@@ -288,7 +293,7 @@ class ArcMenu {
         const midPoint = points[Math.floor(points.length / 2)];
         const endPointForFit = endPoint || points[points.length - 1];
         
-        // Calculate chord properties
+        // Calculate vectors from start to mid and mid to end
         const dx1 = midPoint.x - startPoint.x;
         const dy1 = midPoint.y - startPoint.y;
         const dx2 = endPointForFit.x - midPoint.x;
@@ -298,43 +303,32 @@ class ArcMenu {
         if (Math.abs(dx1) < 0.01 && Math.abs(dy1) < 0.01) return;
         if (Math.abs(dx2) < 0.01 && Math.abs(dy2) < 0.01) return;
         
-        // Calculate center direction vector from midpoint
-        const centerDx = this.arcDirection > 0 ? -dy2 : dy2;
-        const centerDy = this.arcDirection > 0 ? dx2 : -dx2;
-        const centerDist = Math.sqrt(centerDx * centerDx + centerDy * centerDy);
+        // Find perpendicular vector to create center point
+        const perpX = -dy2;  // Perpendicular to the curve direction
+        const perpY = dx2;
+        const perpLength = Math.sqrt(perpX * perpX + perpY * perpY);
         
-        // First calculate the center position based on the arc
-        let centerX = midPoint.x + (centerDx / centerDist) * this.viewportWidth * 0.5;
-        let centerY = midPoint.y + (centerDy / centerDist) * this.viewportWidth * 0.5;
+        // Calculate distance from midpoint to desired center
+        // This should be large enough to place center off screen
+        const desiredRadius = this.arcDirection > 0 ? 
+            this.viewportWidth + 100 - midPoint.x : 
+            midPoint.x + 100;
+            
+        // Calculate center point
+        const centerX = midPoint.x + (perpX / perpLength) * desiredRadius * (this.arcDirection > 0 ? 1 : -1);
+        const centerY = midPoint.y + (perpY / perpLength) * desiredRadius * (this.arcDirection > 0 ? 1 : -1);
         
-        // Now ensure the center is outside the viewport
-        if (this.arcDirection > 0) {
-            // Right-hand mode: if not past right edge, move it there
-            if (centerX < this.viewportWidth) {
-                const scale = (this.viewportWidth + 100 - midPoint.x) / (centerX - midPoint.x);
-                centerX = midPoint.x + (centerX - midPoint.x) * scale;
-                centerY = midPoint.y + (centerY - midPoint.y) * scale;
-            }
-        } else {
-            // Left-hand mode: if not past left edge, move it there
-            if (centerX > 0) {
-                const scale = (-100 - midPoint.x) / (centerX - midPoint.x);
-                centerX = midPoint.x + (centerX - midPoint.x) * scale;
-                centerY = midPoint.y + (centerY - midPoint.y) * scale;
-            }
-        }
-        
-        // Calculate radius based on distance to midpoint
+        // Calculate radius based on distance to points
         const radius = Math.sqrt(
             (centerX - midPoint.x) * (centerX - midPoint.x) +
             (centerY - midPoint.y) * (centerY - midPoint.y)
         );
         
-        // Calculate angles - use first and last points for consistent arc
+        // Calculate angles
         const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
         const endAngle = Math.atan2(endPointForFit.y - centerY, endPointForFit.x - centerX);
         
-        // Adjust angles based on direction
+        // Adjust end angle based on direction to ensure proper arc
         let adjustedEndAngle = endAngle;
         if (this.arcDirection > 0 && startAngle > endAngle) {
             adjustedEndAngle += 2 * Math.PI;
@@ -350,6 +344,10 @@ class ArcMenu {
             startAngle,
             endAngle: adjustedEndAngle
         };
+
+        if (this.debug) {
+            console.log(`Best circle: center(${centerX.toFixed(0)}, ${centerY.toFixed(0)}) radius(${radius.toFixed(0)}), ${this.arcDirection > 0 ? 'right' : 'left'} hand`);
+        }
 
         this.updateFittedPoints();
     }
@@ -377,7 +375,6 @@ class ArcMenu {
         }
         
         if (this.debug) {
-            console.log(`%cBest circle: center(${this.circleState.centerX.toFixed(0)}, ${this.circleState.centerY.toFixed(0)}) radius(${this.circleState.radius.toFixed(0)}), ${this.arcDirection > 0 ? 'right' : 'left'} hand`, 'color: #00ff00; font-weight: bold');
             this.createDebugPoint(this.circleState.centerX, this.circleState.centerY, 'blue', 'debug-point-center');
         }
     }
@@ -454,6 +451,7 @@ class ArcMenu {
         this.buttons = [];
         this.pathPoints = [];     // Clear path points
         this.fittedPoints = [];   // Clear fitted points
+        this.lockedCircleState = null; // Reset locked circle state
         
         // Hide connecting line and debug arc
         this.connectingPath.style.opacity = '0';
@@ -525,8 +523,6 @@ class ArcMenu {
     getDistance(x1, y1, x2, y2) {
         return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
-
-    // Removed calculateBestFitCircle and updateDebugArc methods
 }
 
 // Initialize the arc menu when the page loads
