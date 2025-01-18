@@ -7,7 +7,25 @@ class ArcMenu {
         this.startX = 0;
         this.startY = 0;
         this.pathPoints = [];  // Store movement points
+        this.debugPoints = [];  // Store debug elements
         this.buttons = [];
+        
+        // Create debug indicator
+        this.debugIndicator = document.createElement('div');
+        this.debugIndicator.style.cssText = `
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            z-index: 10000;
+            display: none;
+        `;
+        this.debugIndicator.textContent = 'DEBUG MODE';
+        document.body.appendChild(this.debugIndicator);
         
         // Sample menu items (can be customized)
         this.menuItems = [
@@ -17,6 +35,18 @@ class ArcMenu {
             { icon: '🗑️', label: 'Delete' },
             { icon: '📤', label: 'Share' }
         ];
+
+        // Debug mode - toggle with 'D' key
+        this.debug = false;
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'd') {
+                this.debug = !this.debug;
+                this.debugIndicator.style.display = this.debug ? 'block' : 'none';
+                console.log('Debug mode:', this.debug);
+                // Clear any existing debug points
+                this.clearDebugPoints();
+            }
+        });
 
         this.init();
     }
@@ -50,7 +80,12 @@ class ArcMenu {
         this.startY = touch.clientY;
         this.pathPoints = [{x: this.startX, y: this.startY}];
         this.isActive = true;
-        console.log('Start:', { x: this.startX, y: this.startY });
+        
+        // Clear any existing debug points
+        if (this.debug) {
+            this.clearDebugPoints();
+            this.createDebugPoint(this.startX, this.startY, 'green');  // Start point in green
+        }
         
         // Create arc buttons
         this.createArcButtons();
@@ -63,15 +98,18 @@ class ArcMenu {
         const currentX = touch.clientX;
         const currentY = touch.clientY;
 
-        // Add point to path if it's far enough from last point
         const lastPoint = this.pathPoints[this.pathPoints.length - 1];
         const dx = currentX - lastPoint.x;
         const dy = currentY - lastPoint.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        if (distance > 10) { // Sample every 10px of movement
+        if (distance > 10) {
             this.pathPoints.push({x: currentX, y: currentY});
-            console.log('New point:', {x: currentX, y: currentY, points: this.pathPoints.length});
+            
+            // Add debug point
+            if (this.debug) {
+                this.createDebugPoint(currentX, currentY);
+            }
         }
 
         this.positionButtons(currentX, currentY);
@@ -82,13 +120,23 @@ class ArcMenu {
         if (!this.isActive) return;
         this.isActive = false;
 
+        // Add final debug point in blue
+        if (this.debug && this.pathPoints.length > 0) {
+            const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+            this.createDebugPoint(lastPoint.x, lastPoint.y, 'blue');
+        }
+
         // Cleanup
         this.buttons.forEach(button => {
             button.style.transform = 'scale(0)';
             setTimeout(() => button.remove(), 200);
         });
         this.buttons = [];
-        console.log('Menu cleaned up');
+        
+        // Clear debug points after a delay
+        if (this.debug) {
+            setTimeout(() => this.clearDebugPoints(), 1000);
+        }
     }
 
     createArcButtons() {
@@ -108,71 +156,82 @@ class ArcMenu {
         });
     }
 
-    // Calculate control point for quadratic bezier curve
-    calculateControlPoint() {
-        if (this.pathPoints.length < 3) return null;
-
-        // Use first, middle and last points to determine curve
-        const start = this.pathPoints[0];
-        const end = this.pathPoints[this.pathPoints.length - 1];
-        const mid = this.pathPoints[Math.floor(this.pathPoints.length / 2)];
-
-        // Find control point using perpendicular bisector method
-        const dx = end.x - start.x;
-        const dy = end.y - start.y;
-        const midX = (start.x + end.x) / 2;
-        const midY = (start.y + end.y) / 2;
-        
-        // Calculate perpendicular vector
-        const perpX = -dy;
-        const perpY = dx;
-        
-        // Distance from mid point to actual middle point determines curve intensity
-        const intensity = Math.sqrt(
-            Math.pow(mid.x - midX, 2) + 
-            Math.pow(mid.y - midY, 2)
-        ) * 2;
-        
-        // Normalize perpendicular vector and scale by intensity
-        const len = Math.sqrt(perpX * perpX + perpY * perpY);
-        const controlX = midX + (perpX / len) * intensity;
-        const controlY = midY + (perpY / len) * intensity;
-        
-        return {x: controlX, y: controlY};
+    clearDebugPoints() {
+        this.debugPoints.forEach(point => point.remove());
+        this.debugPoints = [];
     }
 
-    // Get point on quadratic bezier curve at t (0-1)
-    getPointOnCurve(t, start, control, end) {
-        const t1 = 1 - t;
-        return {
-            x: t1 * t1 * start.x + 2 * t1 * t * control.x + t * t * end.x,
-            y: t1 * t1 * start.y + 2 * t1 * t * control.y + t * t * end.y
-        };
+    createDebugPoint(x, y, color = 'red') {
+        const point = document.createElement('div');
+        point.style.cssText = `
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: ${color};
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            left: ${x - 3}px;
+            top: ${y - 3}px;
+        `;
+        document.body.appendChild(point);
+        this.debugPoints.push(point);
+        return point;
     }
 
     positionButtons(currentX, currentY) {
         if (!this.isActive || this.pathPoints.length < 3) return;
 
-        const control = this.calculateControlPoint();
-        if (!control) return;
+        // Get the total path length
+        let totalLength = 0;
+        const segments = [];
+        for (let i = 1; i < this.pathPoints.length; i++) {
+            const dx = this.pathPoints[i].x - this.pathPoints[i-1].x;
+            const dy = this.pathPoints[i].y - this.pathPoints[i-1].y;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            totalLength += length;
+            segments.push({ start: i-1, end: i, length });
+        }
 
-        const start = this.pathPoints[0];
-        const end = this.pathPoints[this.pathPoints.length - 1];
-        
-        // Position buttons along the curve
+        // Position buttons along the actual path
         this.buttons.forEach((button, index) => {
-            // Calculate position along curve (0 to 1)
-            const t = index / (this.buttons.length - 1);
-            const pos = this.getPointOnCurve(t, start, control, end);
+            // Calculate desired distance along path for this button
+            const targetDistance = (index / (this.buttons.length - 1)) * totalLength;
             
+            // Find the segment containing this position
+            let currentDist = 0;
+            let segmentIndex = 0;
+            while (segmentIndex < segments.length && currentDist + segments[segmentIndex].length < targetDistance) {
+                currentDist += segments[segmentIndex].length;
+                segmentIndex++;
+            }
+
+            // If we're at the end, use the last point
+            if (segmentIndex >= segments.length) {
+                const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+                button.style.left = `${lastPoint.x - 25}px`;
+                button.style.top = `${lastPoint.y - 25}px`;
+                return;
+            }
+
+            // Calculate position within the segment
+            const segment = segments[segmentIndex];
+            const segmentPos = (targetDistance - currentDist) / segment.length;
+            const start = this.pathPoints[segment.start];
+            const end = this.pathPoints[segment.end];
+
+            // Interpolate position
+            const x = start.x + (end.x - start.x) * segmentPos;
+            const y = start.y + (end.y - start.y) * segmentPos;
+
             // Scale based on distance from start
-            const dx = pos.x - start.x;
-            const dy = pos.y - start.y;
+            const dx = x - this.pathPoints[0].x;
+            const dy = y - this.pathPoints[0].y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             const scale = Math.min(1, Math.max(0, (distance - 20) / 50));
 
-            button.style.left = `${pos.x - 25}px`;
-            button.style.top = `${pos.y - 25}px`;
+            button.style.left = `${x - 25}px`;
+            button.style.top = `${y - 25}px`;
             button.style.transform = `scale(${scale})`;
         });
     }
