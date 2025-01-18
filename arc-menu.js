@@ -108,6 +108,13 @@ class ArcMenu {
         const currentX = touch.clientX;
         const currentY = touch.clientY;
 
+        // Ignore points outside viewport (with small margin)
+        const margin = 10;
+        if (currentX < margin || currentX > this.viewportWidth - margin ||
+            currentY < margin || currentY > this.viewportHeight - margin) {
+            return;
+        }
+
         // If we somehow lost our points, restore the start point
         if (this.pathPoints.length === 0) {
             this.pathPoints.push({x: this.startX, y: this.startY});
