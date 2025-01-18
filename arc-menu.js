@@ -178,15 +178,29 @@ class ArcMenu {
     handleTouchMove(e) {
         if (!this.isActive) return;
 
-        const touch = e.touches[0];
-        const currentX = touch.clientX;
-        const currentY = touch.clientY;
+        // Handle both mouse and touch events properly
+        const currentX = e.clientX || (e.touches && e.touches[0].clientX);
+        const currentY = e.clientY || (e.touches && e.touches[0].clientY);
 
         // Only clip raw input points, not calculated points
         const margin = 10;
         if (currentX < margin || currentX > this.viewportWidth - margin ||
             currentY < margin || currentY > this.viewportHeight - margin) {
             return;
+        }
+
+        // If we have a direction set, check if we've backtracked past origin
+        if (this.arcDirection !== null) {
+            // Check if we're below start Y or on wrong side of X
+            if (currentY > this.startY || 
+                (this.arcDirection > 0 && currentX < this.startX) || 
+                (this.arcDirection < 0 && currentX > this.startX)) {
+                if (this.debug) {
+                    console.log('Backtracking detected:', {currentX, currentY, startX: this.startX, startY: this.startY});
+                    this.createDebugPoint(currentX, currentY, '#ff0000', 'debug-point-backtrack');
+                }
+                return;
+            }
         }
 
         // If we somehow lost our points, restore the start point
