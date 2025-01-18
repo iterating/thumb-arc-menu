@@ -199,6 +199,50 @@ class ArcMenu {
         const dy = currentY - lastPoint.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
+        // Check if user is backtracking
+        if (this.arcDirection !== null && this.pathPoints.length > 5 && this.circleState.radius) {
+            // Calculate current angle from circle center
+            const currentAngle = Math.atan2(currentY - this.circleState.centerY, currentX - this.circleState.centerX);
+            
+            // Get previous point's angle
+            const prevPoint = this.pathPoints[this.pathPoints.length - 1];
+            const prevAngle = Math.atan2(prevPoint.y - this.circleState.centerY, prevPoint.x - this.circleState.centerX);
+            
+            // Calculate angle difference, considering the circle direction
+            let angleDiff = currentAngle - prevAngle;
+            // Normalize angle to [-π, π]
+            if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+            if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+            
+            // Check if movement direction matches arc direction
+            const isBacktracking = (this.arcDirection > 0 && angleDiff < -0.1) || 
+                                 (this.arcDirection < 0 && angleDiff > 0.1);
+            
+            if (isBacktracking) {
+                if (this.debug) {
+                    console.log('Backtracking detected - angleDiff:', angleDiff);
+                }
+                this.handleTouchEnd();
+                return;
+            }
+
+            // Check for wild movements outside curve boundaries
+            const dx = currentX - this.circleState.centerX;
+            const dy = currentY - this.circleState.centerY;
+            const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
+            const deviation = Math.abs(distanceFromCenter - this.circleState.radius);
+            
+            // If deviation is more than 2x the maxDeviation, switch to action mode
+            if (deviation > this.maxDeviation * 2) {
+                if (this.debug) {
+                    console.log('Wild movement detected - deviation:', deviation);
+                }
+                // For now, just close the menu. Later we can implement specific actions
+                this.handleTouchEnd();
+                return;
+            }
+        }
+
         // Only add points if significant movement
         if (distance > 5) {
             this.pathPoints.push({x: currentX, y: currentY});
@@ -247,6 +291,26 @@ class ArcMenu {
         const points = this.pathPoints;
         if (points.length < 3) return;
 
+        // If we already have a locked circle state, just update the end angle
+        if (this.lockedCircleState) {
+            const currentAngle = Math.atan2(currentY - this.lockedCircleState.centerY, 
+                                          currentX - this.lockedCircleState.centerX);
+            this.circleState = {
+                ...this.lockedCircleState,
+                endAngle: currentAngle
+            };
+            
+            // Adjust end angle based on direction to ensure proper arc
+            if (this.arcDirection > 0 && this.circleState.startAngle > this.circleState.endAngle) {
+                this.circleState.endAngle += 2 * Math.PI;
+            } else if (this.arcDirection < 0 && this.circleState.endAngle > this.circleState.startAngle) {
+                this.circleState.endAngle -= 2 * Math.PI;
+            }
+            
+            this.updateFittedPoints();
+            return;
+        }
+
         // Try fitting with all points first
         this.fitCircleToPoints(points);
         if (!this.circleState.radius) return;
@@ -281,8 +345,11 @@ class ArcMenu {
         this.updateFittedPoints();
 
         // If we've drawn enough points and have a good circle fit, lock it
-        if (this.pathPoints.length > 10 && this.circleState) {
+        if (this.pathPoints.length > 10 && this.circleState && !this.lockedCircleState) {
             this.lockedCircleState = { ...this.circleState };
+            if (this.debug) {
+                console.log('Circle parameters locked:', this.lockedCircleState);
+            }
             this.createArcButtons(); // Create buttons once we lock the circle
         }
     }
