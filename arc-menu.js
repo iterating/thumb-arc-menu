@@ -13,6 +13,9 @@ class ArcMenu {
         this.maxArcRadius = 400; // Increased from 200 to allow wider arcs
         this.projectedCircle = null; // Store calculated circle parameters
         
+        // Prevent text selection during arc drawing
+        this.arcMenu.style.userSelect = 'none';
+        
         // Get viewport dimensions
         this.updateViewportDimensions = () => {
             this.viewportWidth = window.innerWidth;
@@ -64,9 +67,10 @@ class ArcMenu {
         this.debugArcPath.style.cssText = `
             fill: none;
             stroke: #FF6B00;
-            stroke-width: 2;
-            stroke-dasharray: 5,5;
+            stroke-width: 3;
+            stroke-dasharray: 8,4;
             opacity: 0;
+            filter: drop-shadow(0 0 3px rgba(255, 107, 0, 0.5));
         `;
         
         this.svg.appendChild(this.connectingPath);
@@ -176,10 +180,28 @@ class ArcMenu {
                 this.createDebugPoint(currentX, currentY);
             }
 
-            // Calculate best-fit circle after we have enough points
-            if (this.pathPoints.length >= 5) {
+            // Calculate path length from start
+            let pathLength = 0;
+            for (let i = 1; i < this.pathPoints.length; i++) {
+                const p1 = this.pathPoints[i - 1];
+                const p2 = this.pathPoints[i];
+                pathLength += Math.sqrt(
+                    Math.pow(p2.x - p1.x, 2) + 
+                    Math.pow(p2.y - p1.y, 2)
+                );
+            }
+
+            // Try to project the arc VERY early - after just 5% movement and 3 points
+            const minPathLength = this.maxArcRadius * 0.05; // Just 20 pixels of movement
+            
+            if (!this.projectedCircle && pathLength > minPathLength && this.pathPoints.length >= 3) {
                 this.projectedCircle = this.calculateBestFitCircle();
                 if (this.projectedCircle && this.debug) {
+                    console.log('Projected circle calculated:', {
+                        pathLength,
+                        numPoints: this.pathPoints.length,
+                        circle: this.projectedCircle
+                    });
                     // Show the middle point we used in purple
                     const middleIndex = Math.floor(this.pathPoints.length / 2);
                     const middlePoint = this.pathPoints[middleIndex];
@@ -188,10 +210,12 @@ class ArcMenu {
                         middlePoint.y,
                         '#800080'  // Purple
                     );
-                    
-                    // Update the debug arc
-                    this.updateDebugArc();
                 }
+            }
+            
+            // Always update the debug arc if we have a projection
+            if (this.projectedCircle && this.debug) {
+                this.updateDebugArc();
             }
         }
 
@@ -332,44 +356,64 @@ class ArcMenu {
 
     // Calculate circle using three points method
     calculateBestFitCircle() {
-        if (this.pathPoints.length < 3) return null;
+        if (this.pathPoints.length < 3) {
+            console.log('Not enough points:', this.pathPoints.length);
+            return null;
+        }
 
-        // Get three key points: start, middle, end
-        const startPoint = this.pathPoints[0];
-        const endPoint = this.pathPoints[this.pathPoints.length - 1];
+        // Use more points - first 50% instead of 30%
+        const numPointsToUse = Math.max(3, Math.floor(this.pathPoints.length * 0.5));
+        const earlyPoints = this.pathPoints.slice(0, numPointsToUse);
         
-        // Find point with maximum perpendicular distance from start-end line
-        const dx = endPoint.x - startPoint.x;
-        const dy = endPoint.y - startPoint.y;
-        const lineLength = Math.sqrt(dx * dx + dy * dy);
-        if (lineLength < 1) return null;
+        console.log('Using early points:', {
+            total: this.pathPoints.length,
+            using: numPointsToUse,
+            points: earlyPoints
+        });
+
+        // Get three key points: start, middle, end (of early points)
+        const startPoint = earlyPoints[0];
+        const endPoint = earlyPoints[earlyPoints.length - 1];
         
-        // Normalize direction vector
-        const dirX = dx / lineLength;
-        const dirY = dy / lineLength;
-        
-        // Perpendicular direction (rotated 90 degrees)
-        const perpX = -dirY;
-        const perpY = dirX;
-        
-        // Find middle point with max distance from line
-        let maxDist = 0;
+        // Find the point with maximum curvature
+        let maxCurvature = 0;
         let middlePoint = null;
         
-        for (let i = 1; i < this.pathPoints.length - 1; i++) {
-            const point = this.pathPoints[i];
-            // Vector from start to point
-            const vpx = point.x - startPoint.x;
-            const vpy = point.y - startPoint.y;
-            // Perpendicular distance = dot product with perpendicular vector
-            const dist = Math.abs(vpx * perpX + vpy * perpY);
-            if (dist > maxDist) {
-                maxDist = dist;
-                middlePoint = point;
+        // Look at groups of 3 consecutive points
+        for (let i = 1; i < earlyPoints.length - 1; i++) {
+            const prev = earlyPoints[i - 1];
+            const curr = earlyPoints[i];
+            const next = earlyPoints[i + 1];
+            
+            // Calculate vectors between points
+            const v1x = curr.x - prev.x;
+            const v1y = curr.y - prev.y;
+            const v2x = next.x - curr.x;
+            const v2y = next.y - curr.y;
+            
+            // Calculate the angle between vectors
+            const dot = v1x * v2x + v1y * v2y;
+            const cross = v1x * v2y - v1y * v2x;
+            const angle = Math.abs(Math.atan2(cross, dot));
+            
+            // Larger angle = sharper curve
+            if (angle > maxCurvature) {
+                maxCurvature = angle;
+                middlePoint = curr;
             }
         }
         
-        if (!middlePoint || maxDist < 10) return null;
+        // Accept any curvature greater than 1 degree
+        const minAngle = Math.PI / 180;  // 1 degree in radians
+        if (!middlePoint || maxCurvature < minAngle) {
+            console.log('No curve found:', { maxCurvature: maxCurvature * 180 / Math.PI });
+            return null;
+        }
+
+        console.log('Found curve:', { 
+            maxCurvature: maxCurvature * 180 / Math.PI,
+            middle: middlePoint
+        });
 
         // Calculate circle using three points method
         // First, find perpendicular bisectors of two chords
@@ -395,10 +439,11 @@ class ArcMenu {
         const perp2Y = chord2Dx;
         
         // Find intersection of perpendicular bisectors
-        // Using parametric equations:
-        // mid1 + t*perp1 = mid2 + s*perp2
         const denominator = perp1X * perp2Y - perp1Y * perp2X;
-        if (Math.abs(denominator) < 1e-10) return null;
+        if (Math.abs(denominator) < 1e-10) {
+            console.log('Parallel lines - no intersection');
+            return null;
+        }
         
         const t = ((mid2X - mid1X) * perp2Y - (mid2Y - mid1Y) * perp2X) / denominator;
         
@@ -412,11 +457,14 @@ class ArcMenu {
             Math.pow(centerY - startPoint.y, 2)
         );
 
-        // Log values for debugging
-        console.log('Circle calculation:', {
+        const result = {
             center: {x: centerX, y: centerY},
-            radius,
-            maxDist,
+            radius: radius
+        };
+
+        console.log('Circle calculated:', {
+            center: result.center,
+            radius: result.radius,
             points: {
                 start: startPoint,
                 middle: middlePoint,
@@ -424,39 +472,49 @@ class ArcMenu {
             }
         });
 
-        return {
-            center: {x: centerX, y: centerY},
-            radius: radius
-        };
+        return result;
     }
 
     // Calculate and draw the debug arc
     updateDebugArc() {
         if (!this.projectedCircle || !this.debug) {
+            console.log('No projected circle or not in debug mode');
             this.debugArcPath.style.opacity = '0';
             return;
         }
 
+        // Use full path points for start/end, but projected circle for the arc
         const startPoint = this.pathPoints[0];
         const endPoint = this.pathPoints[this.pathPoints.length - 1];
         const center = this.projectedCircle.center;
         const radius = this.projectedCircle.radius;
 
+        console.log('Drawing debug arc:', {
+            startPoint,
+            endPoint,
+            center,
+            radius,
+            arcDirection: this.arcDirection
+        });
+
         // Calculate angles from center to start and end points
         const startAngle = Math.atan2(startPoint.y - center.y, startPoint.x - center.x);
-        const endAngle = Math.atan2(endPoint.y - center.y, endPoint.x - center.x);
+        let endAngle = Math.atan2(endPoint.y - center.y, endPoint.x - center.x);
 
-        // Determine which arc to draw (short or long way around)
-        let deltaAngle = endAngle - startAngle;
-        if (Math.abs(deltaAngle) > Math.PI) {
-            deltaAngle = deltaAngle - Math.sign(deltaAngle) * 2 * Math.PI;
+        // Ensure we draw in the correct direction
+        if (this.arcDirection > 0) {
+            while (endAngle <= startAngle) endAngle += 2 * Math.PI;
+        } else {
+            while (endAngle >= startAngle) endAngle -= 2 * Math.PI;
         }
 
         // Create SVG arc path
         const d = [
             `M ${startPoint.x} ${startPoint.y}`,
-            `A ${radius} ${radius} 0 ${Math.abs(deltaAngle) > Math.PI ? '1' : '0'} ${deltaAngle > 0 ? '1' : '0'} ${endPoint.x} ${endPoint.y}`
+            `A ${radius} ${radius} 0 ${Math.abs(endAngle - startAngle) > Math.PI ? '1' : '0'} ${this.arcDirection > 0 ? '1' : '0'} ${endPoint.x} ${endPoint.y}`
         ].join(' ');
+
+        console.log('SVG path:', d);
 
         this.debugArcPath.setAttribute('d', d);
         this.debugArcPath.style.opacity = '1';
