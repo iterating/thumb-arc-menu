@@ -163,6 +163,9 @@ class ArcMenu {
         this.buttons.forEach(button => button.remove());
         this.buttons = [];
         
+        // Create arc buttons
+        this.createArcButtons();
+        
         // Clear debug points
         if (this.debug) {
             this.clearDebugPoints();
@@ -285,49 +288,67 @@ class ArcMenu {
         const midPoint = points[Math.floor(points.length / 2)];
         const endPointForFit = endPoint || points[points.length - 1];
         
-        // Calculate perpendicular bisectors of two chords
-        const mx1 = (startPoint.x + midPoint.x) / 2;
-        const my1 = (startPoint.y + midPoint.y) / 2;
+        // Calculate chord properties
         const dx1 = midPoint.x - startPoint.x;
         const dy1 = midPoint.y - startPoint.y;
-        
-        const mx2 = (midPoint.x + endPointForFit.x) / 2;
-        const my2 = (midPoint.y + endPointForFit.y) / 2;
         const dx2 = endPointForFit.x - midPoint.x;
         const dy2 = endPointForFit.y - midPoint.y;
         
-        // Avoid division by zero
+        // Avoid tiny movements
         if (Math.abs(dx1) < 0.01 && Math.abs(dy1) < 0.01) return;
         if (Math.abs(dx2) < 0.01 && Math.abs(dy2) < 0.01) return;
         
-        // Perpendicular vectors
-        const px1 = -dy1;
-        const py1 = dx1;
-        const px2 = -dy2;
-        const py2 = dx2;
+        // Calculate center direction vector from midpoint
+        const centerDx = this.arcDirection > 0 ? -dy2 : dy2;
+        const centerDy = this.arcDirection > 0 ? dx2 : -dx2;
+        const centerDist = Math.sqrt(centerDx * centerDx + centerDy * centerDy);
         
-        // Avoid parallel lines
-        const denominator = (px1 * py2 - py1 * px2);
-        if (Math.abs(denominator) < 0.01) return;
+        // First calculate the center position based on the arc
+        let centerX = midPoint.x + (centerDx / centerDist) * this.viewportWidth * 0.5;
+        let centerY = midPoint.y + (centerDy / centerDist) * this.viewportWidth * 0.5;
         
-        // Find intersection
-        const t = ((mx2 - mx1) * py2 + (my1 - my2) * px2) / denominator;
+        // Now ensure the center is outside the viewport
+        if (this.arcDirection > 0) {
+            // Right-hand mode: if not past right edge, move it there
+            if (centerX < this.viewportWidth) {
+                const scale = (this.viewportWidth + 100 - midPoint.x) / (centerX - midPoint.x);
+                centerX = midPoint.x + (centerX - midPoint.x) * scale;
+                centerY = midPoint.y + (centerY - midPoint.y) * scale;
+            }
+        } else {
+            // Left-hand mode: if not past left edge, move it there
+            if (centerX > 0) {
+                const scale = (-100 - midPoint.x) / (centerX - midPoint.x);
+                centerX = midPoint.x + (centerX - midPoint.x) * scale;
+                centerY = midPoint.y + (centerY - midPoint.y) * scale;
+            }
+        }
         
-        // Calculate center and radius
-        const centerX = mx1 + t * px1;
-        const centerY = my1 + t * py1;
+        // Calculate radius based on distance to midpoint
         const radius = Math.sqrt(
-            (centerX - startPoint.x) * (centerX - startPoint.x) +
-            (centerY - startPoint.y) * (centerY - startPoint.y)
+            (centerX - midPoint.x) * (centerX - midPoint.x) +
+            (centerY - midPoint.y) * (centerY - midPoint.y)
         );
+        
+        // Calculate angles - use first and last points for consistent arc
+        const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+        const endAngle = Math.atan2(endPointForFit.y - centerY, endPointForFit.x - centerX);
+        
+        // Adjust angles based on direction
+        let adjustedEndAngle = endAngle;
+        if (this.arcDirection > 0 && startAngle > endAngle) {
+            adjustedEndAngle += 2 * Math.PI;
+        } else if (this.arcDirection < 0 && endAngle > startAngle) {
+            adjustedEndAngle -= 2 * Math.PI;
+        }
         
         // Update circle state
         this.circleState = {
             centerX,
             centerY,
             radius,
-            startAngle: Math.atan2(startPoint.y - centerY, startPoint.x - centerX),
-            endAngle: Math.atan2(endPointForFit.y - centerY, endPointForFit.x - centerX)
+            startAngle,
+            endAngle: adjustedEndAngle
         };
 
         this.updateFittedPoints();
@@ -338,21 +359,9 @@ class ArcMenu {
         this.fittedPoints = [];
         const numPoints = 20; // Increased number of points for smoother arc
         
-        // Make sure we go the right direction around the circle
-        let startAngle = this.circleState.startAngle;
-        let endAngle = this.circleState.endAngle;
-        
-        // Normalize angles to 0-2π range
-        while (startAngle < 0) startAngle += 2 * Math.PI;
-        while (endAngle < 0) endAngle += 2 * Math.PI;
-        
-        // Determine direction based on arcDirection
-        if (this.arcDirection < 0 && endAngle > startAngle) {
-            endAngle -= 2 * Math.PI;
-        } else if (this.arcDirection > 0 && startAngle > endAngle) {
-            endAngle += 2 * Math.PI;
-        }
-        
+        // Use angles directly from circle state
+        const startAngle = this.circleState.startAngle;
+        const endAngle = this.circleState.endAngle;
         const angleRange = endAngle - startAngle;
         
         for (let i = 0; i < numPoints; i++) {
@@ -431,10 +440,10 @@ class ArcMenu {
         if (!this.isActive) return;
         this.isActive = false;
 
-        // Add final debug point in blue
+        // Add final debug point in purple
         if (this.debug && this.pathPoints.length > 0) {
             const lastPoint = this.pathPoints[this.pathPoints.length - 1];
-            this.createDebugPoint(lastPoint.x, lastPoint.y, 'blue');
+            this.createDebugPoint(lastPoint.x, lastPoint.y, '#800080', 'debug-point-end');
         }
 
         // Cleanup
