@@ -98,21 +98,35 @@ class ArcMenu {
         const currentX = touch.clientX;
         const currentY = touch.clientY;
 
+        // If we somehow lost our points, restore the start point
+        if (this.pathPoints.length === 0) {
+            this.pathPoints.push({x: this.startX, y: this.startY});
+            if (this.debug) {
+                this.createDebugPoint(this.startX, this.startY, 'green');
+            }
+        }
+
         const lastPoint = this.pathPoints[this.pathPoints.length - 1];
         const dx = currentX - lastPoint.x;
         const dy = currentY - lastPoint.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        if (distance > 10) {
+        // Only add points if we're not moving downward significantly
+        const isMovingDown = currentY > lastPoint.y;
+        if (distance > 10 && !isMovingDown) {
             this.pathPoints.push({x: currentX, y: currentY});
-            
-            // Add debug point
             if (this.debug) {
                 this.createDebugPoint(currentX, currentY);
             }
         }
 
-        this.positionButtons(currentX, currentY);
+        // Position buttons along an ideal arc regardless of actual path
+        const arcStartX = this.pathPoints[0].x;
+        const arcStartY = this.pathPoints[0].y;
+        const horizontalDistance = Math.abs(currentX - arcStartX);
+        const idealY = arcStartY - horizontalDistance; // 45-degree arc
+        
+        this.positionButtons(currentX, idealY);
     }
 
     handleTouchEnd() {
