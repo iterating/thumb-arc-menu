@@ -24,8 +24,7 @@ class ArcMenu {
             startAngle: null,
             endAngle: null
         };
-        this.arcDirection = 1; // Default arc direction
-        this.maxArcRadius = 400; // Increased from 200 to allow wider arcs
+        this.maxArcRadius = 400; // Maximum radius
         this.projectedCircle = null; // Store calculated circle parameters
         this.circleStartPoint = null;
         this.circleEndPoint = null;
@@ -152,20 +151,23 @@ class ArcMenu {
     }
 
     handleTouchStart(e) {
+        this.isActive = true;
         const touch = e.touches[0];
         this.startX = touch.clientX;
         this.startY = touch.clientY;
-        this.pathPoints = [{x: this.startX, y: this.startY}];
-        this.isActive = true;
+        this.pathPoints = [];
+        this.fittedPoints = [];
+        this.arcDirection = null;  // Reset direction on new touch
         
-        // Clear any existing debug points
+        // Clear any existing buttons
+        this.buttons.forEach(button => button.remove());
+        this.buttons = [];
+        
+        // Clear debug points
         if (this.debug) {
             this.clearDebugPoints();
-            this.createDebugPoint(this.startX, this.startY, 'green');  // Start point in green
+            this.createDebugPoint(this.startX, this.startY, 'green');
         }
-        
-        // Create arc buttons
-        this.createArcButtons();
     }
 
     handleTouchMove(e) {
@@ -204,14 +206,19 @@ class ArcMenu {
 
             // Wait for enough points before determining direction
             if (this.arcDirection === null && this.pathPoints.length >= this.minPointsForDirection) {
-                // Use first and last points for more stable direction detection
-                const firstPoint = this.pathPoints[0];
-                const lastPoint = this.pathPoints[this.pathPoints.length - 1];
-                const overallDx = lastPoint.x - firstPoint.x;
+                // Count how many points move left vs right
+                let leftCount = 0;
+                let rightCount = 0;
                 
-                this.arcDirection = Math.sign(overallDx) || 1;
+                for (let i = 1; i < this.pathPoints.length; i++) {
+                    const dx = this.pathPoints[i].x - this.pathPoints[i-1].x;
+                    if (dx < 0) leftCount++;
+                    if (dx > 0) rightCount++;
+                }
+                
+                this.arcDirection = leftCount > rightCount ? -1 : 1;
                 if (this.debug) {
-                    console.log(`Direction determined after ${this.pathPoints.length} points: ${this.arcDirection > 0 ? 'right' : 'left'}`);
+                    console.log(`Direction set to: ${this.arcDirection > 0 ? 'RIGHT' : 'LEFT'} (${this.arcDirection})`);
                 }
             }
 
@@ -219,6 +226,9 @@ class ArcMenu {
             const now = Date.now();
             if (this.pathPoints.length >= 3 && now - this.lastFitTime >= this.fitThrottleMs) {
                 this.lastFitTime = now;
+                if (this.debug) {
+                    console.log(`Current arcDirection before fitting: ${this.arcDirection}`);
+                }
                 this.updateCircleFit(currentX, currentY);
             }
         }
