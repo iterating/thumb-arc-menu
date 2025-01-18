@@ -12,6 +12,11 @@ class ArcMenu {
         this.buttons = [];
         this.lastFitTime = 0;  // Timestamp of last circle fit
         this.fitThrottleMs = 100; // Only fit every 100ms
+        this.minPointsForFit = 5;     // Reduced from 10 to 5
+        this.maxDeviation = 30;       // Increased from 20 to 30
+        this.deviationThreshold = 0.5; // Increased from 0.3 to 0.5
+        this.goodPointCount = 0;
+        this.badPointCount = 0;
         this.circleState = {
             centerX: null,
             centerY: null,
@@ -32,6 +37,7 @@ class ArcMenu {
         this.startAngle = null; // Starting angle of movement
         this.minAngle = null; // Minimum allowed angle
         this.maxAngle = null; // Maximum allowed angle
+        this.minPointsForDirection = 10;  // Wait for 10 points before deciding direction
         
         // Prevent text selection during arc drawing
         this.arcMenu.style.userSelect = 'none';
@@ -196,6 +202,19 @@ class ArcMenu {
                 this.createDebugPoint(currentX, currentY, 'red', 'debug-point-raw');
             }
 
+            // Wait for enough points before determining direction
+            if (this.arcDirection === null && this.pathPoints.length >= this.minPointsForDirection) {
+                // Use first and last points for more stable direction detection
+                const firstPoint = this.pathPoints[0];
+                const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+                const overallDx = lastPoint.x - firstPoint.x;
+                
+                this.arcDirection = Math.sign(overallDx) || 1;
+                if (this.debug) {
+                    console.log(`Direction determined after ${this.pathPoints.length} points: ${this.arcDirection > 0 ? 'right' : 'left'}`);
+                }
+            }
+
             // Throttle circle fitting
             const now = Date.now();
             if (this.pathPoints.length >= 3 && now - this.lastFitTime >= this.fitThrottleMs) {
@@ -214,24 +233,62 @@ class ArcMenu {
         }
 
         const points = this.pathPoints;
+        if (points.length < 3) return;
+
+        // Try fitting with all points first
+        this.fitCircleToPoints(points);
+        if (!this.circleState.radius) return;
+
+        // Now verify how many points actually fit this circle
+        let goodPoints = [];
+        let badPoints = [];
         
+        for (let i = 0; i < points.length; i++) {
+            const point = points[i];
+            const dx = point.x - this.circleState.centerX;
+            const dy = point.y - this.circleState.centerY;
+            const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
+            const deviation = Math.abs(distanceFromCenter - this.circleState.radius);
+            
+            if (deviation <= this.maxDeviation) {
+                goodPoints.push(point);
+            } else {
+                badPoints.push(point);
+            }
+        }
+
+        // If we have more bad points than good points, try fitting with just the good points
+        if (badPoints.length > goodPoints.length && goodPoints.length >= 3) {
+            if (this.debug) {
+                console.log(`Found ${badPoints.length} bad points vs ${goodPoints.length} good points, refitting with good points only`);
+            }
+            this.fitCircleToPoints(goodPoints);
+        }
+
+        // Update fitted points for visualization
+        this.updateFittedPoints();
+    }
+
+    fitCircleToPoints(points, endPoint) {
         // Take three points: start, middle, and end
         const startPoint = points[0];
         const midPoint = points[Math.floor(points.length / 2)];
-        const endPoint = points[points.length - 1];
+        const endPointForFit = endPoint || points[points.length - 1];
         
         // Calculate perpendicular bisectors of two chords
-        // First chord: start to mid
         const mx1 = (startPoint.x + midPoint.x) / 2;
         const my1 = (startPoint.y + midPoint.y) / 2;
         const dx1 = midPoint.x - startPoint.x;
         const dy1 = midPoint.y - startPoint.y;
         
-        // Second chord: mid to end
-        const mx2 = (midPoint.x + endPoint.x) / 2;
-        const my2 = (midPoint.y + endPoint.y) / 2;
-        const dx2 = endPoint.x - midPoint.x;
-        const dy2 = endPoint.y - midPoint.y;
+        const mx2 = (midPoint.x + endPointForFit.x) / 2;
+        const my2 = (midPoint.y + endPointForFit.y) / 2;
+        const dx2 = endPointForFit.x - midPoint.x;
+        const dy2 = endPointForFit.y - midPoint.y;
+        
+        // Avoid division by zero
+        if (Math.abs(dx1) < 0.01 && Math.abs(dy1) < 0.01) return;
+        if (Math.abs(dx2) < 0.01 && Math.abs(dy2) < 0.01) return;
         
         // Perpendicular vectors
         const px1 = -dy1;
@@ -239,16 +296,16 @@ class ArcMenu {
         const px2 = -dy2;
         const py2 = dx2;
         
-        // Find intersection of perpendicular bisectors
-        // Using parametric equations:
-        // (mx1 + t*px1, my1 + t*py1) = (mx2 + s*px2, my2 + s*py2)
-        const t = ((mx2 - mx1) * py2 + (my1 - my2) * px2) / (px1 * py2 - py1 * px2);
+        // Avoid parallel lines
+        const denominator = (px1 * py2 - py1 * px2);
+        if (Math.abs(denominator) < 0.01) return;
         
-        // Calculate center
+        // Find intersection
+        const t = ((mx2 - mx1) * py2 + (my1 - my2) * px2) / denominator;
+        
+        // Calculate center and radius
         const centerX = mx1 + t * px1;
         const centerY = my1 + t * py1;
-        
-        // Calculate radius as distance to any point
         const radius = Math.sqrt(
             (centerX - startPoint.x) * (centerX - startPoint.x) +
             (centerY - startPoint.y) * (centerY - startPoint.y)
@@ -260,7 +317,7 @@ class ArcMenu {
             centerY,
             radius,
             startAngle: Math.atan2(startPoint.y - centerY, startPoint.x - centerX),
-            endAngle: Math.atan2(currentY - centerY, currentX - centerX)
+            endAngle: Math.atan2(endPointForFit.y - centerY, endPointForFit.x - centerX)
         };
 
         this.updateFittedPoints();
@@ -376,6 +433,8 @@ class ArcMenu {
             setTimeout(() => button.remove(), 200);
         });
         this.buttons = [];
+        this.pathPoints = [];     // Clear path points
+        this.fittedPoints = [];   // Clear fitted points
         
         // Hide connecting line and debug arc
         this.connectingPath.style.opacity = '0';
