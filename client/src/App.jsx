@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { MenuProvider } from './contexts/MenuContext';
+import ThumbMenu from './components/ThumbMenu';
+import ArcMenu from './components/ArcMenu';
 import Home from './pages/Home';
 import Mindset from './pages/Mindset';
 import Today from './pages/Today';
@@ -81,33 +84,36 @@ function App() {
 
   return (
     <Router>
-      <div className={`app-container theme-${currentTheme}`}>
-        <div className="content-area">
-          <div className="theme-selector">
-            <select 
-              value={currentTheme}
-              onChange={handleThemeChange}
-              className="theme-select"
-            >
-              {themes.map((theme) => (
-                <option key={theme.value} value={theme.value}>
-                  {theme.text}
-                </option>
-              ))}
-            </select>
+      <MenuProvider>
+        <div className={`app-container theme-${currentTheme}`}>
+          <div className="content-area">
+            <div className="theme-selector">
+              <select 
+                value={currentTheme}
+                onChange={handleThemeChange}
+                className="theme-select"
+              >
+                {themes.map((theme) => (
+                  <option key={theme.value} value={theme.value}>
+                    {theme.text}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/mindset" element={<Mindset />} />
+              <Route path="/today" element={<Today />} />
+              <Route path="/dreambuilder" element={<DreamBuilder />} />
+              <Route path="/community" element={<Community />} />
+            </Routes>
           </div>
           
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/mindset" element={<Mindset />} />
-            <Route path="/today" element={<Today />} />
-            <Route path="/dreambuilder" element={<DreamBuilder />} />
-            <Route path="/community" element={<Community />} />
-          </Routes>
+          <ArcMenu />
+          <NavigationBar activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
-        
-        <NavigationBar activeTab={activeTab} setActiveTab={setActiveTab} />
-      </div>
+      </MenuProvider>
     </Router>
   );
 }

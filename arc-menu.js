@@ -1,5 +1,5 @@
 // ArcMenu class to handle the thumb arc interaction
-class ArcMenu {
+export class ArcMenu {
     constructor(actionBar, config = {}) {
         // Store references to DOM elements
         this.actionBar = actionBar;

@@ -1,0 +1,68 @@
+.thumb-menu {
+  position: fixed;
+  bottom: 80px;  /* Above the bottom nav */
+  right: 20px;
+  z-index: 1000;
+}
+
+.menu-trigger {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary-color, #1976d2);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+  z-index: 2;
+  position: relative;
+}
+
+.menu-trigger.open {
+  transform: rotate(180deg);
+}
+
+.menu-items {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 240px;
+  height: 240px;
+  pointer-events: none;
+}
+
+.menu-item {
+  position: absolute;
+  bottom: 28px;  /* Half of trigger button height */
+  right: 28px;   /* Half of trigger button height */
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: auto;
+  transform: scale(0);
+  opacity: 0;
+}
+
+.menu-trigger.open ~ .menu-items .menu-item {
+  opacity: 1;
+}
+
+.menu-item:hover {
+  transform: scale(1.1) !important;
+}
+
+.menu-item .material-icons {
+  font-size: 24px;
+}
