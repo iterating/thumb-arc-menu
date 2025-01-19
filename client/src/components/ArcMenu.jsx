@@ -32,6 +32,8 @@ const ArcMenu = () => {
   const MIN_BUTTON_SIZE = 30;
   const BUTTON_PADDING = 10;
   const HOLD_DURATION = 400;
+  const MIN_POINT_DISTANCE = 5; // Minimum distance between points in pixels
+  const USE_SMART_PRUNING = true; // Easy toggle for pruning strategy
 
   // Menu items configuration
   const menuItems = {
@@ -98,8 +100,8 @@ const ArcMenu = () => {
     if (Math.abs(dx2) < 0.01 && Math.abs(dy2) < 0.01) return null;
     
     // Find perpendicular vector to create center point
-    const perpX = -dy2;  // Perpendicular to the curve direction
-    const perpY = dx2;
+    const perpX = dy2;  // Perpendicular to the curve direction (flipped sign)
+    const perpY = -dx2;
     const perpLength = Math.sqrt(perpX * perpX + perpY * perpY);
 
     // Detect arc direction if not set
@@ -112,9 +114,9 @@ const ArcMenu = () => {
         window.innerWidth + 100 - midPoint.x : 
         midPoint.x + 100;
         
-    // Calculate center point
-    const centerX = midPoint.x + (perpX / perpLength) * desiredRadius * (arcDirection > 0 ? 1 : -1);
-    const centerY = midPoint.y + (perpY / perpLength) * desiredRadius * (arcDirection > 0 ? 1 : -1);
+    // Calculate center point with corrected direction
+    const centerX = midPoint.x + (perpX / perpLength) * desiredRadius * (arcDirection > 0 ? -1 : 1);
+    const centerY = midPoint.y + (perpY / perpLength) * desiredRadius * (arcDirection > 0 ? -1 : 1);
     
     // Calculate radius based on distance to points
     const radius = Math.sqrt(
@@ -162,90 +164,134 @@ const ArcMenu = () => {
     isMouseDownRef.current = false;
   }, []);
 
+  // Utility function to get distance between points
+  const getDistance = (p1, p2) => {
+    const dx = p1.x - p2.x;
+    const dy = p1.y - p2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  // Smart point pruning - only add points that are far enough from the last one
+  const prunePoints = useCallback((newPoint, existingPoints) => {
+    if (!USE_SMART_PRUNING) {
+      // Original simple pruning logic
+      const points = [...existingPoints, newPoint];
+      if (points.length > 300) {
+        const firstPoint = points[0];
+        const lastPoints = points.slice(-299);
+        return [firstPoint, ...lastPoints];
+      }
+      return points;
+    }
+
+    // Always keep the first point
+    if (existingPoints.length === 0) {
+      return [newPoint];
+    }
+
+    // Check distance from last point
+    const lastPoint = existingPoints[existingPoints.length - 1];
+    if (getDistance(newPoint, lastPoint) < MIN_POINT_DISTANCE) {
+      return existingPoints;
+    }
+
+    // Add the new point since it's far enough
+    return [...existingPoints, newPoint];
+  }, []);
+
   // Document-level event handlers
   useEffect(() => {
-    const handleTouchMove = (e) => {
-      const touch = e.touches[0];
-      if (!touch) return;
+    const handleMove = (e) => {
+      if (!isActive) return;
 
-      if (!isActive) {
-        const dx = touch.clientX - touchStartRef.current.x;
-        const dy = touch.clientY - touchStartRef.current.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+      // Get coordinates and ensure they exist
+      const currentX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX);
+      const currentY = e.clientY || (e.touches && e.touches[0] && e.touches[0].clientY);
 
-        console.log('Distance:', distance, 'Threshold:', DRAG_THRESHOLD);
+      // Return early if coordinates are invalid
+      if (typeof currentX !== 'number' || typeof currentY !== 'number') {
+        return;
+      }
 
-        if (distance > DRAG_THRESHOLD) {
-          console.log('🌈 Activating menu from drag');
-          setIsActive(true);
-          setPathPoints([{ x: touchStartRef.current.x, y: touchStartRef.current.y }]);
-          if (holdTimerRef.current) {
-            clearTimeout(holdTimerRef.current);
-            holdTimerRef.current = null;
-          }
+      // Strict viewport bounds checking - reject any points outside
+      if (currentX < 0 || currentX > window.innerWidth || 
+          currentY < 0 || currentY > window.innerHeight) {
+        return;
+      }
+
+      // Additional margin check for near-edge cases
+      const margin = 10;
+      if (currentX < margin || currentX > window.innerWidth - margin ||
+          currentY < margin || currentY > window.innerHeight - margin) {
+        return;
+      }
+
+      // Detect arc direction if not set
+      const dx = currentX - touchStartRef.current.x;
+      const arcDirection = Math.sign(dx);
+
+      // If we have a direction set, check if we've backtracked past origin
+      if (arcDirection !== null) {
+        // Check if we're below start Y or on wrong side of X
+        if (currentY > touchStartRef.current.y || 
+            (arcDirection > 0 && currentX < touchStartRef.current.x) || 
+            (arcDirection < 0 && currentX > touchStartRef.current.x)) {
+          return;
         }
       }
 
-      if (isActive) {
-        setPathPoints(prev => [...prev, { x: touch.clientX, y: touch.clientY }]);
-        const circle = fitCircleToPoints([...pathPoints, { x: touch.clientX, y: touch.clientY }]);
+      // Add point using smart pruning
+      const newPoints = prunePoints({ x: currentX, y: currentY }, pathPoints);
+      setPathPoints(newPoints);
+
+      // Calculate circle fit if we have enough points
+      if (newPoints.length >= 5) {
+        const circle = fitCircleToPoints(newPoints);
         if (circle) {
           setCircleState(circle);
         }
       }
+    };
+
+    const handleTouchMove = (e) => {
+      if (!isActive) return;
+      e.preventDefault();
+      handleMove(e);
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isActive || !isMouseDownRef.current) return;
+      handleMove(e);
     };
 
     const handleTouchEnd = () => {
       console.log('Document touch end');
-      resetState();
-    };
-
-    const handleMouseMove = (e) => {
-      if (!isMouseDownRef.current) return;
-
-      if (!isActive) {
-        const dx = e.clientX - touchStartRef.current.x;
-        const dy = e.clientY - touchStartRef.current.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance > DRAG_THRESHOLD) {
-          setIsActive(true);
-          setPathPoints([{ x: touchStartRef.current.x, y: touchStartRef.current.y }]);
-          if (holdTimerRef.current) {
-            clearTimeout(holdTimerRef.current);
-            holdTimerRef.current = null;
-          }
-        }
-      }
-
-      if (isActive) {
-        setPathPoints(prev => [...prev, { x: e.clientX, y: e.clientY }]);
-        const circle = fitCircleToPoints([...pathPoints, { x: e.clientX, y: e.clientY }]);
-        if (circle) {
-          setCircleState(circle);
-        }
-      }
+      isMouseDownRef.current = false;
+      setIsActive(false);
+      setPathPoints([]);
+      setCircleState({});
     };
 
     const handleMouseUp = () => {
       console.log('Document mouse up');
       isMouseDownRef.current = false;
-      resetState();
+      setIsActive(false);
+      setPathPoints([]);
+      setCircleState({});
     };
 
-    // Add document-level event listeners
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('touchend', handleTouchEnd);
     document.addEventListener('mouseup', handleMouseUp);
 
     return () => {
       document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
       document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('touchend', handleTouchEnd);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isActive, pathPoints, resetState, fitCircleToPoints]);
+  }, [isActive, pathPoints, fitCircleToPoints, prunePoints]);
 
   // Action bar event handlers
   const handleTouchStart = useCallback((e) => {
@@ -274,34 +320,6 @@ const ArcMenu = () => {
       setPathPoints([{ x: e.clientX, y: e.clientY }]);
     }, HOLD_DURATION);
   }, []);
-
-  // Handle touch/mouse move
-  const handleMove = useCallback((e) => {
-    if (!isActive) return;
-
-    const currentX = e.clientX || (e.touches && e.touches[0].clientX);
-    const currentY = e.clientY || (e.touches && e.touches[0].clientY);
-
-    // Only add points if we've moved enough
-    if (pathPoints.length > 0) {
-      const lastPoint = pathPoints[pathPoints.length - 1];
-      const dx = currentX - lastPoint.x;
-      const dy = currentY - lastPoint.y;
-      if (dx * dx + dy * dy < 25) return;
-    }
-
-    // Add point to path
-    const newPoints = [...pathPoints, { x: currentX, y: currentY }];
-    setPathPoints(newPoints);
-
-    // Calculate circle fit if we have enough points
-    if (newPoints.length >= 5) {
-      const circle = fitCircleToPoints(newPoints);
-      if (circle) {
-        setCircleState(circle);
-      }
-    }
-  }, [isActive, pathPoints, fitCircleToPoints]);
 
   // Update buttons when circle state changes
   useEffect(() => {
@@ -401,8 +419,6 @@ const ArcMenu = () => {
           zIndex: 9997,
           pointerEvents: isActive ? 'auto' : 'none'
         }}
-        onTouchMove={handleMove}
-        onMouseMove={handleMove}
       />
 
       {/* SVG for visualization */}
