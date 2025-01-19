@@ -16,6 +16,9 @@ const ArcMenu = () => {
     startAngle: null,
     endAngle: null
   });
+  const [lockedCircleState, setLockedCircleState] = useState(null);
+  const [goodPointCount, setGoodPointCount] = useState(0);
+  const [badPointCount, setBadPointCount] = useState(0);
 
   // Refs
   const actionBarRef = useRef(null);
@@ -25,6 +28,7 @@ const ArcMenu = () => {
   const touchStartRef = useRef({ x: 0, y: 0 });
   const isMouseDownRef = useRef(false);
   const holdTimerRef = useRef(null);
+  const arcDirectionRef = useRef(null);
 
   // Constants
   const DRAG_THRESHOLD = 10;
@@ -34,6 +38,8 @@ const ArcMenu = () => {
   const HOLD_DURATION = 400;
   const MIN_POINT_DISTANCE = 5; // Minimum distance between points in pixels
   const USE_SMART_PRUNING = true; // Easy toggle for pruning strategy
+  const MIN_POINTS_FOR_LOCK = 10;
+  const GOOD_POINT_THRESHOLD = 0.8; // 80% of points need to be good
 
   // Menu items configuration
   const menuItems = {
@@ -162,6 +168,9 @@ const ArcMenu = () => {
       holdTimerRef.current = null;
     }
     isMouseDownRef.current = false;
+    setLockedCircleState(null);
+    setGoodPointCount(0);
+    setBadPointCount(0);
   }, []);
 
   // Utility function to get distance between points
@@ -199,77 +208,148 @@ const ArcMenu = () => {
     return [...existingPoints, newPoint];
   }, []);
 
+  // Handle move events
+  const handleMove = useCallback((e) => {
+    if (!isActive) return;
+
+    // Get coordinates and ensure they exist
+    const currentX = e.clientX ?? e.touches?.[0]?.clientX;
+    const currentY = e.clientY ?? e.touches?.[0]?.clientY;
+
+    // Return early if coordinates are invalid
+    if (typeof currentX !== 'number' || typeof currentY !== 'number') {
+      return;
+    }
+
+    // Strict viewport bounds checking - reject any points outside
+    const margin = 10;
+    if (currentX < margin || currentX > window.innerWidth - margin || 
+        currentY < margin || currentY > window.innerHeight - margin) {
+      return;
+    }
+
+    // Detect arc direction if not set
+    if (arcDirectionRef.current === null && pathPoints.length > 5) {
+      const dx = currentX - touchStartRef.current.x;
+      arcDirectionRef.current = Math.sign(dx);
+      console.log('Arc direction set to:', arcDirectionRef.current);
+    }
+
+    // If we have a direction set, check if we've backtracked past origin
+    if (arcDirectionRef.current !== null) {
+      // Check if we're below start Y or on wrong side of X
+      if (currentY > touchStartRef.current.y || 
+          (arcDirectionRef.current > 0 && currentX < touchStartRef.current.x) || 
+          (arcDirectionRef.current < 0 && currentX > touchStartRef.current.x)) {
+        console.log('Rejected: Backtracking detected');
+        return;
+      }
+    }
+
+    // Only add points if we've moved enough (minimum 5 pixels)
+    if (pathPoints.length > 0) {
+      const lastPoint = pathPoints[pathPoints.length - 1];
+      const dx = currentX - lastPoint.x;
+      const dy = currentY - lastPoint.y;
+      if (dx * dx + dy * dy < 25) return;
+    }
+
+    // Add point using smart pruning
+    const newPoints = prunePoints({ x: currentX, y: currentY }, pathPoints);
+    setPathPoints(newPoints);
+
+    // Calculate circle fit if we have enough points
+    if (newPoints.length >= 5) {
+      const circle = fitCircleToPoints(newPoints);
+      if (circle) {
+        // If we have a locked circle state, use its center and radius but calculate new angles
+        if (lockedCircleState) {
+          const currentAngle = Math.atan2(currentY - lockedCircleState.centerY, 
+                                        currentX - lockedCircleState.centerX);
+          setCircleState({
+            ...lockedCircleState,
+            startAngle: Math.atan2(touchStartRef.current.y - lockedCircleState.centerY,
+                                 touchStartRef.current.x - lockedCircleState.centerX),
+            endAngle: currentAngle
+          });
+        } else {
+          setCircleState(circle);
+
+          // Check if this point is "good" - close to the fitted circle
+          const distanceToCircle = Math.abs(
+            Math.sqrt(
+              Math.pow(currentX - circle.centerX, 2) + 
+              Math.pow(currentY - circle.centerY, 2)
+            ) - circle.radius
+          );
+
+          const isGoodPoint = distanceToCircle < 10; // Within 10 pixels of the circle
+          if (isGoodPoint) {
+            setGoodPointCount(prev => prev + 1);
+          } else {
+            setBadPointCount(prev => prev + 1);
+          }
+
+          // Check if we should lock the circle
+          const totalPoints = goodPointCount + badPointCount;
+          if (totalPoints > MIN_POINTS_FOR_LOCK) {
+            const goodPointRatio = goodPointCount / totalPoints;
+            if (goodPointRatio > GOOD_POINT_THRESHOLD) {
+              console.log('🔒 Locking circle center and radius!', {
+                center: { x: circle.centerX, y: circle.centerY },
+                radius: circle.radius,
+                goodPoints: goodPointCount,
+                badPoints: badPointCount,
+                ratio: goodPointRatio
+              });
+              // Only lock the center and radius
+              setLockedCircleState({
+                centerX: circle.centerX,
+                centerY: circle.centerY,
+                radius: circle.radius
+              });
+            }
+          }
+        }
+      }
+    }
+  }, [isActive, pathPoints, fitCircleToPoints, prunePoints, lockedCircleState, goodPointCount, badPointCount]);
+
   // Document-level event handlers
   useEffect(() => {
-    const handleMove = (e) => {
-      if (!isActive) return;
-
-      // Get coordinates and ensure they exist
-      const currentX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX);
-      const currentY = e.clientY || (e.touches && e.touches[0] && e.touches[0].clientY);
-
-      // Return early if coordinates are invalid
-      if (typeof currentX !== 'number' || typeof currentY !== 'number') {
-        return;
-      }
-
-      // Strict viewport bounds checking - reject any points outside
-      if (currentX < 0 || currentX > window.innerWidth || 
-          currentY < 0 || currentY > window.innerHeight) {
-        return;
-      }
-
-      // Additional margin check for near-edge cases
-      const margin = 10;
-      if (currentX < margin || currentX > window.innerWidth - margin ||
-          currentY < margin || currentY > window.innerHeight - margin) {
-        return;
-      }
-
-      // Detect arc direction if not set
-      const dx = currentX - touchStartRef.current.x;
-      const arcDirection = Math.sign(dx);
-
-      // If we have a direction set, check if we've backtracked past origin
-      if (arcDirection !== null) {
-        // Check if we're below start Y or on wrong side of X
-        if (currentY > touchStartRef.current.y || 
-            (arcDirection > 0 && currentX < touchStartRef.current.x) || 
-            (arcDirection < 0 && currentX > touchStartRef.current.x)) {
-          return;
-        }
-      }
-
-      // Add point using smart pruning
-      const newPoints = prunePoints({ x: currentX, y: currentY }, pathPoints);
-      setPathPoints(newPoints);
-
-      // Calculate circle fit if we have enough points
-      if (newPoints.length >= 5) {
-        const circle = fitCircleToPoints(newPoints);
-        if (circle) {
-          setCircleState(circle);
-        }
-      }
-    };
-
     const handleTouchMove = (e) => {
       if (!isActive) return;
-      e.preventDefault();
-      handleMove(e);
+      e.preventDefault(); // Prevent scrolling
+      handleMove(e.touches[0]);
     };
 
     const handleMouseMove = (e) => {
       if (!isActive || !isMouseDownRef.current) return;
+      e.preventDefault();
       handleMove(e);
     };
 
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [isActive, handleMove]);
+
+  // Handle end events
+  useEffect(() => {
     const handleTouchEnd = () => {
       console.log('Document touch end');
       isMouseDownRef.current = false;
       setIsActive(false);
       setPathPoints([]);
       setCircleState({});
+      setLockedCircleState(null);
+      setGoodPointCount(0);
+      setBadPointCount(0);
+      arcDirectionRef.current = null;
     };
 
     const handleMouseUp = () => {
@@ -278,20 +358,43 @@ const ArcMenu = () => {
       setIsActive(false);
       setPathPoints([]);
       setCircleState({});
+      setLockedCircleState(null);
+      setGoodPointCount(0);
+      setBadPointCount(0);
+      arcDirectionRef.current = null;
     };
 
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('touchend', handleTouchEnd);
     document.addEventListener('mouseup', handleMouseUp);
 
     return () => {
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('touchend', handleTouchEnd);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isActive, pathPoints, fitCircleToPoints, prunePoints]);
+  }, []);
+
+  // Debug visualization for curve locking
+  useEffect(() => {
+    if (!isActive) return;
+
+    // Update debug arc color based on lock state
+    if (debugArcPathRef.current) {
+      debugArcPathRef.current.style.stroke = lockedCircleState ? '#00FF00' : '#FF6B00';
+      debugArcPathRef.current.style.strokeWidth = lockedCircleState ? '4' : '3';
+    }
+
+    // Log curve locking stats
+    if (pathPoints.length > MIN_POINTS_FOR_LOCK) {
+      const totalPoints = goodPointCount + badPointCount;
+      const goodPointRatio = goodPointCount / totalPoints;
+      console.log('Curve stats:', {
+        goodPoints: goodPointCount,
+        badPoints: badPointCount,
+        ratio: goodPointRatio,
+        locked: !!lockedCircleState
+      });
+    }
+  }, [isActive, lockedCircleState, pathPoints.length, goodPointCount, badPointCount]);
 
   // Action bar event handlers
   const handleTouchStart = useCallback((e) => {
