@@ -15,10 +15,10 @@ function App() {
 
   const navItems = [
     { text: 'Home', icon: 'home' },
-    { text: 'Search', icon: 'search' },
-    { text: 'Add', icon: 'add' },
-    { text: 'Like', icon: 'favorite' },
-    { text: 'Profile', icon: 'person' }
+    { text: 'Mindset', icon: 'psychology' },
+    { text: 'Today', icon: 'today' },
+    { text: 'DreamBuilder', icon: 'cloud' },
+    { text: 'Community', icon: 'groups' }
   ];
 
   const handleThemeChange = (event) => {
