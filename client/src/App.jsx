@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import { ToolbarComponent } from '@syncfusion/ej2-react-navigations';
 import './App.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
 
   const navItems = [
-    { text: 'Home', icon: 'e-icons e-home' },
-    { text: 'Search', icon: 'e-icons e-search' },
-    { text: 'Add', icon: 'e-icons e-plus' },
-    { text: 'Favorites', icon: 'e-icons e-star' },
-    { text: 'Profile', icon: 'e-icons e-user' }
+    { text: 'Home', icon: 'home' },
+    { text: 'Search', icon: 'search' },
+    { text: 'Add', icon: 'add' },
+    { text: 'Like', icon: 'favorite' },
+    { text: 'Profile', icon: 'person' }
   ];
 
   return (
@@ -26,7 +25,7 @@ function App() {
             className={`nav-button ${activeTab === item.text.toLowerCase() ? 'active' : ''}`}
             onClick={() => setActiveTab(item.text.toLowerCase())}
           >
-            <i className={item.icon}></i>
+            <span className="material-icons">{item.icon}</span>
             <span>{item.text}</span>
           </button>
         ))}

@@ -1,7 +1,9 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 !important;
+  margin: 0;
+  height: 100vh;
   text-align: center;
 }
 
@@ -50,7 +52,7 @@
 
 .content-area {
   flex: 1;
-  padding: 20px;
+  padding: 0 20px;
   overflow-y: auto;
 }
 
@@ -88,12 +90,12 @@
   color: #1976d2;
 }
 
-.nav-button i {
+.nav-button .material-icons {
   font-size: 24px;
   margin-bottom: 4px;
 }
 
-.nav-button span {
+.nav-button span:not(.material-icons) {
   font-size: 12px;
 }
 
