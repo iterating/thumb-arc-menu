@@ -11,6 +11,10 @@
   border-radius: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: opacity 0.2s;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 9998;
 }
 
 .action-item {
@@ -26,6 +30,7 @@
   justify-content: center;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;
+  pointer-events: none; /* Let parent handle all events */
 }
 
 .action-item:hover {
@@ -34,7 +39,7 @@
 }
 
 .arc-menu-button {
-  position: absolute;
+  position: fixed; /* Changed from absolute to fixed */
   width: 50px;
   height: 50px;
   border: none;
@@ -46,12 +51,14 @@
   justify-content: center;
   font-size: 24px;
   cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
   z-index: 9999;
+  margin: -25px; /* Center the button on its position */
+  pointer-events: auto;
 }
 
 .arc-menu-button:hover {
-  transform: scale(1.1);
+  transform: translate(var(--x), var(--y)) scale(1.1) !important;
 }
 
 .arc-menu-touch-area {
