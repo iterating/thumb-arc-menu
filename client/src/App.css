@@ -47,7 +47,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f5f5;
+  background: var(--background-color, #f5f5f5);
 }
 
 .content-area {
@@ -61,8 +61,8 @@
   justify-content: space-around;
   align-items: center;
   height: 60px;
-  background: white;
-  border-top: 1px solid #e0e0e0;
+  background: var(--surface-color, white);
+  border-top: 1px solid var(--border-color, #e0e0e0);
   position: sticky;
   bottom: 0;
 }
@@ -76,18 +76,18 @@
   height: 100%;
   border: none;
   background: none;
-  color: #666;
+  color: var(--text-color, #666);
   padding: 8px 0;
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .nav-button:hover {
-  color: #1976d2;
+  color: var(--primary-color, #1976d2);
 }
 
 .nav-button.active {
-  color: #1976d2;
+  color: var(--primary-color, #1976d2);
 }
 
 .nav-button .material-icons {
@@ -97,6 +97,75 @@
 
 .nav-button span:not(.material-icons) {
   font-size: 12px;
+}
+
+.theme-selector {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+.theme-select {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  background: var(--surface-color, white);
+  color: var(--text-color, #666);
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.theme-select:hover {
+  border-color: var(--primary-color, #1976d2);
+}
+
+.theme-select:focus {
+  border-color: var(--primary-color, #1976d2);
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+/* Theme-specific styles */
+.theme-material {
+  --primary-color: #1976d2;
+  --background-color: #f5f5f5;
+  --surface-color: #ffffff;
+  --text-color: #666666;
+  --border-color: #e0e0e0;
+}
+
+.theme-bootstrap {
+  --primary-color: #007bff;
+  --background-color: #f8f9fa;
+  --surface-color: #ffffff;
+  --text-color: #6c757d;
+  --border-color: #dee2e6;
+}
+
+.theme-fabric {
+  --primary-color: #0078d4;
+  --background-color: #faf9f8;
+  --surface-color: #ffffff;
+  --text-color: #323130;
+  --border-color: #edebe9;
+}
+
+.theme-highcontrast {
+  --primary-color: #ffd939;
+  --background-color: #000000;
+  --surface-color: #1a1a1a;
+  --text-color: #ffffff;
+  --border-color: #969696;
+}
+
+.theme-tailwind {
+  --primary-color: #3b82f6;
+  --background-color: #f3f4f6;
+  --surface-color: #ffffff;
+  --text-color: #4b5563;
+  --border-color: #e5e7eb;
 }
 
 /* Right section styles */

@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@syncfusion/ej2-base": "^28.1.33",
     "@syncfusion/ej2-notifications": "^28.1.33",
     "@syncfusion/ej2-react-base": "^28.1.38",
     "@syncfusion/ej2-react-buttons": "^28.1.39",
