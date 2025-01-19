@@ -1,58 +1,38 @@
-import { useState } from 'react'
-import { AppBarComponent } from '@syncfusion/ej2-react-navigations'
-import { BadgeComponent } from '@syncfusion/ej2-react-notifications'
-import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
-import './App.css'
+import { useState } from 'react';
+import { ToolbarComponent } from '@syncfusion/ej2-react-navigations';
+import './App.css';
 
 function App() {
-  const [isDragging, setIsDragging] = useState(false)
-  const [startPoint, setStartPoint] = useState(null)
+  const [activeTab, setActiveTab] = useState('home');
 
-  const onDragStart = (args) => {
-    setStartPoint({
-      x: args.originalEvent.clientX,
-      y: args.originalEvent.clientY
-    })
-    
-    const { velocityX, velocityY } = args
-    if (Math.abs(velocityX) > 0 || Math.abs(velocityY) > 0) {
-      setIsDragging(true)
-    }
-  }
-  
-  const onDrag = (args) => {
-    if (isDragging) {
-      // Handle rainbow menu updates
-      console.log('Dragging', args)
-    }
-  }
-  
-  const onDragStop = () => {
-    setIsDragging(false)
-  }
+  const navItems = [
+    { text: 'Home', icon: 'e-icons e-home' },
+    { text: 'Search', icon: 'e-icons e-search' },
+    { text: 'Add', icon: 'e-icons e-plus' },
+    { text: 'Favorites', icon: 'e-icons e-star' },
+    { text: 'Profile', icon: 'e-icons e-user' }
+  ];
 
   return (
-    <div className="app">
-      <AppBarComponent
-        colorMode="Primary"
-        allowDragging={true}
-        drag={onDrag}
-        dragStart={onDragStart}
-        dragStop={onDragStop}
-        touchThreshold={10}
-      >
-        <BadgeComponent content="3">
-          <ButtonComponent iconCss="e-icons e-phone">📱</ButtonComponent>
-        </BadgeComponent>
-        <BadgeComponent content="1">
-          <ButtonComponent iconCss="e-icons e-location">📍</ButtonComponent>
-        </BadgeComponent>
-        <ButtonComponent iconCss="e-icons e-camera">📷</ButtonComponent>
-        <ButtonComponent iconCss="e-icons e-settings">⚙️</ButtonComponent>
-        <ButtonComponent iconCss="e-icons e-add">➕</ButtonComponent>
-      </AppBarComponent>
+    <div className="app-container">
+      <div className="content-area">
+        <h1>Content Area</h1>
+      </div>
+      
+      <div className="bottom-nav">
+        {navItems.map((item, index) => (
+          <button
+            key={index}
+            className={`nav-button ${activeTab === item.text.toLowerCase() ? 'active' : ''}`}
+            onClick={() => setActiveTab(item.text.toLowerCase())}
+          >
+            <i className={item.icon}></i>
+            <span>{item.text}</span>
+          </button>
+        ))}
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,9 +1,9 @@
 import { registerLicense } from '@syncfusion/ej2-base';
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import { SYNCFUSION_LICENSE_KEY } from './config.js'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import { SYNCFUSION_LICENSE_KEY } from './config.js';
 
 // Register Syncfusion license
 registerLicense(SYNCFUSION_LICENSE_KEY);
