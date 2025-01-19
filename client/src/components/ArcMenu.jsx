@@ -80,39 +80,67 @@ const ArcMenu = () => {
 
   // Circle fitting math
   const fitCircleToPoints = useCallback((points) => {
-    if (points.length < 5) return null;
+    if (!points || points.length < 5) return null;
 
-    // Calculate center and radius using least squares method
-    let sumX = 0, sumY = 0, sumXX = 0, sumYY = 0, sumXY = 0;
-    points.forEach(point => {
-      sumX += point.x;
-      sumY += point.y;
-      sumXX += point.x * point.x;
-      sumYY += point.y * point.y;
-      sumXY += point.x * point.y;
-    });
+    // Take three points: start, middle, and end
+    const startPoint = points[0];
+    const midPoint = points[Math.floor(points.length / 2)];
+    const endPointForFit = points[points.length - 1];
+    
+    // Calculate vectors from start to mid and mid to end
+    const dx1 = midPoint.x - startPoint.x;
+    const dy1 = midPoint.y - startPoint.y;
+    const dx2 = endPointForFit.x - midPoint.x;
+    const dy2 = endPointForFit.y - midPoint.y;
+    
+    // Avoid tiny movements
+    if (Math.abs(dx1) < 0.01 && Math.abs(dy1) < 0.01) return null;
+    if (Math.abs(dx2) < 0.01 && Math.abs(dy2) < 0.01) return null;
+    
+    // Find perpendicular vector to create center point
+    const perpX = -dy2;  // Perpendicular to the curve direction
+    const perpY = dx2;
+    const perpLength = Math.sqrt(perpX * perpX + perpY * perpY);
 
-    const n = points.length;
-    const meanX = sumX / n;
-    const meanY = sumY / n;
-
-    // Calculate circle parameters
-    const centerX = meanX;
-    const centerY = meanY;
+    // Detect arc direction if not set
+    const dx = endPointForFit.x - startPoint.x;
+    const arcDirection = Math.sign(dx);
+    
+    // Calculate distance from midpoint to desired center
+    // This should be large enough to place center off screen
+    const desiredRadius = arcDirection > 0 ? 
+        window.innerWidth + 100 - midPoint.x : 
+        midPoint.x + 100;
+        
+    // Calculate center point
+    const centerX = midPoint.x + (perpX / perpLength) * desiredRadius * (arcDirection > 0 ? 1 : -1);
+    const centerY = midPoint.y + (perpY / perpLength) * desiredRadius * (arcDirection > 0 ? 1 : -1);
+    
+    // Calculate radius based on distance to points
     const radius = Math.sqrt(
-      (sumXX - 2 * meanX * sumX + n * meanX * meanX +
-        sumYY - 2 * meanY * sumY + n * meanY * meanY) /
-      (2 * n)
+        (centerX - midPoint.x) * (centerX - midPoint.x) +
+        (centerY - midPoint.y) * (centerY - midPoint.y)
     );
+    
+    // Calculate angles
+    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+    const endAngle = Math.atan2(endPointForFit.y - centerY, endPointForFit.x - centerX);
+    
+    // Adjust end angle based on direction to ensure proper arc
+    let adjustedEndAngle = endAngle;
+    if (arcDirection > 0 && startAngle > endAngle) {
+        adjustedEndAngle += 2 * Math.PI;
+    } else if (arcDirection < 0 && endAngle > startAngle) {
+        adjustedEndAngle -= 2 * Math.PI;
+    }
 
-    // Calculate start and end angles
-    const startAngle = Math.atan2(points[0].y - centerY, points[0].x - centerX);
-    const endAngle = Math.atan2(
-      points[points.length - 1].y - centerY,
-      points[points.length - 1].x - centerX
-    );
-
-    return { centerX, centerY, radius, startAngle, endAngle };
+    return {
+        centerX,
+        centerY,
+        radius,
+        startAngle,
+        endAngle: adjustedEndAngle
+    };
   }, []);
 
   // Reset all state
@@ -247,6 +275,34 @@ const ArcMenu = () => {
     }, HOLD_DURATION);
   }, []);
 
+  // Handle touch/mouse move
+  const handleMove = useCallback((e) => {
+    if (!isActive) return;
+
+    const currentX = e.clientX || (e.touches && e.touches[0].clientX);
+    const currentY = e.clientY || (e.touches && e.touches[0].clientY);
+
+    // Only add points if we've moved enough
+    if (pathPoints.length > 0) {
+      const lastPoint = pathPoints[pathPoints.length - 1];
+      const dx = currentX - lastPoint.x;
+      const dy = currentY - lastPoint.y;
+      if (dx * dx + dy * dy < 25) return;
+    }
+
+    // Add point to path
+    const newPoints = [...pathPoints, { x: currentX, y: currentY }];
+    setPathPoints(newPoints);
+
+    // Calculate circle fit if we have enough points
+    if (newPoints.length >= 5) {
+      const circle = fitCircleToPoints(newPoints);
+      if (circle) {
+        setCircleState(circle);
+      }
+    }
+  }, [isActive, pathPoints, fitCircleToPoints]);
+
   // Update buttons when circle state changes
   useEffect(() => {
     if (!isActive || !circleState.radius) {
@@ -345,6 +401,8 @@ const ArcMenu = () => {
           zIndex: 9997,
           pointerEvents: isActive ? 'auto' : 'none'
         }}
+        onTouchMove={handleMove}
+        onMouseMove={handleMove}
       />
 
       {/* SVG for visualization */}
