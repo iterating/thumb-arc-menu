@@ -8,11 +8,7 @@ const ArcMenu = () => {
   // State variables matching original code
   const [isActive, setIsActive] = useState(false);
   const [pathPoints, setPathPoints] = useState([]);  // Raw user input points
-  const [fittedPoints, setFittedPoints] = useState([]); // Points that lie on the circle
-  const [debugPoints, setDebugPoints] = useState([]); // Debug visualization points
   const [buttons, setButtons] = useState([]);
-  const [goodPointCount, setGoodPointCount] = useState(0);
-  const [badPointCount, setBadPointCount] = useState(0);
   const [circleState, setCircleState] = useState({
     centerX: null,
     centerY: null,
@@ -26,27 +22,17 @@ const ArcMenu = () => {
   const BUTTON_SIZE = 50;
   const MIN_BUTTON_SIZE = 30;
   const BUTTON_PADDING = 10;
-  const MIN_POINTS_FOR_FIT = 3;  // Reduced from 5 to 3 points for faster response
-  const MAX_DEVIATION = 30;
-  const DEVIATION_THRESHOLD = 0.5;
-  const MIN_POINTS_FOR_DIRECTION = 10;
-  const HOLD_DURATION = 400;
   const SAMPLE_DISTANCE = 5;  // Reduced from 20px to 5px for better fast-drag sampling
 
   // Refs matching original code
   const touchStartRef = useRef({ x: 0, y: 0 });
   const isMouseDownRef = useRef(false);
-  const arcDirectionRef = useRef(null);
-  const lastFitTimeRef = useRef(0);
-  const fitThrottleMs = useRef(100);
-  const lastCheckedPointIndexRef = useRef(0);
-  const debugIndicatorRef = useRef(null);
+  const lastPointRef = useRef(null);  // Track last sampled point
   const svgRef = useRef(null);
   const connectingPathRef = useRef(null);
   const debugArcPathRef = useRef(null);
   const actionBarRef = useRef(null);
   const holdTimerRef = useRef(null);
-  const lastPointRef = useRef(null);  // Track last sampled point
 
   // Menu items matching original code
   const menuItems = [
@@ -165,18 +151,10 @@ const ArcMenu = () => {
           });
         } else {
           setCircleState(circle);
-          
-          // Point quality check
-          const distToCircle = Math.abs(getDistance(currentX, currentY, circle.centerX, circle.centerY) - circle.radius);
-          if (distToCircle < MAX_DEVIATION) {
-            setGoodPointCount(prev => prev + 1);
-          } else {
-            setBadPointCount(prev => prev + 1);
-          }
         }
       }
     }
-  }, [isActive, pathPoints, fitCircleToPoints, getDistance, lockedCircleState]);
+  }, [isActive, pathPoints, fitCircleToPoints]);
 
   // Document-level event handlers
   useEffect(() => {
@@ -210,8 +188,6 @@ const ArcMenu = () => {
       setPathPoints([]);
       setCircleState({});
       setLockedCircleState(null);
-      setGoodPointCount(0);
-      setBadPointCount(0);
       
       // Clear SVG paths
       if (connectingPathRef.current) {
@@ -229,8 +205,6 @@ const ArcMenu = () => {
       setPathPoints([]);
       setCircleState({});
       setLockedCircleState(null);
-      setGoodPointCount(0);
-      setBadPointCount(0);
       
       // Clear SVG paths
       if (connectingPathRef.current) {
@@ -249,31 +223,6 @@ const ArcMenu = () => {
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
-
-  // Debug visualization for curve locking
-  useEffect(() => {
-    if (!isActive) return;
-
-    // Update debug arc color based on lock state
-    if (debugArcPathRef.current) {
-      debugArcPathRef.current.style.stroke = lockedCircleState ? '#00FF00' : '#FF6B00';
-      debugArcPathRef.current.style.strokeWidth = lockedCircleState ? '4' : '3';
-    }
-
-    // Log curve locking stats
-    if (pathPoints.length > MIN_POINTS_FOR_FIT) {
-      const totalPoints = goodPointCount + badPointCount;
-      const goodPointRatio = goodPointCount / totalPoints;
-      console.log('Curve stats:', {
-        goodPoints: goodPointCount,
-        badPoints: badPointCount,
-        ratio: goodPointRatio,
-        locked: !!lockedCircleState,
-        startPoint: touchStartRef.current,
-        firstPoint: pathPoints[0]
-      });
-    }
-  }, [isActive, lockedCircleState, pathPoints.length, goodPointCount, badPointCount]);
 
   // Update button styles when positions change
   useEffect(() => {
@@ -320,61 +269,6 @@ const ArcMenu = () => {
       `;
     });
   }, [isActive, pathPoints, circleState]);
-
-  // Action bar event handlers
-  const handleTouchStart = useCallback((e) => {
-    console.log('Action bar touch start');
-    const touch = e.touches[0];
-    if (!touch) return;
-
-    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    setIsActive(true);  
-    setPathPoints([touchStartRef.current]);  
-
-    // Initialize circle state immediately
-    const startPoint = touchStartRef.current;
-    const centerX = window.innerWidth + 100;  
-    const centerY = window.innerHeight + 100;
-    const radius = Math.sqrt(
-      Math.pow(centerX - startPoint.x, 2) + 
-      Math.pow(centerY - startPoint.y, 2)
-    );
-    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-    
-    setCircleState({
-      centerX,
-      centerY,
-      radius,
-      startAngle,
-      endAngle: startAngle  
-    });
-  }, []);
-
-  const handleMouseDown = useCallback((e) => {
-    console.log('Action bar mouse down');
-    isMouseDownRef.current = true;
-    touchStartRef.current = { x: e.clientX, y: e.clientY };
-    setIsActive(true);  
-    setPathPoints([touchStartRef.current]);  
-
-    // Initialize circle state immediately
-    const startPoint = touchStartRef.current;
-    const centerX = window.innerWidth + 100;  
-    const centerY = window.innerHeight + 100;
-    const radius = Math.sqrt(
-      Math.pow(centerX - startPoint.x, 2) + 
-      Math.pow(centerY - startPoint.y, 2)
-    );
-    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-    
-    setCircleState({
-      centerX,
-      centerY,
-      radius,
-      startAngle,
-      endAngle: startAngle  
-    });
-  }, []);
 
   // Update SVG path
   useEffect(() => {
@@ -458,31 +352,65 @@ const ArcMenu = () => {
     svg.appendChild(debugArcPath);
     document.body.appendChild(svg);
 
-    // Create debug indicator
-    const debugIndicator = document.createElement('div');
-    debugIndicator.style.cssText = `
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-family: monospace;
-      z-index: 10000;
-      display: none;
-    `;
-    debugIndicator.textContent = 'DEBUG MODE';
-    debugIndicatorRef.current = debugIndicator;
-    document.body.appendChild(debugIndicator);
-
     // Cleanup on unmount
     return () => {
       document.body.removeChild(svg);
-      if (debugIndicator.parentNode) {
-        document.body.removeChild(debugIndicator);
-      }
     };
+  }, []);
+
+  // Action bar event handlers
+  const handleTouchStart = useCallback((e) => {
+    console.log('Action bar touch start');
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    setIsActive(true);  
+    setPathPoints([touchStartRef.current]);  
+
+    // Initialize circle state immediately
+    const startPoint = touchStartRef.current;
+    const centerX = window.innerWidth + 100;  
+    const centerY = window.innerHeight + 100;
+    const radius = Math.sqrt(
+      Math.pow(centerX - startPoint.x, 2) + 
+      Math.pow(centerY - startPoint.y, 2)
+    );
+    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+    
+    setCircleState({
+      centerX,
+      centerY,
+      radius,
+      startAngle,
+      endAngle: startAngle  
+    });
+  }, []);
+
+  const handleMouseDown = useCallback((e) => {
+    console.log('Action bar mouse down');
+    isMouseDownRef.current = true;
+    touchStartRef.current = { x: e.clientX, y: e.clientY };
+    setIsActive(true);  
+    setPathPoints([touchStartRef.current]);  
+
+    // Initialize circle state immediately
+    const startPoint = touchStartRef.current;
+    const centerX = window.innerWidth + 100;  
+    const centerY = window.innerHeight + 100;
+    const radius = Math.sqrt(
+      Math.pow(centerX - startPoint.x, 2) + 
+      Math.pow(centerY - startPoint.y, 2)
+    );
+    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+    
+    setCircleState({
+      centerX,
+      centerY,
+      radius,
+      startAngle,
+      endAngle: startAngle  
+    });
   }, []);
 
   return (
