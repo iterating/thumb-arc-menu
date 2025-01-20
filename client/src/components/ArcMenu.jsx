@@ -128,10 +128,9 @@ const ArcMenu = () => {
     // Use the same circle center calculation as fitCircleToPoints
     const centerX = arcDirection > 0 ? window.innerWidth + 300 : -300;
     const centerY = window.innerHeight + 300;
-    const radius = Math.sqrt(
-      Math.pow(centerX - touchStartRef.current.x, 2) + 
-      Math.pow(centerY - touchStartRef.current.y, 2)
-    );
+
+    // Use the radius from circleState since it's fixed for this drag
+    const { radius } = circleState;
 
     // Calculate the Y coordinate for this X position on the circle
     const dx2 = currentX - centerX;
@@ -178,7 +177,7 @@ const ArcMenu = () => {
         }
       }
     }
-  }, [isActive, pathPoints, fitCircleToPoints, getDistance]);
+  }, [isActive, pathPoints, fitCircleToPoints, getDistance, circleState]);
 
   // Core event handlers
   useEffect(() => {
@@ -377,17 +376,18 @@ const ArcMenu = () => {
 
   // Action bar event handlers
   const handleTouchStart = useCallback((e) => {
-    console.log('Action bar touch start');
     const touch = e.touches[0];
     if (!touch) return;
 
     touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    setIsActive(true);  
-    setPathPoints([touchStartRef.current]);  
+    setIsActive(true);
+    setPathPoints([touchStartRef.current]);
 
     const startPoint = touchStartRef.current;
-    const centerX = window.innerWidth + 300;  
+    const centerX = window.innerWidth + 300;
     const centerY = window.innerHeight + 300;
+    
+    // Calculate radius once at the start
     const radius = Math.sqrt(
       Math.pow(centerX - startPoint.x, 2) + 
       Math.pow(centerY - startPoint.y, 2)
@@ -397,9 +397,9 @@ const ArcMenu = () => {
     setCircleState({
       centerX,
       centerY,
-      radius,
+      radius,  // Store radius in state
       startAngle,
-      endAngle: startAngle  
+      endAngle: startAngle
     });
   }, []);
 
