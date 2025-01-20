@@ -26,11 +26,12 @@ const ArcMenu = () => {
   const BUTTON_SIZE = 50;
   const MIN_BUTTON_SIZE = 30;
   const BUTTON_PADDING = 10;
-  const MIN_POINTS_FOR_FIT = 5;
+  const MIN_POINTS_FOR_FIT = 3;  // Reduced from 5 to 3 points for faster response
   const MAX_DEVIATION = 30;
   const DEVIATION_THRESHOLD = 0.5;
   const MIN_POINTS_FOR_DIRECTION = 10;
   const HOLD_DURATION = 400;
+  const SAMPLE_DISTANCE = 5;  // Reduced from 20px to 5px for better fast-drag sampling
 
   // Refs matching original code
   const touchStartRef = useRef({ x: 0, y: 0 });
@@ -45,6 +46,7 @@ const ArcMenu = () => {
   const debugArcPathRef = useRef(null);
   const actionBarRef = useRef(null);
   const holdTimerRef = useRef(null);
+  const lastPointRef = useRef(null);  // Track last sampled point
 
   // Menu items matching original code
   const menuItems = [
@@ -61,48 +63,63 @@ const ArcMenu = () => {
   }, []);
 
   const fitCircleToPoints = useCallback((points) => {
-    if (points.length < MIN_POINTS_FOR_FIT) return null;
+    const startPoint = touchStartRef.current;
+    if (!startPoint) return null;
 
-    const startPoint = touchStartRef.current; // MUST go through this point
-    const endPoint = points[points.length - 1];
+    const endPoint = points[points.length - 1] || startPoint;
     
-    // Calculate direction and center offset
+    // Quick direction check - no minimum points needed
     const dx = endPoint.x - startPoint.x;
-    const arcDirection = Math.sign(dx);
-    
-    // Calculate pivot point based on strict rules
-    const OFFSCREEN_MARGIN = 100; // How far off screen the center should be
-    const centerY = window.innerHeight + OFFSCREEN_MARGIN; // Always below screen
-    
-    const centerX = arcDirection > 0 ?
-        window.innerWidth + OFFSCREEN_MARGIN : // Right pivot: beyond right edge
-        -OFFSCREEN_MARGIN; // Left pivot: beyond left edge
-    
-    // Calculate radius based on distance from start to center
-    const radius = Math.sqrt(
+    const arcDirection = dx >= 0 ? 1 : -1;  // Assume direction immediately
+
+    // Perfect circle calculation
+    if (arcDirection > 0) {  // Right-handed circle
+      const centerX = window.innerWidth + 100;
+      const centerY = window.innerHeight + 100;
+      const radius = Math.sqrt(
         Math.pow(centerX - startPoint.x, 2) + 
         Math.pow(centerY - startPoint.y, 2)
-    );
-    
-    // Calculate angles
-    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-    const endAngle = Math.atan2(endPoint.y - centerY, endPoint.x - centerX);
-    
-    // Adjust end angle based on direction
-    let adjustedEndAngle = endAngle;
-    if (arcDirection > 0 && startAngle > endAngle) {
-        adjustedEndAngle += 2 * Math.PI;
-    } else if (arcDirection < 0 && endAngle > startAngle) {
-        adjustedEndAngle -= 2 * Math.PI;
-    }
-    
-    return {
+      );
+
+      const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+      const currentAngle = Math.atan2(endPoint.y - centerY, endPoint.x - centerX);
+      
+      let adjustedCurrentAngle = currentAngle;
+      if (startAngle > currentAngle) {
+        adjustedCurrentAngle += 2 * Math.PI;
+      }
+      
+      return {
         centerX,
         centerY,
         radius,
         startAngle,
-        endAngle: adjustedEndAngle
-    };
+        endAngle: adjustedCurrentAngle
+      };
+    } else {  // Left-handed circle (mirror of right-handed)
+      const centerX = -100;  // Beyond left edge
+      const centerY = window.innerHeight + 100;
+      const radius = Math.sqrt(
+        Math.pow(centerX - startPoint.x, 2) + 
+        Math.pow(centerY - startPoint.y, 2)
+      );
+
+      const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+      const currentAngle = Math.atan2(endPoint.y - centerY, endPoint.x - centerX);
+      
+      let adjustedCurrentAngle = currentAngle;
+      if (currentAngle > startAngle) {
+        adjustedCurrentAngle -= 2 * Math.PI;
+      }
+      
+      return {
+        centerX,
+        centerY,
+        radius,
+        startAngle,
+        endAngle: adjustedCurrentAngle
+      };
+    }
   }, []);
 
   const handleMove = useCallback((e) => {
@@ -119,33 +136,23 @@ const ArcMenu = () => {
       return;
     }
 
-    // Direction detection (same as original)
-    if (arcDirectionRef.current === null && pathPoints.length >= MIN_POINTS_FOR_DIRECTION) {
-      const dx = currentX - touchStartRef.current.x;
-      arcDirectionRef.current = Math.sign(dx);
-      console.log('Arc direction:', arcDirectionRef.current > 0 ? 'right' : 'left');
+    // Always collect the first point
+    if (pathPoints.length === 0) {
+      lastPointRef.current = { x: currentX, y: currentY };
+      setPathPoints([{ x: currentX, y: currentY }]);
+      return;
     }
 
-    // Backtracking prevention (same as original)
-    if (arcDirectionRef.current !== null) {
-      if (currentY > touchStartRef.current.y || 
-          (arcDirectionRef.current > 0 && currentX < touchStartRef.current.x) || 
-          (arcDirectionRef.current < 0 && currentX > touchStartRef.current.x)) {
-        return;
-      }
-    }
+    // Distance-based sampling
+    const lastPoint = lastPointRef.current || touchStartRef.current;  // Fallback to touchStart if no last point
+    const distance = getDistance(currentX, currentY, lastPoint.x, lastPoint.y);
+    
+    // Only take points that are SAMPLE_DISTANCE away from last point
+    if (distance >= SAMPLE_DISTANCE) {
+      lastPointRef.current = { x: currentX, y: currentY };
+      setPathPoints(prev => [...prev, { x: currentX, y: currentY }]);
 
-    // Point pruning (same as original)
-    if (pathPoints.length > 0) {
-      const lastPoint = pathPoints[pathPoints.length - 1];
-      if (getDistance(currentX, currentY, lastPoint.x, lastPoint.y) < 5) return;
-    }
-
-    setPathPoints(prev => [...prev, { x: currentX, y: currentY }]);
-
-    // Circle fitting (same as original)
-    const now = Date.now();
-    if (now - lastFitTimeRef.current > fitThrottleMs.current && pathPoints.length >= MIN_POINTS_FOR_FIT) {
+      // Fit circle
       const circle = fitCircleToPoints(pathPoints);
       if (circle) {
         if (lockedCircleState) {
@@ -159,7 +166,7 @@ const ArcMenu = () => {
         } else {
           setCircleState(circle);
           
-          // Point quality check (same as original)
+          // Point quality check
           const distToCircle = Math.abs(getDistance(currentX, currentY, circle.centerX, circle.centerY) - circle.radius);
           if (distToCircle < MAX_DEVIATION) {
             setGoodPointCount(prev => prev + 1);
@@ -168,7 +175,6 @@ const ArcMenu = () => {
           }
         }
       }
-      lastFitTimeRef.current = now;
     }
   }, [isActive, pathPoints, fitCircleToPoints, getDistance, lockedCircleState]);
 
@@ -206,7 +212,6 @@ const ArcMenu = () => {
       setLockedCircleState(null);
       setGoodPointCount(0);
       setBadPointCount(0);
-      arcDirectionRef.current = null;
       
       // Clear SVG paths
       if (connectingPathRef.current) {
@@ -226,7 +231,6 @@ const ArcMenu = () => {
       setLockedCircleState(null);
       setGoodPointCount(0);
       setBadPointCount(0);
-      arcDirectionRef.current = null;
       
       // Clear SVG paths
       if (connectingPathRef.current) {
@@ -277,14 +281,14 @@ const ArcMenu = () => {
 
     const positions = menuItems.map((_, index) => {
       const angle = (index / (menuItems.length - 1)) * (circleState.endAngle - circleState.startAngle) + circleState.startAngle;
+      
+      // Use exact same calculation as SVG arc path
       const x = circleState.centerX + circleState.radius * Math.cos(angle);
       const y = circleState.centerY + circleState.radius * Math.sin(angle);
-
-      // For right-handed circles, we need to adjust the offset to match left-handed behavior
-      const isRightHanded = circleState.centerX > window.innerWidth;
+      
       return {
-        x: isRightHanded ? x + BUTTON_SIZE / 2 : x - BUTTON_SIZE / 2,
-        y: y - BUTTON_SIZE / 2,
+        x: x,
+        y: y,
         scale: 1
       };
     });
@@ -324,25 +328,16 @@ const ArcMenu = () => {
     if (!touch) return;
 
     touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    
-    // Create hold timer
-    holdTimerRef.current = setTimeout(() => {
-      console.log('Hold timer activated');
-      setIsActive(true);
-      setPathPoints([touchStartRef.current]); // Use original touch position
-    }, HOLD_DURATION);
+    setIsActive(true);  // Activate immediately
+    setPathPoints([touchStartRef.current]);  // Start with initial point
   }, []);
 
   const handleMouseDown = useCallback((e) => {
     console.log('Action bar mouse down');
     isMouseDownRef.current = true;
     touchStartRef.current = { x: e.clientX, y: e.clientY };
-    
-    holdTimerRef.current = setTimeout(() => {
-      console.log('Hold timer activated');
-      setIsActive(true);
-      setPathPoints([touchStartRef.current]); // Use original mouse position
-    }, HOLD_DURATION);
+    setIsActive(true);  // Activate immediately
+    setPathPoints([touchStartRef.current]);  // Start with initial point
   }, []);
 
   // Update SVG path
@@ -365,6 +360,11 @@ const ArcMenu = () => {
     if (!debugArcPathRef.current || !circleState.centerX) return;
 
     const { centerX, centerY, radius, startAngle, endAngle } = circleState;
+    
+    // Calculate if we need large arc flag
+    const angleDiff = Math.abs(endAngle - startAngle);
+    const largeArcFlag = angleDiff > Math.PI ? 1 : 0;
+    
     let sweepFlag = 1;
     if (endAngle < startAngle) sweepFlag = 0;
 
@@ -373,8 +373,9 @@ const ArcMenu = () => {
     const x2 = centerX + radius * Math.cos(endAngle);
     const y2 = centerY + radius * Math.sin(endAngle);
 
-    const arcPath = `M ${x1} ${y1} A ${radius} ${radius} 0 0 ${sweepFlag} ${x2} ${y2}`;
+    const arcPath = `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${x2} ${y2}`;
     debugArcPathRef.current.setAttribute('d', arcPath);
+    debugArcPathRef.current.style.opacity = '1';  // Make sure path is visible
   }, [circleState]);
 
   // Create SVG elements on mount
