@@ -119,18 +119,6 @@ const ArcMenu = () => {
       return;
     }
 
-    // BUTTON BOUNDARY CHECK 1: Reject if too close to left edge
-    // Comment out this if-block to disable left boundary check
-    if (currentX < (BUTTON_SIZE + BUTTON_PADDING)) {
-      return;
-    }
-
-    // BUTTON BOUNDARY CHECK 2: Reject if too close to right edge
-    // Comment out this if-block to disable right boundary check
-    if (currentX > (window.innerWidth - (BUTTON_SIZE + BUTTON_PADDING))) {
-      return;
-    }
-
     // Direction detection (same as original)
     if (arcDirectionRef.current === null && pathPoints.length >= MIN_POINTS_FOR_DIRECTION) {
       const dx = currentX - touchStartRef.current.x;
@@ -292,8 +280,10 @@ const ArcMenu = () => {
       const x = circleState.centerX + circleState.radius * Math.cos(angle);
       const y = circleState.centerY + circleState.radius * Math.sin(angle);
 
+      // For right-handed circles, we need to adjust the offset to match left-handed behavior
+      const isRightHanded = circleState.centerX > window.innerWidth;
       return {
-        x: x - BUTTON_SIZE / 2,
+        x: isRightHanded ? x + BUTTON_SIZE / 2 : x - BUTTON_SIZE / 2,
         y: y - BUTTON_SIZE / 2,
         scale: 1
       };
@@ -375,12 +365,6 @@ const ArcMenu = () => {
     if (!debugArcPathRef.current || !circleState.centerX) return;
 
     const { centerX, centerY, radius, startAngle, endAngle } = circleState;
-    
-    // Determine if we need the large arc flag
-    const angleDiff = Math.abs(endAngle - startAngle);
-    const largeArcFlag = angleDiff > Math.PI ? 1 : 0;
-    
-    // Determine sweep direction
     let sweepFlag = 1;
     if (endAngle < startAngle) sweepFlag = 0;
 
@@ -389,16 +373,8 @@ const ArcMenu = () => {
     const x2 = centerX + radius * Math.cos(endAngle);
     const y2 = centerY + radius * Math.sin(endAngle);
 
-    // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
-    const arcPath = `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${x2} ${y2}`;
+    const arcPath = `M ${x1} ${y1} A ${radius} ${radius} 0 0 ${sweepFlag} ${x2} ${y2}`;
     debugArcPathRef.current.setAttribute('d', arcPath);
-    
-    console.log('Arc angles:', {
-      startAngle: startAngle * 180 / Math.PI,
-      endAngle: endAngle * 180 / Math.PI,
-      diff: angleDiff * 180 / Math.PI,
-      largeArc: largeArcFlag
-    });
   }, [circleState]);
 
   // Create SVG elements on mount
