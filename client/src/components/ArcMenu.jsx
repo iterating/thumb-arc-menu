@@ -8,7 +8,6 @@ const ArcMenu = () => {
   // State variables matching original code
   const [isActive, setIsActive] = useState(false);
   const [pathPoints, setPathPoints] = useState([]);  // Raw user input points
-  const [buttons, setButtons] = useState([]);
   const [circleState, setCircleState] = useState({
     centerX: null,
     centerY: null,
@@ -31,8 +30,6 @@ const ArcMenu = () => {
   const svgRef = useRef(null);
   const connectingPathRef = useRef(null);
   const debugArcPathRef = useRef(null);
-  const actionBarRef = useRef(null);
-  const holdTimerRef = useRef(null);
 
   // Menu items matching original code
   const menuItems = [
@@ -112,7 +109,8 @@ const ArcMenu = () => {
     if (!isActive) return;
 
     const currentX = e.clientX ?? e.touches?.[0]?.clientX;
-    const currentY = e.clientY ?? e.touches?.[0]?.clientY;
+    // Clamp Y to never go below start point
+    const currentY = Math.min(e.clientY ?? e.touches?.[0]?.clientY, touchStartRef.current.y);
 
     if (typeof currentX !== 'number' || typeof currentY !== 'number') return;
 
