@@ -138,7 +138,11 @@ const ArcMenu = () => {
     const minY = centerY - Math.sqrt(radius * radius - dx2 * dx2);
     
     // Use the higher of minY or rawY to stay on or below the arc
-    const currentY = Math.max(minY, rawY);
+    // AND never go below the start point
+    const currentY = Math.min(
+      touchStartRef.current.y,  // Never go below start point
+      Math.max(minY, rawY)      // Never go above the arc
+    );
 
     if (currentX < 0 || currentX > window.innerWidth || 
         currentY < 0 || currentY > window.innerHeight) {
