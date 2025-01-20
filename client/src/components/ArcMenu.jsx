@@ -9,6 +9,7 @@ const ArcMenu = () => {
   // Core state we definitely need
   const [isActive, setIsActive] = useState(false);
   const [pathPoints, setPathPoints] = useState([]);
+  const [pointCount, setPointCount] = useState(0);
   const [circleState, setCircleState] = useState({
     centerX: null,
     centerY: null,
@@ -25,6 +26,7 @@ const ArcMenu = () => {
   const SAMPLE_DISTANCE = 5;
   const DEBUG_PATH = false;  // Toggle gray connecting path only
   const DEBUG_ARC = true;  // Toggle orange arc path
+  const MAX_POINTS = 100;  // Maximum number of points to store
 
   // Potentially unused constants
   const MIN_BUTTON_SIZE = 30;
@@ -53,64 +55,33 @@ const ArcMenu = () => {
   }, []);
 
   // Core circle calculation
-  const fitCircleToPoints = useCallback((points) => {
-    const startPoint = touchStartRef.current;
-    if (!startPoint) return null;
+  const fitCircleToPoints = useCallback((startPoint, currentPoint) => {
+    if (!startPoint || !currentPoint) return null;
 
-    const endPoint = points[points.length - 1] || startPoint;
-    
-    const dx = endPoint.x - startPoint.x;
+    const dx = currentPoint.x - startPoint.x;
     const arcDirection = dx >= 0 ? 1 : -1;
+    
+    // Fixed circle center based on direction
+    const centerX = arcDirection > 0 ? window.innerWidth + 300 : -300;
+    const centerY = window.innerHeight + 300;
 
-    if (arcDirection > 0) {
-      // For right-handed circles, center is far off the right side
-      const centerX = window.innerWidth + 300;
-      const centerY = window.innerHeight + 300;
-      const radius = Math.sqrt(
-        Math.pow(centerX - startPoint.x, 2) + 
-        Math.pow(centerY - startPoint.y, 2)
-      );
+    // Calculate radius using start point (remains constant)
+    const radius = Math.sqrt(
+      Math.pow(centerX - startPoint.x, 2) + 
+      Math.pow(centerY - startPoint.y, 2)
+    );
 
-      const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-      const currentAngle = Math.atan2(endPoint.y - centerY, endPoint.x - centerX);
-      
-      let adjustedCurrentAngle = currentAngle;
-      if (startAngle > currentAngle) {
-        adjustedCurrentAngle += 2 * Math.PI;
-      }
-      
-      return {
-        centerX,
-        centerY,
-        radius,
-        startAngle,
-        endAngle: adjustedCurrentAngle
-      };
-    } else {
-      // For left-handed circles, center is far off the left side
-      const centerX = -300;
-      const centerY = window.innerHeight + 300;
-      const radius = Math.sqrt(
-        Math.pow(centerX - startPoint.x, 2) + 
-        Math.pow(centerY - startPoint.y, 2)
-      );
+    // Calculate angles
+    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+    const endAngle = Math.atan2(currentPoint.y - centerY, currentPoint.x - centerX);
 
-      const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-      const currentAngle = Math.atan2(endPoint.y - centerY, endPoint.x - centerX);
-      
-      let adjustedCurrentAngle = currentAngle;
-      if (currentAngle > startAngle) {
-        adjustedCurrentAngle -= 2 * Math.PI;
-      }
-      
-      return {
-        centerX,
-        centerY,
-        radius,
-        startAngle,
-        endAngle: adjustedCurrentAngle
-      };
-    }
+    return {
+      centerX,
+      centerY,
+      radius,
+      startAngle,
+      endAngle
+    };
   }, []);
 
   const handleMove = useCallback((e) => {
@@ -132,7 +103,7 @@ const ArcMenu = () => {
     // Use the radius from circleState since it's fixed for this drag
     const { radius } = circleState;
 
-    // Optimize minY calculation by pre-squaring radius
+    // Calculate the Y coordinate for this X position on the circle
     const dx2 = currentX - centerX;
     const r2 = radius * radius; // Only multiply once
     const minY = centerY - Math.sqrt(r2 - dx2 * dx2);
@@ -149,9 +120,12 @@ const ArcMenu = () => {
       return;
     }
 
-    if (pathPoints.length === 0) {
-      lastPointRef.current = { x: currentX, y: currentY };
-      setPathPoints([{ x: currentX, y: currentY }]);
+    const currentPoint = { x: currentX, y: currentY };
+
+    if (pointCount === 0) {
+      lastPointRef.current = currentPoint;
+      setPathPoints([currentPoint]);
+      setPointCount(1);
       return;
     }
 
@@ -159,26 +133,32 @@ const ArcMenu = () => {
     const distance = getDistance(currentX, currentY, lastPoint.x, lastPoint.y);
     
     if (distance >= SAMPLE_DISTANCE) {
-      lastPointRef.current = { x: currentX, y: currentY };
-      setPathPoints(prev => [...prev, { x: currentX, y: currentY }]);
+      lastPointRef.current = currentPoint;
+      
+      // Update points array without spread
+      if (pointCount < MAX_POINTS) {
+        setPathPoints(prev => {
+          const newPoints = prev.slice(0, pointCount);
+          newPoints[pointCount] = currentPoint;
+          return newPoints;
+        });
+        setPointCount(prev => prev + 1);
+      } else {
+        // Shift array when full
+        setPathPoints(prev => {
+          const newPoints = prev.slice(1, pointCount);
+          newPoints.push(currentPoint);
+          return newPoints;
+        });
+      }
 
-      const circle = fitCircleToPoints(pathPoints);
+      // Only use start and current point for circle calculation
+      const circle = fitCircleToPoints(touchStartRef.current, currentPoint);
       if (circle) {
-        // Potentially unused locked circle state logic
-        if (lockedCircleState) {
-          setCircleState({
-            ...lockedCircleState,
-            startAngle: Math.atan2(touchStartRef.current.y - lockedCircleState.centerY,
-                               touchStartRef.current.x - lockedCircleState.centerX),
-            endAngle: Math.atan2(currentY - lockedCircleState.centerY,
-                             currentX - lockedCircleState.centerX)
-          });
-        } else {
-          setCircleState(circle);
-        }
+        setCircleState(circle);
       }
     }
-  }, [isActive, pathPoints, fitCircleToPoints, getDistance, circleState]);
+  }, [isActive, getDistance, circleState, pointCount]);
 
   // Core event handlers
   useLayoutEffect(() => {
@@ -210,6 +190,7 @@ const ArcMenu = () => {
       isMouseDownRef.current = false;
       setIsActive(false);
       setPathPoints([]);
+      setPointCount(0);
       setCircleState({});
       setLockedCircleState(null);
       
@@ -227,6 +208,7 @@ const ArcMenu = () => {
       isMouseDownRef.current = false;
       setIsActive(false);
       setPathPoints([]);
+      setPointCount(0);
       setCircleState({});
       setLockedCircleState(null);
       
