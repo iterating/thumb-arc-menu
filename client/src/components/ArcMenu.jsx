@@ -105,7 +105,7 @@ const ArcMenu = () => {
 
     // Calculate the Y coordinate for this X position on the circle
     const dx2 = currentX - centerX;
-    const r2 = radius * radius; // Only multiply once
+    const r2 = radius * radius;
     const minY = centerY - Math.sqrt(r2 - dx2 * dx2);
     
     // Use the higher of minY or rawY to stay on or below the arc
@@ -121,44 +121,19 @@ const ArcMenu = () => {
     }
 
     const currentPoint = { x: currentX, y: currentY };
-
-    if (pointCount === 0) {
-      lastPointRef.current = currentPoint;
-      setPathPoints([currentPoint]);
-      setPointCount(1);
-      return;
-    }
-
     const lastPoint = lastPointRef.current || touchStartRef.current;
     const distance = getDistance(currentX, currentY, lastPoint.x, lastPoint.y);
     
     if (distance >= SAMPLE_DISTANCE) {
       lastPointRef.current = currentPoint;
       
-      // Update points array without spread
-      if (pointCount < MAX_POINTS) {
-        setPathPoints(prev => {
-          const newPoints = prev.slice(0, pointCount);
-          newPoints[pointCount] = currentPoint;
-          return newPoints;
-        });
-        setPointCount(prev => prev + 1);
-      } else {
-        // Shift array when full
-        setPathPoints(prev => {
-          const newPoints = prev.slice(1, pointCount);
-          newPoints.push(currentPoint);
-          return newPoints;
-        });
-      }
-
-      // Only use start and current point for circle calculation
+      // Only update circle state, skip path points for performance
       const circle = fitCircleToPoints(touchStartRef.current, currentPoint);
       if (circle) {
         setCircleState(circle);
       }
     }
-  }, [isActive, getDistance, circleState, pointCount]);
+  }, [isActive, getDistance, circleState]);
 
   // Core event handlers
   useLayoutEffect(() => {
@@ -234,34 +209,23 @@ const ArcMenu = () => {
   useEffect(() => {
     if (!isActive) return;
 
-    // Pre-calculate values used for all buttons
     const { centerX, centerY, radius: radiusMult, startAngle, endAngle } = circleState;
     const angleDelta = (endAngle - startAngle) / (menuItems.length - 1);
     
-    // Pre-calculate sin/cos values for start and delta angles
-    const startCos = Math.cos(startAngle);
-    const startSin = Math.sin(startAngle);
-    const deltaCos = Math.cos(angleDelta);
-    const deltaSin = Math.sin(angleDelta);
+    // Cache ALL trig calculations up front
+    const angles = new Array(menuItems.length);
+    angles[0] = startAngle;
+    for (let i = 1; i < menuItems.length; i++) {
+      angles[i] = angles[i-1] + angleDelta;
+    }
     
-    // First button position
-    let currentCos = startCos;
-    let currentSin = startSin;
+    // Pre-calculate all cos/sin values
+    const cosValues = angles.map(Math.cos);
+    const sinValues = angles.map(Math.sin);
 
     const positions = menuItems.map((_, index) => {
-      // Calculate position using current sin/cos
-      const x = centerX + radiusMult * currentCos;
-      const y = centerY + radiusMult * currentSin;
-      
-      // Update sin/cos for next button using angle addition formulas
-      // cos(A+B) = cos(A)cos(B) - sin(A)sin(B)
-      // sin(A+B) = sin(A)cos(B) + cos(A)sin(B)
-      if (index < menuItems.length - 1) {
-        const nextCos = currentCos * deltaCos - currentSin * deltaSin;
-        const nextSin = currentSin * deltaCos + currentCos * deltaSin;
-        currentCos = nextCos;
-        currentSin = nextSin;
-      }
+      const x = centerX + radiusMult * cosValues[index];
+      const y = centerY + radiusMult * sinValues[index];
       
       return {
         x: x,
