@@ -38,7 +38,7 @@ const ArcMenu = () => {
 
   // Potentially unused constants
   const MIN_BUTTON_SIZE = 30;
-  const BUTTON_PADDING = 10;
+  const BUTTON_PADDING = 5;
 
   // Core refs we definitely need
   const touchStartRef = useRef({ x: 0, y: 0, time: 0, target: null });
@@ -139,8 +139,8 @@ const ArcMenu = () => {
       Math.max(minY, rawY)      // Never go above the arc
     );
 
-    if (currentX < 0 || currentX > window.innerWidth || 
-        currentY < 0 || currentY > window.innerHeight) {
+    if ((currentX < ( BUTTON_SIZE / 2 + BUTTON_PADDING) || currentX > window.innerWidth - BUTTON_SIZE / 2 - BUTTON_PADDING) || 
+        (currentY < 0|| currentY > window.innerHeight)) {
       return;
     }
 
