@@ -3,11 +3,12 @@ import { useLocation } from 'react-router-dom';
 import './ArcMenu.css';
 
 const ArcMenu = () => {
+  // Potentially unused imports/hooks
   const location = useLocation();
-  
-  // State variables matching original code
+
+  // Core state we definitely need
   const [isActive, setIsActive] = useState(false);
-  const [pathPoints, setPathPoints] = useState([]);  // Raw user input points
+  const [pathPoints, setPathPoints] = useState([]);
   const [circleState, setCircleState] = useState({
     centerX: null,
     centerY: null,
@@ -15,23 +16,29 @@ const ArcMenu = () => {
     startAngle: null,
     endAngle: null
   });
+
+  // Potentially unused state
   const [lockedCircleState, setLockedCircleState] = useState(null);
 
-  // Constants matching original code
+  // Core constants we definitely need
   const BUTTON_SIZE = 50;
+  const SAMPLE_DISTANCE = 5;
+
+  // Potentially unused constants
   const MIN_BUTTON_SIZE = 30;
   const BUTTON_PADDING = 10;
-  const SAMPLE_DISTANCE = 5;  // Reduced from 20px to 5px for better fast-drag sampling
 
-  // Refs matching original code
+  // Core refs we definitely need
   const touchStartRef = useRef({ x: 0, y: 0 });
   const isMouseDownRef = useRef(false);
-  const lastPointRef = useRef(null);  // Track last sampled point
-  const svgRef = useRef(null);
-  const connectingPathRef = useRef(null);
+  const lastPointRef = useRef(null);
   const debugArcPathRef = useRef(null);
+  const svgRef = useRef(null);
 
-  // Menu items matching original code
+  // Potentially unused refs
+  const connectingPathRef = useRef(null);
+
+  // Menu items
   const menuItems = [
     { icon: '🔍', label: 'Search', onClick: () => alert('Search clicked! Time to find something...') },
     { icon: '⭐', label: 'Favorite', onClick: () => alert('Added to favorites! Good choice!') },
@@ -40,23 +47,22 @@ const ArcMenu = () => {
     { icon: '📤', label: 'Share', onClick: () => alert('Share menu opened! Spread the word!') }
   ];
 
-  // Helper functions matching original code
+  // Potentially unused helper functions
   const getDistance = useCallback((x1, y1, x2, y2) => {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }, []);
 
+  // Core circle calculation
   const fitCircleToPoints = useCallback((points) => {
     const startPoint = touchStartRef.current;
     if (!startPoint) return null;
 
     const endPoint = points[points.length - 1] || startPoint;
     
-    // Quick direction check - no minimum points needed
     const dx = endPoint.x - startPoint.x;
-    const arcDirection = dx >= 0 ? 1 : -1;  // Assume direction immediately
+    const arcDirection = dx >= 0 ? 1 : -1;
 
-    // Perfect circle calculation
-    if (arcDirection > 0) {  // Right-handed circle
+    if (arcDirection > 0) {
       const centerX = window.innerWidth + 100;
       const centerY = window.innerHeight + 100;
       const radius = Math.sqrt(
@@ -79,8 +85,8 @@ const ArcMenu = () => {
         startAngle,
         endAngle: adjustedCurrentAngle
       };
-    } else {  // Left-handed circle (mirror of right-handed)
-      const centerX = -100;  // Beyond left edge
+    } else {
+      const centerX = -100;
       const centerY = window.innerHeight + 100;
       const radius = Math.sqrt(
         Math.pow(centerX - startPoint.x, 2) + 
@@ -109,36 +115,31 @@ const ArcMenu = () => {
     if (!isActive) return;
 
     const currentX = e.clientX ?? e.touches?.[0]?.clientX;
-    // Clamp Y to never go below start point
     const currentY = Math.min(e.clientY ?? e.touches?.[0]?.clientY, touchStartRef.current.y);
 
     if (typeof currentX !== 'number' || typeof currentY !== 'number') return;
 
-    // Strict viewport bounds checking - ignore ANY point outside viewport
     if (currentX < 0 || currentX > window.innerWidth || 
         currentY < 0 || currentY > window.innerHeight) {
       return;
     }
 
-    // Always collect the first point
     if (pathPoints.length === 0) {
       lastPointRef.current = { x: currentX, y: currentY };
       setPathPoints([{ x: currentX, y: currentY }]);
       return;
     }
 
-    // Distance-based sampling
-    const lastPoint = lastPointRef.current || touchStartRef.current;  // Fallback to touchStart if no last point
+    const lastPoint = lastPointRef.current || touchStartRef.current;
     const distance = getDistance(currentX, currentY, lastPoint.x, lastPoint.y);
     
-    // Only take points that are SAMPLE_DISTANCE away from last point
     if (distance >= SAMPLE_DISTANCE) {
       lastPointRef.current = { x: currentX, y: currentY };
       setPathPoints(prev => [...prev, { x: currentX, y: currentY }]);
 
-      // Fit circle
       const circle = fitCircleToPoints(pathPoints);
       if (circle) {
+        // Potentially unused locked circle state logic
         if (lockedCircleState) {
           setCircleState({
             ...lockedCircleState,
@@ -152,13 +153,13 @@ const ArcMenu = () => {
         }
       }
     }
-  }, [isActive, pathPoints, fitCircleToPoints]);
+  }, [isActive, pathPoints, fitCircleToPoints, getDistance]);
 
-  // Document-level event handlers
+  // Core event handlers
   useEffect(() => {
     const handleTouchMove = (e) => {
       if (!isActive) return;
-      e.preventDefault(); // Prevent scrolling
+      e.preventDefault();
       handleMove(e.touches[0]);
     };
 
@@ -177,7 +178,7 @@ const ArcMenu = () => {
     };
   }, [isActive, handleMove]);
 
-  // Handle end events
+  // Potentially duplicated end event handlers
   useEffect(() => {
     const handleTouchEnd = () => {
       console.log('Document touch end');
@@ -187,7 +188,7 @@ const ArcMenu = () => {
       setCircleState({});
       setLockedCircleState(null);
       
-      // Clear SVG paths
+      // Potentially unused cleanup
       if (connectingPathRef.current) {
         connectingPathRef.current.setAttribute('d', '');
       }
@@ -204,7 +205,7 @@ const ArcMenu = () => {
       setCircleState({});
       setLockedCircleState(null);
       
-      // Clear SVG paths
+      // Potentially unused cleanup
       if (connectingPathRef.current) {
         connectingPathRef.current.setAttribute('d', '');
       }
@@ -229,7 +230,6 @@ const ArcMenu = () => {
     const positions = menuItems.map((_, index) => {
       const angle = (index / (menuItems.length - 1)) * (circleState.endAngle - circleState.startAngle) + circleState.startAngle;
       
-      // Use exact same calculation as SVG arc path
       const x = circleState.centerX + circleState.radius * Math.cos(angle);
       const y = circleState.centerY + circleState.radius * Math.sin(angle);
       
@@ -289,7 +289,6 @@ const ArcMenu = () => {
 
     const { centerX, centerY, radius, startAngle, endAngle } = circleState;
     
-    // Calculate if we need large arc flag
     const angleDiff = Math.abs(endAngle - startAngle);
     const largeArcFlag = angleDiff > Math.PI ? 1 : 0;
     
@@ -308,7 +307,6 @@ const ArcMenu = () => {
 
   // Create SVG elements on mount
   useEffect(() => {
-    // Create SVG element
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.style.cssText = `
       position: fixed;
@@ -321,7 +319,6 @@ const ArcMenu = () => {
     `;
     svgRef.current = svg;
 
-    // Create connecting path
     const connectingPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
     connectingPath.style.cssText = `
       fill: none;
@@ -333,7 +330,6 @@ const ArcMenu = () => {
     `;
     connectingPathRef.current = connectingPath;
 
-    // Create debug arc path
     const debugArcPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
     debugArcPath.style.cssText = `
       fill: none;
@@ -345,12 +341,10 @@ const ArcMenu = () => {
     `;
     debugArcPathRef.current = debugArcPath;
 
-    // Add paths to SVG
     svg.appendChild(connectingPath);
     svg.appendChild(debugArcPath);
     document.body.appendChild(svg);
 
-    // Cleanup on unmount
     return () => {
       document.body.removeChild(svg);
     };
@@ -366,7 +360,6 @@ const ArcMenu = () => {
     setIsActive(true);  
     setPathPoints([touchStartRef.current]);  
 
-    // Initialize circle state immediately
     const startPoint = touchStartRef.current;
     const centerX = window.innerWidth + 100;  
     const centerY = window.innerHeight + 100;
@@ -392,7 +385,6 @@ const ArcMenu = () => {
     setIsActive(true);  
     setPathPoints([touchStartRef.current]);  
 
-    // Initialize circle state immediately
     const startPoint = touchStartRef.current;
     const centerX = window.innerWidth + 100;  
     const centerY = window.innerHeight + 100;
