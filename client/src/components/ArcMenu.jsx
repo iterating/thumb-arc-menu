@@ -63,8 +63,9 @@ const ArcMenu = () => {
     const arcDirection = dx >= 0 ? 1 : -1;
 
     if (arcDirection > 0) {
-      const centerX = window.innerWidth + 100;
-      const centerY = window.innerHeight + 100;
+      // For right-handed circles, center is far off the right side
+      const centerX = window.innerWidth + 300;
+      const centerY = window.innerHeight + 300;
       const radius = Math.sqrt(
         Math.pow(centerX - startPoint.x, 2) + 
         Math.pow(centerY - startPoint.y, 2)
@@ -86,8 +87,9 @@ const ArcMenu = () => {
         endAngle: adjustedCurrentAngle
       };
     } else {
-      const centerX = -100;
-      const centerY = window.innerHeight + 100;
+      // For left-handed circles, center is far off the left side
+      const centerX = -300;
+      const centerY = window.innerHeight + 300;
       const radius = Math.sqrt(
         Math.pow(centerX - startPoint.x, 2) + 
         Math.pow(centerY - startPoint.y, 2)
@@ -361,8 +363,8 @@ const ArcMenu = () => {
     setPathPoints([touchStartRef.current]);  
 
     const startPoint = touchStartRef.current;
-    const centerX = window.innerWidth + 100;  
-    const centerY = window.innerHeight + 100;
+    const centerX = window.innerWidth + 300;  
+    const centerY = window.innerHeight + 300;
     const radius = Math.sqrt(
       Math.pow(centerX - startPoint.x, 2) + 
       Math.pow(centerY - startPoint.y, 2)
@@ -386,8 +388,8 @@ const ArcMenu = () => {
     setPathPoints([touchStartRef.current]);  
 
     const startPoint = touchStartRef.current;
-    const centerX = window.innerWidth + 100;  
-    const centerY = window.innerHeight + 100;
+    const centerX = window.innerWidth + 300;  
+    const centerY = window.innerHeight + 300;
     const radius = Math.sqrt(
       Math.pow(centerX - startPoint.x, 2) + 
       Math.pow(centerY - startPoint.y, 2)
