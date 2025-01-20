@@ -23,6 +23,8 @@ const ArcMenu = () => {
   // Core constants we definitely need
   const BUTTON_SIZE = 50;
   const SAMPLE_DISTANCE = 5;
+  const DEBUG_PATH = false;  // Toggle gray connecting path only
+  const DEBUG_ARC = true;  // Toggle orange arc path
 
   // Potentially unused constants
   const MIN_BUTTON_SIZE = 30;
@@ -132,9 +134,10 @@ const ArcMenu = () => {
     // Use the radius from circleState since it's fixed for this drag
     const { radius } = circleState;
 
-    // Calculate the Y coordinate for this X position on the circle
+    // Optimize minY calculation by pre-squaring radius
     const dx2 = currentX - centerX;
-    const minY = centerY - Math.sqrt(radius * radius - dx2 * dx2);
+    const r2 = radius * radius; // Only multiply once
+    const minY = centerY - Math.sqrt(r2 - dx2 * dx2);
     
     // Use the higher of minY or rawY to stay on or below the arc
     // AND never go below the start point
@@ -252,10 +255,13 @@ const ArcMenu = () => {
     if (!isActive) return;
 
     const positions = menuItems.map((_, index) => {
-      const angle = (index / (menuItems.length - 1)) * (circleState.endAngle - circleState.startAngle) + circleState.startAngle;
+      // Pre-calculate values used for all buttons
+      const angleDelta = (circleState.endAngle - circleState.startAngle) / (menuItems.length - 1);
+      const radiusMult = circleState.radius; // Only access once
       
-      const x = circleState.centerX + circleState.radius * Math.cos(angle);
-      const y = circleState.centerY + circleState.radius * Math.sin(angle);
+      const angle = circleState.startAngle + (index * angleDelta);
+      const x = circleState.centerX + radiusMult * Math.cos(angle);
+      const y = circleState.centerY + radiusMult * Math.sin(angle);
       
       return {
         x: x,
@@ -294,7 +300,7 @@ const ArcMenu = () => {
 
   // Update SVG path
   useEffect(() => {
-    if (!connectingPathRef.current) return;
+    if (!connectingPathRef.current || !DEBUG_PATH) return;
 
     if (pathPoints.length > 1) {
       const pathD = pathPoints
@@ -307,9 +313,9 @@ const ArcMenu = () => {
     }
   }, [pathPoints]);
 
-  // Debug arc path
+  // Arc path visualization
   useEffect(() => {
-    if (!debugArcPathRef.current || !circleState.centerX) return;
+    if (!debugArcPathRef.current || !circleState.centerX || !DEBUG_ARC) return;
 
     const { centerX, centerY, radius, startAngle, endAngle } = circleState;
     
@@ -494,7 +500,7 @@ const ArcMenu = () => {
               stroke: 'rgba(255, 255, 255, 0.3)',
               strokeWidth: 2,
               filter: 'drop-shadow(0 0 2px rgba(0, 0, 0, 0.3))',
-              opacity: isActive ? 1 : 0,
+              opacity: DEBUG_PATH ? (isActive ? 1 : 0) : 0,
               transition: 'opacity 0.2s'
             }}
           />
@@ -505,7 +511,7 @@ const ArcMenu = () => {
               stroke: '#FF6B00',
               strokeWidth: 3,
               strokeDasharray: '8,4',
-              opacity: isActive ? 1 : 0,
+              opacity: DEBUG_ARC ? (isActive ? 1 : 0) : 0,
               filter: 'drop-shadow(0 0 3px rgba(255, 107, 0, 0.5))'
             }}
           />
