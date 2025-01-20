@@ -328,16 +328,52 @@ const ArcMenu = () => {
     if (!touch) return;
 
     touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    setIsActive(true);  // Activate immediately
-    setPathPoints([touchStartRef.current]);  // Start with initial point
+    setIsActive(true);  
+    setPathPoints([touchStartRef.current]);  
+
+    // Initialize circle state immediately
+    const startPoint = touchStartRef.current;
+    const centerX = window.innerWidth + 100;  
+    const centerY = window.innerHeight + 100;
+    const radius = Math.sqrt(
+      Math.pow(centerX - startPoint.x, 2) + 
+      Math.pow(centerY - startPoint.y, 2)
+    );
+    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+    
+    setCircleState({
+      centerX,
+      centerY,
+      radius,
+      startAngle,
+      endAngle: startAngle  
+    });
   }, []);
 
   const handleMouseDown = useCallback((e) => {
     console.log('Action bar mouse down');
     isMouseDownRef.current = true;
     touchStartRef.current = { x: e.clientX, y: e.clientY };
-    setIsActive(true);  // Activate immediately
-    setPathPoints([touchStartRef.current]);  // Start with initial point
+    setIsActive(true);  
+    setPathPoints([touchStartRef.current]);  
+
+    // Initialize circle state immediately
+    const startPoint = touchStartRef.current;
+    const centerX = window.innerWidth + 100;  
+    const centerY = window.innerHeight + 100;
+    const radius = Math.sqrt(
+      Math.pow(centerX - startPoint.x, 2) + 
+      Math.pow(centerY - startPoint.y, 2)
+    );
+    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+    
+    setCircleState({
+      centerX,
+      centerY,
+      radius,
+      startAngle,
+      endAngle: startAngle  
+    });
   }, []);
 
   // Update SVG path
@@ -375,7 +411,7 @@ const ArcMenu = () => {
 
     const arcPath = `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${x2} ${y2}`;
     debugArcPathRef.current.setAttribute('d', arcPath);
-    debugArcPathRef.current.style.opacity = '1';  // Make sure path is visible
+    debugArcPathRef.current.style.opacity = '1';  
   }, [circleState]);
 
   // Create SVG elements on mount
