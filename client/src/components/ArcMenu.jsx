@@ -63,51 +63,32 @@ const ArcMenu = () => {
   const fitCircleToPoints = useCallback((points) => {
     if (points.length < MIN_POINTS_FOR_FIT) return null;
 
-    // Take three points: start, middle, and end
-    const startPoint = points[0];
-    const midPoint = points[Math.floor(points.length / 2)];
+    const startPoint = touchStartRef.current; // MUST go through this point
     const endPoint = points[points.length - 1];
     
-    // Calculate vectors from start to mid and mid to end
-    const dx1 = midPoint.x - startPoint.x;
-    const dy1 = midPoint.y - startPoint.y;
-    const dx2 = endPoint.x - midPoint.x;
-    const dy2 = endPoint.y - midPoint.y;
-    
-    // Avoid tiny movements
-    if (Math.abs(dx1) < 0.01 && Math.abs(dy1) < 0.01) return null;
-    if (Math.abs(dx2) < 0.01 && Math.abs(dy2) < 0.01) return null;
-    
-    // Find perpendicular vector to create center point
-    const perpX = dy2;  // Perpendicular to the curve direction
-    const perpY = -dx2;
-    const perpLength = Math.sqrt(perpX * perpX + perpY * perpY);
-    
-    // Detect arc direction if not set
+    // Calculate direction and center offset
     const dx = endPoint.x - startPoint.x;
     const arcDirection = Math.sign(dx);
     
-    // Calculate distance from midpoint to desired center
-    // This should be large enough to place center off screen
-    const desiredRadius = arcDirection > 0 ? 
-        window.innerWidth + 100 - midPoint.x : 
-        midPoint.x + 100;
-        
-    // Calculate center point with corrected direction
-    const centerX = midPoint.x + (perpX / perpLength) * desiredRadius * (arcDirection > 0 ? -1 : 1);
-    const centerY = midPoint.y + (perpY / perpLength) * desiredRadius * (arcDirection > 0 ? -1 : 1);
+    // Calculate pivot point based on strict rules
+    const OFFSCREEN_MARGIN = 100; // How far off screen the center should be
+    const centerY = window.innerHeight + OFFSCREEN_MARGIN; // Always below screen
     
-    // Calculate radius based on distance to points
+    const centerX = arcDirection > 0 ?
+        window.innerWidth + OFFSCREEN_MARGIN : // Right pivot: beyond right edge
+        -OFFSCREEN_MARGIN; // Left pivot: beyond left edge
+    
+    // Calculate radius based on distance from start to center
     const radius = Math.sqrt(
-        (centerX - midPoint.x) * (centerX - midPoint.x) +
-        (centerY - midPoint.y) * (centerY - midPoint.y)
+        Math.pow(centerX - startPoint.x, 2) + 
+        Math.pow(centerY - startPoint.y, 2)
     );
     
     // Calculate angles
     const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
     const endAngle = Math.atan2(endPoint.y - centerY, endPoint.x - centerX);
     
-    // Adjust end angle based on direction to ensure proper arc
+    // Adjust end angle based on direction
     let adjustedEndAngle = endAngle;
     if (arcDirection > 0 && startAngle > endAngle) {
         adjustedEndAngle += 2 * Math.PI;
@@ -132,10 +113,9 @@ const ArcMenu = () => {
 
     if (typeof currentX !== 'number' || typeof currentY !== 'number') return;
 
-    // Viewport bounds checking (same as original)
-    const margin = BUTTON_PADDING;
-    if (currentX < margin || currentX > window.innerWidth - margin || 
-        currentY < margin || currentY > window.innerHeight - margin) {
+    // Strict viewport bounds checking - ignore ANY point outside viewport
+    if (currentX < 0 || currentX > window.innerWidth || 
+        currentY < 0 || currentY > window.innerHeight) {
       return;
     }
 
@@ -227,6 +207,14 @@ const ArcMenu = () => {
       setGoodPointCount(0);
       setBadPointCount(0);
       arcDirectionRef.current = null;
+      
+      // Clear SVG paths
+      if (connectingPathRef.current) {
+        connectingPathRef.current.setAttribute('d', '');
+      }
+      if (debugArcPathRef.current) {
+        debugArcPathRef.current.setAttribute('d', '');
+      }
     };
 
     const handleMouseUp = () => {
@@ -239,6 +227,14 @@ const ArcMenu = () => {
       setGoodPointCount(0);
       setBadPointCount(0);
       arcDirectionRef.current = null;
+      
+      // Clear SVG paths
+      if (connectingPathRef.current) {
+        connectingPathRef.current.setAttribute('d', '');
+      }
+      if (debugArcPathRef.current) {
+        debugArcPathRef.current.setAttribute('d', '');
+      }
     };
 
     document.addEventListener('touchend', handleTouchEnd);
@@ -268,7 +264,9 @@ const ArcMenu = () => {
         goodPoints: goodPointCount,
         badPoints: badPointCount,
         ratio: goodPointRatio,
-        locked: !!lockedCircleState
+        locked: !!lockedCircleState,
+        startPoint: touchStartRef.current,
+        firstPoint: pathPoints[0]
       });
     }
   }, [isActive, lockedCircleState, pathPoints.length, goodPointCount, badPointCount]);
@@ -329,7 +327,7 @@ const ArcMenu = () => {
     holdTimerRef.current = setTimeout(() => {
       console.log('Hold timer activated');
       setIsActive(true);
-      setPathPoints([{ x: touch.clientX, y: touch.clientY }]);
+      setPathPoints([touchStartRef.current]); // Use original touch position
     }, HOLD_DURATION);
   }, []);
 
@@ -341,7 +339,7 @@ const ArcMenu = () => {
     holdTimerRef.current = setTimeout(() => {
       console.log('Hold timer activated');
       setIsActive(true);
-      setPathPoints([{ x: e.clientX, y: e.clientY }]);
+      setPathPoints([touchStartRef.current]); // Use original mouse position
     }, HOLD_DURATION);
   }, []);
 
@@ -365,6 +363,12 @@ const ArcMenu = () => {
     if (!debugArcPathRef.current || !circleState.centerX) return;
 
     const { centerX, centerY, radius, startAngle, endAngle } = circleState;
+    
+    // Determine if we need the large arc flag
+    const angleDiff = Math.abs(endAngle - startAngle);
+    const largeArcFlag = angleDiff > Math.PI ? 1 : 0;
+    
+    // Determine sweep direction
     let sweepFlag = 1;
     if (endAngle < startAngle) sweepFlag = 0;
 
@@ -373,8 +377,16 @@ const ArcMenu = () => {
     const x2 = centerX + radius * Math.cos(endAngle);
     const y2 = centerY + radius * Math.sin(endAngle);
 
-    const arcPath = `M ${x1} ${y1} A ${radius} ${radius} 0 0 ${sweepFlag} ${x2} ${y2}`;
+    // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+    const arcPath = `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${x2} ${y2}`;
     debugArcPathRef.current.setAttribute('d', arcPath);
+    
+    console.log('Arc angles:', {
+      startAngle: startAngle * 180 / Math.PI,
+      endAngle: endAngle * 180 / Math.PI,
+      diff: angleDiff * 180 / Math.PI,
+      largeArc: largeArcFlag
+    });
   }, [circleState]);
 
   // Create SVG elements on mount
