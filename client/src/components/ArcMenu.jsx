@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import './ArcMenu.css';
 
@@ -35,10 +35,8 @@ const ArcMenu = () => {
   const isMouseDownRef = useRef(false);
   const lastPointRef = useRef(null);
   const debugArcPathRef = useRef(null);
-  const svgRef = useRef(null);
-
-  // Potentially unused refs
   const connectingPathRef = useRef(null);
+  const svgRef = useRef(null);
 
   // Menu items
   const menuItems = [
@@ -183,7 +181,7 @@ const ArcMenu = () => {
   }, [isActive, pathPoints, fitCircleToPoints, getDistance, circleState]);
 
   // Core event handlers
-  useEffect(() => {
+  useLayoutEffect(() => {
     const handleTouchMove = (e) => {
       if (!isActive) return;
       e.preventDefault();
@@ -299,7 +297,7 @@ const ArcMenu = () => {
   }, [isActive, pathPoints, circleState]);
 
   // Update SVG path
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!connectingPathRef.current || !DEBUG_PATH) return;
 
     if (pathPoints.length > 1) {
@@ -314,7 +312,7 @@ const ArcMenu = () => {
   }, [pathPoints]);
 
   // Arc path visualization
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!debugArcPathRef.current || !circleState.centerX || !DEBUG_ARC) return;
 
     const { centerX, centerY, radius, startAngle, endAngle } = circleState;
@@ -335,117 +333,66 @@ const ArcMenu = () => {
     debugArcPathRef.current.style.opacity = '1';  
   }, [circleState]);
 
-  // Create SVG elements on mount
-  useEffect(() => {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 9998;
-    `;
-    svgRef.current = svg;
-
-    const connectingPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    connectingPath.style.cssText = `
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.3);
-      stroke-width: 2;
-      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
-      opacity: 0;
-      transition: opacity 0.2s;
-    `;
-    connectingPathRef.current = connectingPath;
-
-    const debugArcPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    debugArcPath.style.cssText = `
-      fill: none;
-      stroke: #FF6B00;
-      stroke-width: 3;
-      stroke-dasharray: 8,4;
-      opacity: 0;
-      filter: drop-shadow(0 0 3px rgba(255, 107, 0, 0.5));
-    `;
-    debugArcPathRef.current = debugArcPath;
-
-    svg.appendChild(connectingPath);
-    svg.appendChild(debugArcPath);
-    document.body.appendChild(svg);
-
-    return () => {
-      document.body.removeChild(svg);
-    };
-  }, []);
-
-  // Action bar event handlers
-  const handleTouchStart = useCallback((e) => {
-    const touch = e.touches[0];
-    if (!touch) return;
-
-    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    setIsActive(true);
-    setPathPoints([touchStartRef.current]);
-
-    const startPoint = touchStartRef.current;
-    const centerX = window.innerWidth + 300;
-    const centerY = window.innerHeight + 300;
-    
-    // Calculate radius once at the start
-    const radius = Math.sqrt(
-      Math.pow(centerX - startPoint.x, 2) + 
-      Math.pow(centerY - startPoint.y, 2)
-    );
-    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-    
-    setCircleState({
-      centerX,
-      centerY,
-      radius,  // Store radius in state
-      startAngle,
-      endAngle: startAngle
-    });
-  }, []);
-
-  const handleMouseDown = useCallback((e) => {
-    console.log('Action bar mouse down');
-    isMouseDownRef.current = true;
-    touchStartRef.current = { x: e.clientX, y: e.clientY };
-    setIsActive(true);  
-    setPathPoints([touchStartRef.current]);  
-
-    const startPoint = touchStartRef.current;
-    const centerX = window.innerWidth + 300;  
-    const centerY = window.innerHeight + 300;
-    const radius = Math.sqrt(
-      Math.pow(centerX - startPoint.x, 2) + 
-      Math.pow(centerY - startPoint.y, 2)
-    );
-    const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-    
-    setCircleState({
-      centerX,
-      centerY,
-      radius,
-      startAngle,
-      endAngle: startAngle  
-    });
-  }, []);
-
   return (
     <>
       <div 
-        ref={touchStartRef} 
         className="action-bar"
         style={{ 
           opacity: isActive ? 0 : 1,
           pointerEvents: isActive ? 'none' : 'auto',
           transition: 'opacity 0.2s'
         }}
-        onTouchStart={handleTouchStart}
-        onMouseDown={handleMouseDown}
+        onTouchStart={(e) => {
+          const touch = e.touches[0];
+          if (!touch) return;
+
+          touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+          setIsActive(true);
+          setPathPoints([touchStartRef.current]);
+
+          const startPoint = touchStartRef.current;
+          const centerX = window.innerWidth + 300;
+          const centerY = window.innerHeight + 300;
+          
+          // Calculate radius once at the start
+          const radius = Math.sqrt(
+            Math.pow(centerX - startPoint.x, 2) + 
+            Math.pow(centerY - startPoint.y, 2)
+          );
+          const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+          
+          setCircleState({
+            centerX,
+            centerY,
+            radius,  // Store radius in state
+            startAngle,
+            endAngle: startAngle
+          });
+        }}
+        onMouseDown={(e) => {
+          console.log('Action bar mouse down');
+          isMouseDownRef.current = true;
+          touchStartRef.current = { x: e.clientX, y: e.clientY };
+          setIsActive(true);  
+          setPathPoints([touchStartRef.current]);  
+
+          const startPoint = touchStartRef.current;
+          const centerX = window.innerWidth + 300;  
+          const centerY = window.innerHeight + 300;
+          const radius = Math.sqrt(
+            Math.pow(centerX - startPoint.x, 2) + 
+            Math.pow(centerY - startPoint.y, 2)
+          );
+          const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+          
+          setCircleState({
+            centerX,
+            centerY,
+            radius,
+            startAngle,
+            endAngle: startAngle  
+          });
+        }}
       >
         <button className="action-item">📱</button>
         <button className="action-item">📍</button>
@@ -454,7 +401,6 @@ const ArcMenu = () => {
         <button className="action-item">➕</button>
       </div>
 
-      {/* Only show menu buttons when active */}
       {isActive && menuItems.map((button, index) => (
         <button
           key={index}
@@ -465,7 +411,6 @@ const ArcMenu = () => {
         </button>
       ))}
 
-      {/* Touch area - only active when menu is active */}
       <div
         className="arc-menu-touch-area"
         style={{
@@ -479,44 +424,40 @@ const ArcMenu = () => {
         }}
       />
 
-      {/* SVG for visualization */}
-      {svgRef.current && (
-        <svg
-          ref={svgRef}
+      <svg
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          zIndex: 9998
+        }}
+      >
+        <path
+          ref={connectingPathRef}
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none',
-            zIndex: 9998
+            fill: 'none',
+            stroke: 'rgba(255, 255, 255, 0.3)',
+            strokeWidth: 2,
+            filter: 'drop-shadow(0 0 2px rgba(0, 0, 0, 0.3))',
+            opacity: DEBUG_PATH ? (isActive ? 1 : 0) : 0,
+            transition: 'opacity 0.2s'
           }}
-        >
-          <path
-            ref={connectingPathRef}
-            style={{
-              fill: 'none',
-              stroke: 'rgba(255, 255, 255, 0.3)',
-              strokeWidth: 2,
-              filter: 'drop-shadow(0 0 2px rgba(0, 0, 0, 0.3))',
-              opacity: DEBUG_PATH ? (isActive ? 1 : 0) : 0,
-              transition: 'opacity 0.2s'
-            }}
-          />
-          <path
-            ref={debugArcPathRef}
-            style={{
-              fill: 'none',
-              stroke: '#FF6B00',
-              strokeWidth: 3,
-              strokeDasharray: '8,4',
-              opacity: DEBUG_ARC ? (isActive ? 1 : 0) : 0,
-              filter: 'drop-shadow(0 0 3px rgba(255, 107, 0, 0.5))'
-            }}
-          />
-        </svg>
-      )}
+        />
+        <path
+          ref={debugArcPathRef}
+          style={{
+            fill: 'none',
+            stroke: '#FF6B00',
+            strokeWidth: 3,
+            strokeDasharray: '8,4',
+            opacity: DEBUG_ARC ? (isActive ? 1 : 0) : 0,
+            filter: 'drop-shadow(0 0 3px rgba(255, 107, 0, 0.5))'
+          }}
+        />
+      </svg>
     </>
   );
 };
