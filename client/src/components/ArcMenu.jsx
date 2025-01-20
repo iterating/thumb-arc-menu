@@ -31,6 +31,7 @@ const ArcMenu = () => {
   const DEBUG_ARC = true;  // Toggle orange arc path
   const MAX_POINTS = 100;  // Maximum number of points to store
   const MIN_MENU_ANGLE = Math.PI / 6;  // Minimum angle (in radians) to keep menu open (30 degrees)
+  const EDGE_THRESHOLD = 100;  // Distance from edge to consider "near edge" in pixels
   const CLOSE_ANIMATION_MS = 1000;  // Closing animation duration in milliseconds
   const DRAG_DELAY_MS = 150;  // Delay before considering it a drag
   const MIN_DRAG_DISTANCE = 10;  // Minimum distance to move before considering it a drag
@@ -188,8 +189,24 @@ const ArcMenu = () => {
       
       if (isActive) {
         const dragAngle = Math.abs(circleState?.endAngle - circleState?.startAngle) || 0;
-        if (dragAngle >= MIN_MENU_ANGLE) {
-          setLockedCircleState(circleState);
+        const currentPoint = lastPointRef.current;
+        
+        if (currentPoint) {
+          // Check if we dragged far enough angle-wise
+          const hasMinAngle = dragAngle >= MIN_MENU_ANGLE;
+          
+          // Check if we released near the appropriate edge based on drag direction
+          const dx = currentPoint.x - touchStartRef.current.x;
+          const isRightDrag = dx >= 0;
+          const isNearEdge = isRightDrag ? 
+            (currentPoint.x >= window.innerWidth - EDGE_THRESHOLD) : 
+            (currentPoint.x <= EDGE_THRESHOLD);
+
+          if (hasMinAngle || isNearEdge) {
+            setLockedCircleState(circleState);
+          } else {
+            cleanup();
+          }
         } else {
           cleanup();
         }
@@ -202,8 +219,24 @@ const ArcMenu = () => {
       
       if (isActive) {
         const dragAngle = Math.abs(circleState?.endAngle - circleState?.startAngle) || 0;
-        if (dragAngle >= MIN_MENU_ANGLE) {
-          setLockedCircleState(circleState);
+        const currentPoint = lastPointRef.current;
+        
+        if (currentPoint) {
+          // Check if we dragged far enough angle-wise
+          const hasMinAngle = dragAngle >= MIN_MENU_ANGLE;
+          
+          // Check if we released near the appropriate edge based on drag direction
+          const dx = currentPoint.x - touchStartRef.current.x;
+          const isRightDrag = dx >= 0;
+          const isNearEdge = isRightDrag ? 
+            (currentPoint.x >= window.innerWidth - EDGE_THRESHOLD) : 
+            (currentPoint.x <= EDGE_THRESHOLD);
+
+          if (hasMinAngle || isNearEdge) {
+            setLockedCircleState(circleState);
+          } else {
+            cleanup();
+          }
         } else {
           cleanup();
         }
