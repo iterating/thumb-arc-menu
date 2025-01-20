@@ -85,14 +85,14 @@ const ArcMenu = () => {
     const dx = currentPoint.x - startPoint.x;
     const arcDirection = dx >= 0 ? 1 : -1;
     
-    // Fixed circle center based on direction
+    // Fixed center points
     const centerX = arcDirection > 0 ? window.innerWidth + 300 : -300;
     const centerY = window.innerHeight + 300;
 
-    // Calculate radius using start point (remains constant)
+    // Use exact radius from start point
     const radius = Math.sqrt(
-      Math.pow(centerX - startPoint.x, 2) + 
-      Math.pow(centerY - startPoint.y, 2)
+      Math.pow(startPoint.x - centerX, 2) + 
+      Math.pow(startPoint.y - centerY, 2)
     );
 
     // Calculate angles
@@ -466,8 +466,8 @@ const ArcMenu = () => {
               const centerY = window.innerHeight + 300;
               
               const radius = Math.sqrt(
-                Math.pow(centerX - startPoint.x, 2) + 
-                Math.pow(centerY - startPoint.y, 2)
+                Math.pow(startPoint.x - centerX, 2) + 
+                Math.pow(startPoint.y - centerY, 2)
               );
               const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
               
@@ -517,8 +517,8 @@ const ArcMenu = () => {
               const centerX = startPoint.x + 300;
               const centerY = window.innerHeight + 300;
               const radius = Math.sqrt(
-                Math.pow(centerX - startPoint.x, 2) + 
-                Math.pow(centerY - startPoint.y, 2)
+                Math.pow(startPoint.x - centerX, 2) + 
+                Math.pow(startPoint.y - centerY, 2)
               );
               const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
               
