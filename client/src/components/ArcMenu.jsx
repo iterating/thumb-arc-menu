@@ -32,13 +32,15 @@ const ArcMenu = () => {
   const MAX_POINTS = 100;  // Maximum number of points to store
   const MIN_MENU_ANGLE = Math.PI / 6;  // Minimum angle (in radians) to keep menu open (30 degrees)
   const CLOSE_ANIMATION_MS = 1000;  // Closing animation duration in milliseconds
+  const DRAG_DELAY_MS = 150;  // Delay before considering it a drag
+  const MIN_DRAG_DISTANCE = 10;  // Minimum distance to move before considering it a drag
 
   // Potentially unused constants
   const MIN_BUTTON_SIZE = 30;
   const BUTTON_PADDING = 10;
 
   // Core refs we definitely need
-  const touchStartRef = useRef({ x: 0, y: 0 });
+  const touchStartRef = useRef({ x: 0, y: 0, time: 0, target: null });
   const isMouseDownRef = useRef(false);
   const lastPointRef = useRef(null);
   const debugArcPathRef = useRef(null);
@@ -363,59 +365,242 @@ const ArcMenu = () => {
           const touch = e.touches[0];
           if (!touch) return;
 
-          touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-          setIsActive(true);
-          setPathPoints([touchStartRef.current]);
+          touchStartRef.current = { 
+            x: touch.clientX, 
+            y: touch.clientY,
+            time: Date.now(),
+            target: e.target
+          };
+          isMouseDownRef.current = true;
+          
+          // Start a timer to check for long press
+          setTimeout(() => {
+            if (!isMouseDownRef.current) return; // Don't start if released
+            
+            const currentTouch = e.touches[0];
+            if (!currentTouch) return;
+            
+            const distance = Math.sqrt(
+              Math.pow(currentTouch.clientX - touchStartRef.current.x, 2) +
+              Math.pow(currentTouch.clientY - touchStartRef.current.y, 2)
+            );
+            
+            // If we've moved enough or held long enough, start drag
+            if (distance >= MIN_DRAG_DISTANCE || Date.now() - touchStartRef.current.time >= DRAG_DELAY_MS) {
+              setIsActive(true);
+              setPathPoints([touchStartRef.current]);
 
-          const startPoint = touchStartRef.current;
-          const centerX = window.innerWidth + 300;
-          const centerY = window.innerHeight + 300;
-          
-          // Calculate radius once at the start
-          const radius = Math.sqrt(
-            Math.pow(centerX - startPoint.x, 2) + 
-            Math.pow(centerY - startPoint.y, 2)
-          );
-          const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-          
-          setCircleState({
-            centerX,
-            centerY,
-            radius,  // Store radius in state
-            startAngle,
-            endAngle: startAngle
-          });
+              const startPoint = touchStartRef.current;
+              const centerX = window.innerWidth + 300;
+              const centerY = window.innerHeight + 300;
+              
+              const radius = Math.sqrt(
+                Math.pow(centerX - startPoint.x, 2) + 
+                Math.pow(centerY - startPoint.y, 2)
+              );
+              const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+              
+              setCircleState({
+                centerX,
+                centerY,
+                radius,
+                startAngle,
+                endAngle: startAngle
+              });
+            }
+          }, DRAG_DELAY_MS);
         }}
         onMouseDown={(e) => {
           console.log('Action bar mouse down');
+          touchStartRef.current = { 
+            x: e.clientX, 
+            y: e.clientY,
+            time: Date.now(),
+            target: e.target
+          };
           isMouseDownRef.current = true;
-          touchStartRef.current = { x: e.clientX, y: e.clientY };
-          setIsActive(true);  
-          setPathPoints([touchStartRef.current]);  
-
-          const startPoint = touchStartRef.current;
-          const centerX = window.innerWidth + 300;  
-          const centerY = window.innerHeight + 300;
-          const radius = Math.sqrt(
-            Math.pow(centerX - startPoint.x, 2) + 
-            Math.pow(centerY - startPoint.y, 2)
-          );
-          const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
           
-          setCircleState({
-            centerX,
-            centerY,
-            radius,
-            startAngle,
-            endAngle: startAngle  
-          });
+          // Start a timer to check for long press
+          setTimeout(() => {
+            if (!isMouseDownRef.current) return; // Don't start if released
+            
+            const distance = Math.sqrt(
+              Math.pow(e.clientX - touchStartRef.current.x, 2) +
+              Math.pow(e.clientY - touchStartRef.current.y, 2)
+            );
+            
+            // If we've moved enough or held long enough, start drag
+            if (distance >= MIN_DRAG_DISTANCE || Date.now() - touchStartRef.current.time >= DRAG_DELAY_MS) {
+              setIsActive(true);
+              setPathPoints([touchStartRef.current]);
+
+              const startPoint = touchStartRef.current;
+              const centerX = window.innerWidth + 300;
+              const centerY = window.innerHeight + 300;
+              const radius = Math.sqrt(
+                Math.pow(centerX - startPoint.x, 2) + 
+                Math.pow(centerY - startPoint.y, 2)
+              );
+              const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+              
+              setCircleState({
+                centerX,
+                centerY,
+                radius,
+                startAngle,
+                endAngle: startAngle
+              });
+            }
+          }, DRAG_DELAY_MS);
         }}
       >
-        <button className="action-item">📱</button>
-        <button className="action-item">📍</button>
-        <button className="action-item">📷</button>
-        <button className="action-item">⚙️</button>
-        <button className="action-item">➕</button>
+        <button 
+          className="action-item"
+          onClick={(e) => {
+            // Only trigger click if it was a quick tap/click without much movement
+            if (touchStartRef.current && touchStartRef.current.target === e.target) {
+              const timeDiff = Date.now() - touchStartRef.current.time;
+              const distance = Math.sqrt(
+                Math.pow(e.clientX - touchStartRef.current.x, 2) +
+                Math.pow(e.clientY - touchStartRef.current.y, 2)
+              );
+              
+              // If it was a quick tap without much movement, handle the click
+              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+                // Handle button click
+                console.log('Button clicked!');
+              }
+            }
+          }}
+        >
+          📱
+        </button>
+        <button 
+          className="action-item"
+          onClick={(e) => {
+            // Only trigger click if it was a quick tap/click without much movement
+            if (touchStartRef.current && touchStartRef.current.target === e.target) {
+              const timeDiff = Date.now() - touchStartRef.current.time;
+              const distance = Math.sqrt(
+                Math.pow(e.clientX - touchStartRef.current.x, 2) +
+                Math.pow(e.clientY - touchStartRef.current.y, 2)
+              );
+              
+              // If it was a quick tap without much movement, handle the click
+              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+                // Handle button click
+                console.log('Button clicked!');
+              }
+            }
+          }}
+        >
+          📍
+        </button>
+        <button 
+          className="action-item"
+          onClick={(e) => {
+            // Only trigger click if it was a quick tap/click without much movement
+            if (touchStartRef.current && touchStartRef.current.target === e.target) {
+              const timeDiff = Date.now() - touchStartRef.current.time;
+              const distance = Math.sqrt(
+                Math.pow(e.clientX - touchStartRef.current.x, 2) +
+                Math.pow(e.clientY - touchStartRef.current.y, 2)
+              );
+              
+              // If it was a quick tap without much movement, handle the click
+              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+                // Handle button click
+                console.log('Button clicked!');
+              }
+            }
+          }}
+        >
+          📷
+        </button>
+        <button 
+          className="action-item"
+          onClick={(e) => {
+            // Only trigger click if it was a quick tap/click without much movement
+            if (touchStartRef.current && touchStartRef.current.target === e.target) {
+              const timeDiff = Date.now() - touchStartRef.current.time;
+              const distance = Math.sqrt(
+                Math.pow(e.clientX - touchStartRef.current.x, 2) +
+                Math.pow(e.clientY - touchStartRef.current.y, 2)
+              );
+              
+              // If it was a quick tap without much movement, handle the click
+              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+                // Handle button click
+                console.log('Button clicked!');
+              }
+            }
+          }}
+        >
+          ✏️
+        </button>
+        <button 
+          className="action-item"
+          onClick={(e) => {
+            // Only trigger click if it was a quick tap/click without much movement
+            if (touchStartRef.current && touchStartRef.current.target === e.target) {
+              const timeDiff = Date.now() - touchStartRef.current.time;
+              const distance = Math.sqrt(
+                Math.pow(e.clientX - touchStartRef.current.x, 2) +
+                Math.pow(e.clientY - touchStartRef.current.y, 2)
+              );
+              
+              // If it was a quick tap without much movement, handle the click
+              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+                // Handle button click
+                console.log('Button clicked!');
+              }
+            }
+          }}
+        >
+          🗑️
+        </button>
+        <button 
+          className="action-item"
+          onClick={(e) => {
+            // Only trigger click if it was a quick tap/click without much movement
+            if (touchStartRef.current && touchStartRef.current.target === e.target) {
+              const timeDiff = Date.now() - touchStartRef.current.time;
+              const distance = Math.sqrt(
+                Math.pow(e.clientX - touchStartRef.current.x, 2) +
+                Math.pow(e.clientY - touchStartRef.current.y, 2)
+              );
+              
+              // If it was a quick tap without much movement, handle the click
+              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+                // Handle button click
+                console.log('Button clicked!');
+              }
+            }
+          }}
+        >
+          📤
+        </button>
+        <button 
+          className="action-item"
+          onClick={(e) => {
+            // Only trigger click if it was a quick tap/click without much movement
+            if (touchStartRef.current && touchStartRef.current.target === e.target) {
+              const timeDiff = Date.now() - touchStartRef.current.time;
+              const distance = Math.sqrt(
+                Math.pow(e.clientX - touchStartRef.current.x, 2) +
+                Math.pow(e.clientY - touchStartRef.current.y, 2)
+              );
+              
+              // If it was a quick tap without much movement, handle the click
+              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+                // Handle button click
+                console.log('Button clicked!');
+              }
+            }
+          }}
+        >
+          ➕
+        </button>
       </div>
 
       {/* Show buttons during active drag, when locked open, or during closing animation */}

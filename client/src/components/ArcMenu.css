@@ -30,12 +30,16 @@
   justify-content: center;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;
-  pointer-events: none; /* Let parent handle all events */
 }
 
 .action-item:hover {
   transform: scale(1.1);
   background: rgba(255, 255, 255, 0.3);
+}
+
+.action-item:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .arc-menu-button {
