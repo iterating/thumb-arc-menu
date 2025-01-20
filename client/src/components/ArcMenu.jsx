@@ -120,8 +120,8 @@ const ArcMenu = () => {
     const dx = currentX - touchStartRef.current.x;
     const arcDirection = dx >= 0 ? 1 : -1;
     
-    // Use the same circle center calculation as fitCircleToPoints
-    const centerX = arcDirection > 0 ? window.innerWidth + 300 : -300;
+    // Use a relative offset from the starting point instead of screen edge
+    const centerX = touchStartRef.current.x + (arcDirection * 300);
     const centerY = window.innerHeight + 300;
 
     // Use the radius from circleState since it's fixed for this drag
@@ -130,6 +130,14 @@ const ArcMenu = () => {
     // Calculate the Y coordinate for this X position on the circle
     const dx2 = currentX - centerX;
     const r2 = radius * radius;
+    console.log('Circle math:', {
+      dx2,
+      r2,
+      diff: r2 - dx2 * dx2,
+      startX: touchStartRef.current.x,
+      currentX,
+      centerX
+    });
     const minY = centerY - Math.sqrt(r2 - dx2 * dx2);
     
     // Use the higher of minY or rawY to stay on or below the arc
@@ -149,6 +157,15 @@ const ArcMenu = () => {
     const distance = getDistance(currentX, currentY, lastPoint.x, lastPoint.y);
     
     if (distance >= SAMPLE_DISTANCE) {
+      console.log('Buttons moving:', {
+        startX: touchStartRef.current.x,
+        startY: touchStartRef.current.y,
+        currentX,
+        currentY,
+        arcDirection,
+        dx,
+        distance
+      });
       lastPointRef.current = currentPoint;
       
       // Only update circle state, skip path points for performance
@@ -420,11 +437,19 @@ const ArcMenu = () => {
             
             // If we've moved enough or held long enough, start drag
             if (distance >= MIN_DRAG_DISTANCE || Date.now() - touchStartRef.current.time >= DRAG_DELAY_MS) {
+              console.log('Touch movement threshold met:', {
+                startX: touchStartRef.current.x,
+                startY: touchStartRef.current.y,
+                currentX: currentTouch.clientX,
+                currentY: currentTouch.clientY,
+                distance,
+                timeDiff: Date.now() - touchStartRef.current.time
+              });
               setIsActive(true);
               setPathPoints([touchStartRef.current]);
 
               const startPoint = touchStartRef.current;
-              const centerX = window.innerWidth + 300;
+              const centerX = startPoint.x + 300;
               const centerY = window.innerHeight + 300;
               
               const radius = Math.sqrt(
@@ -464,11 +489,19 @@ const ArcMenu = () => {
             
             // If we've moved enough or held long enough, start drag
             if (distance >= MIN_DRAG_DISTANCE || Date.now() - touchStartRef.current.time >= DRAG_DELAY_MS) {
+              console.log('Movement threshold met:', {
+                startX: touchStartRef.current.x,
+                startY: touchStartRef.current.y,
+                currentX: e.clientX,
+                currentY: e.clientY,
+                distance,
+                timeDiff: Date.now() - touchStartRef.current.time
+              });
               setIsActive(true);
               setPathPoints([touchStartRef.current]);
 
               const startPoint = touchStartRef.current;
-              const centerX = window.innerWidth + 300;
+              const centerX = startPoint.x + 300;
               const centerY = window.innerHeight + 300;
               const radius = Math.sqrt(
                 Math.pow(centerX - startPoint.x, 2) + 
