@@ -306,10 +306,7 @@ const ArcMenu = () => {
         left: ${isClosing ? touchStartRef.current.x : pos.x}px;
         top: ${isClosing ? touchStartRef.current.y : pos.y}px;
         transform: scale(${pos.scale});
-        transition: ${isClosing ? 
-          `all ${CLOSE_ANIMATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)` : 
-          'all 0.1s ease-out'
-        };
+        transition: ${isClosing ? `all ${CLOSE_ANIMATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)` : 'none'};
         pointer-events: ${isClosing ? 'none' : 'auto'};
         background: white;
         border-radius: 50%;
