@@ -234,14 +234,34 @@ const ArcMenu = () => {
   useEffect(() => {
     if (!isActive) return;
 
+    // Pre-calculate values used for all buttons
+    const { centerX, centerY, radius: radiusMult, startAngle, endAngle } = circleState;
+    const angleDelta = (endAngle - startAngle) / (menuItems.length - 1);
+    
+    // Pre-calculate sin/cos values for start and delta angles
+    const startCos = Math.cos(startAngle);
+    const startSin = Math.sin(startAngle);
+    const deltaCos = Math.cos(angleDelta);
+    const deltaSin = Math.sin(angleDelta);
+    
+    // First button position
+    let currentCos = startCos;
+    let currentSin = startSin;
+
     const positions = menuItems.map((_, index) => {
-      // Pre-calculate values used for all buttons
-      const angleDelta = (circleState.endAngle - circleState.startAngle) / (menuItems.length - 1);
-      const radiusMult = circleState.radius; // Only access once
+      // Calculate position using current sin/cos
+      const x = centerX + radiusMult * currentCos;
+      const y = centerY + radiusMult * currentSin;
       
-      const angle = circleState.startAngle + (index * angleDelta);
-      const x = circleState.centerX + radiusMult * Math.cos(angle);
-      const y = circleState.centerY + radiusMult * Math.sin(angle);
+      // Update sin/cos for next button using angle addition formulas
+      // cos(A+B) = cos(A)cos(B) - sin(A)sin(B)
+      // sin(A+B) = sin(A)cos(B) + cos(A)sin(B)
+      if (index < menuItems.length - 1) {
+        const nextCos = currentCos * deltaCos - currentSin * deltaSin;
+        const nextSin = currentSin * deltaCos + currentCos * deltaSin;
+        currentCos = nextCos;
+        currentSin = nextSin;
+      }
       
       return {
         x: x,
