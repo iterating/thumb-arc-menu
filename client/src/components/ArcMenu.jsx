@@ -117,9 +117,28 @@ const ArcMenu = () => {
     if (!isActive) return;
 
     const currentX = e.clientX ?? e.touches?.[0]?.clientX;
-    const currentY = Math.min(e.clientY ?? e.touches?.[0]?.clientY, touchStartRef.current.y);
+    const rawY = e.clientY ?? e.touches?.[0]?.clientY;
 
-    if (typeof currentX !== 'number' || typeof currentY !== 'number') return;
+    if (typeof currentX !== 'number' || typeof rawY !== 'number') return;
+
+    // Calculate the minimum Y (highest point) for the current X position
+    const dx = currentX - touchStartRef.current.x;
+    const arcDirection = dx >= 0 ? 1 : -1;
+    
+    // Use the same circle center calculation as fitCircleToPoints
+    const centerX = arcDirection > 0 ? window.innerWidth + 300 : -300;
+    const centerY = window.innerHeight + 300;
+    const radius = Math.sqrt(
+      Math.pow(centerX - touchStartRef.current.x, 2) + 
+      Math.pow(centerY - touchStartRef.current.y, 2)
+    );
+
+    // Calculate the Y coordinate for this X position on the circle
+    const dx2 = currentX - centerX;
+    const minY = centerY - Math.sqrt(radius * radius - dx2 * dx2);
+    
+    // Use the higher of minY or rawY to stay on or below the arc
+    const currentY = Math.max(minY, rawY);
 
     if (currentX < 0 || currentX > window.innerWidth || 
         currentY < 0 || currentY > window.innerHeight) {
