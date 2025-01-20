@@ -116,43 +116,56 @@ const ArcMenu = () => {
 
     if (typeof currentX !== 'number' || typeof rawY !== 'number') return;
 
-    // Calculate the minimum Y (highest point) for the current X position
+    // Calculate how "open" the fan is based on distance to margin
     const dx = currentX - touchStartRef.current.x;
     const arcDirection = dx >= 0 ? 1 : -1;
     
-    // Use a relative offset from the starting point instead of screen edge
-    const centerX = touchStartRef.current.x + (arcDirection * 300);
-    const centerY = window.innerHeight + 300;
-
-    // Use the radius from circleState since it's fixed for this drag
-    const { radius } = circleState;
-
-    // Calculate the Y coordinate for this X position on the circle
-    const dx2 = currentX - centerX;
-    const r2 = radius * radius;
-    console.log('Circle math:', {
-      dx2,
-      r2,
-      diff: r2 - dx2 * dx2,
-      startX: touchStartRef.current.x,
-      currentX,
-      centerX
-    });
-    const minY = centerY - Math.sqrt(r2 - dx2 * dx2);
+    // Calculate margins and distances
+    const marginX = arcDirection > 0 ? 
+      window.innerWidth - BUTTON_SIZE / 2 - BUTTON_PADDING :  // Right margin
+      BUTTON_SIZE / 2 + BUTTON_PADDING;                       // Left margin
     
-    // Use the higher of minY or rawY to stay on or below the arc
-    // AND never go below the start point
-    const currentY = Math.min(
-      touchStartRef.current.y,  // Never go below start point
-      Math.max(minY, rawY)      // Never go above the arc
+    // Clamp X position to margins
+    const clampedX = Math.min(
+      window.innerWidth - BUTTON_SIZE / 2 - BUTTON_PADDING,
+      Math.max(BUTTON_SIZE / 2 + BUTTON_PADDING, currentX)
     );
 
-    if ((currentX < ( BUTTON_SIZE / 2 + BUTTON_PADDING) || currentX > window.innerWidth - BUTTON_SIZE / 2 - BUTTON_PADDING) || 
-        (currentY < 0|| currentY > window.innerHeight)) {
+    // Calculate fan percentage based on available space in drag direction
+    const availableSpace = arcDirection > 0 ?
+      marginX - touchStartRef.current.x :  // Space to right margin
+      touchStartRef.current.x - marginX;   // Space to left margin
+    
+    const distanceMoved = arcDirection > 0 ?
+      clampedX - touchStartRef.current.x :  // Distance moved right
+      touchStartRef.current.x - clampedX;   // Distance moved left
+    
+    // Fan opens based on % of available space used
+    const percentToMargin = Math.min(1, Math.max(0, distanceMoved / availableSpace));
+    
+    // Make maxRise proportional to available space for consistent arc shape
+    const maxRise = Math.min(availableSpace * 0.5, window.innerHeight * 0.4);
+    const fanSpread = maxRise * percentToMargin;
+    
+    console.log('Fan %:', Math.round(percentToMargin * 100) + '%', {
+      distanceMoved,
+      availableSpace,
+      startX: touchStartRef.current.x,
+      currentX: clampedX,
+      marginX,
+      maxRise,
+      fanSpread,
+      arcDirection
+    });
+    
+    // Y position is purely based on fan spread, ignore mouse Y
+    const currentY = Math.max(BUTTON_SIZE / 2, touchStartRef.current.y - fanSpread);
+
+    if (currentY > window.innerHeight - BUTTON_SIZE / 2) {
       return;
     }
 
-    const currentPoint = { x: currentX, y: currentY };
+    const currentPoint = { x: clampedX, y: currentY };
     const lastPoint = lastPointRef.current || touchStartRef.current;
     const distance = getDistance(currentX, currentY, lastPoint.x, lastPoint.y);
     
