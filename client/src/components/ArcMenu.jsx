@@ -119,6 +119,18 @@ const ArcMenu = () => {
       return;
     }
 
+    // BUTTON BOUNDARY CHECK 1: Reject if too close to left edge
+    // Comment out this if-block to disable left boundary check
+    if (currentX < (BUTTON_SIZE + BUTTON_PADDING)) {
+      return;
+    }
+
+    // BUTTON BOUNDARY CHECK 2: Reject if too close to right edge
+    // Comment out this if-block to disable right boundary check
+    if (currentX > (window.innerWidth - (BUTTON_SIZE + BUTTON_PADDING))) {
+      return;
+    }
+
     // Direction detection (same as original)
     if (arcDirectionRef.current === null && pathPoints.length >= MIN_POINTS_FOR_DIRECTION) {
       const dx = currentX - touchStartRef.current.x;
