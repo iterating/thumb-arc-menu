@@ -20,7 +20,7 @@ function PageHeader({ children }) {
               { text: 'Logout', id: 'logout' }
             ]}
             cssClass="hamburger-menu"
-            iconCss="e-icons e-menu"
+            iconCss="e-icons e-menu-icon"
           />
         </div>
         <div className="header-content">

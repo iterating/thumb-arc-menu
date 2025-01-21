@@ -47,7 +47,7 @@ const cardTemplate = (props) => {
             </div>
             <div className="header-progress">
               <ProgressBar 
-                value={props.progress || 0} 
+                value={25} 
                 height="4px" 
                 width="60px"
                 showValue={false}
@@ -57,15 +57,13 @@ const cardTemplate = (props) => {
           {/* Second row */}
           <div className="header-row">
             <h3 className="card-title">{props.Title || 'Untitled'}</h3>
-            {props.uiState?.isExpanded !== false && (
-              <button 
-                className="edit-button" 
-                onClick={handleEdit}
-                title="Edit card"
-              >
-                ✎
-              </button>
-            )}
+            <button 
+              className="edit-button" 
+              onClick={handleEdit}
+              title="Edit card"
+            >
+              ✎
+            </button>
           </div>
         </div>
 
