@@ -13,10 +13,8 @@ const cardTemplate = (props) => {
 
   const handleClick = (e) => {
     e.stopPropagation();
-    // Toggle in data for persistence
     if (!props.uiState) props.uiState = {};
     props.uiState.isExpanded = !props.uiState.isExpanded;
-    // Force just this card to update
     forceUpdate({});
   };
   
@@ -51,6 +49,11 @@ const cardTemplate = (props) => {
 function KanbanBoard({ boardId }) {
   const template = boardTemplates[boardId];
 
+  // Prevent accidental double-clicks
+  const handleCardDoubleClick = (e) => {
+    e.cancel = true; // Cancel default double-click behavior
+  };
+
   return (
     <KanbanComponent
       dataSource={template.data}
@@ -59,6 +62,13 @@ function KanbanBoard({ boardId }) {
         template: cardTemplate,
         headerField: "Title"
       }}
+      dialogSettings={{
+        showHeader: false,
+        enableResize: false,
+        width: '300px',
+        height: '300px'
+      }}
+      cardDoubleClick={handleCardDoubleClick}
     >
       <ColumnsDirective>
         {template.columns.map(column => (
