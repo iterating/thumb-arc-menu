@@ -1,0 +1,17 @@
+.kanban-tabs {
+  width: 100%;
+  background: #fff;
+}
+
+.kanban-tabs .e-tab {
+  background: transparent;
+  border: none;
+}
+
+.kanban-tabs .e-tab .e-tab-header {
+  background: transparent;
+}
+
+.kanban-tabs .e-tab .e-tab-header .e-toolbar-item .e-tab-text {
+  color: #333;
+}
