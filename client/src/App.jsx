@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { MenuProvider } from './contexts/MenuContext';
 import ThumbMenu from './components/ThumbMenu';
-import ArcMenu from './components/ArcMenu';
+import ActionBar from './components/ActionBar';
 import Home from './pages/Home';
 import Mindset from './pages/Mindset';
 import Today from './pages/Today';
@@ -110,7 +110,7 @@ function App() {
             </Routes>
           </div>
           
-          <ArcMenu />
+          <ActionBar />
           <NavigationBar activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
       </MenuProvider>

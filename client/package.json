@@ -17,6 +17,7 @@
     "@syncfusion/ej2-react-kanban": "^28.1.39",
     "@syncfusion/ej2-react-navigations": "^28.1.39",
     "@syncfusion/ej2-react-notifications": "^28.1.33",
+    "@syncfusion/ej2-react-popups": "^28.1.39",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.3"
