@@ -1,0 +1,371 @@
+.dream-card {
+  background-color: var(--card-bg-color, #ffffff);
+  border-radius: var(--card-border-radius, 8px);
+  box-shadow: var(--card-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
+  margin: 8px;
+  padding: 0.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  height: 5rem;
+}
+
+.dream-card.expanded {
+  height: 16rem;
+}
+
+.dream-card-basic {
+  display: grid;
+  grid-template-rows: 1.1rem 1.5rem 0.5rem auto;
+  height: 100%;
+}
+
+.dream-card.expanded .dream-card-basic {
+  grid-template-rows: 1.1rem 1.5rem 1fr auto;
+}
+
+/* Top row with date and toggle */
+.dream-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.dream-card-header-date {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-secondary);
+}
+
+.dream-card-title-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: start;
+  margin-top: -0.25rem;
+}
+
+.dream-card-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.dream-card-spacer {
+  min-height: 1.25rem;
+}
+
+.dream-card-next-step {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  min-height: min-content;
+}
+
+.dream-card-next-step-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.dream-card-next-step-date {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.dream-card-edit {
+  float: right;
+  width: 2rem;
+  padding: 0 0 0 1rem;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  background: none;
+}
+
+.dream-card.expanded .dream-card-edit {
+  opacity: 0.5;
+  pointer-events: auto;
+}
+
+.dream-card-edit:hover {
+  opacity: 1;
+}
+
+.dream-card-edit:focus {
+  outline: none;  
+  box-shadow: none;
+}
+
+.dream-card:hover {
+  box-shadow: var(--card-hover-shadow, 0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.dream-card.selected {
+  border: 2px solid var(--primary-color, #007bff);
+}
+
+/* Header Styles */
+.dream-card-header {
+  margin-bottom: 6px;
+}
+
+.dream-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.dream-card-actions button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: var(--text-secondary, #666);
+  transition: background-color 0.2s ease;
+}
+
+.dream-card-actions button:hover {
+  background-color: var(--hover-bg, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #333);
+}
+
+/* Meta Information */
+.dream-card-meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  display: none;
+}
+
+.dream-card-type,
+.dream-card-priority {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 500;
+}
+
+/* Type-specific styles */
+.dream-card-type-dream { background-color: var(--dream-color, #e3f2fd); }
+.dream-card-type-goal { background-color: var(--goal-color, #e8f5e9); }
+.dream-card-type-plan { background-color: var(--plan-color, #fff3e0); }
+.dream-card-type-achieve { background-color: var(--achieve-color, #f3e5f5); }
+
+/* Priority-specific styles */
+.dream-card-priority-high { color: var(--priority-high-color, #d32f2f); }
+.dream-card-priority-medium { color: var(--priority-medium-color, #f57c00); }
+.dream-card-priority-low { color: var(--priority-low-color, #388e3c); }
+
+/* Description */
+.dream-card-description {
+  margin: 8px 0;
+  font-size: 0.9em;
+  color: var(--text-secondary, #666);
+  line-height: 1.4;
+  display: none;
+}
+
+/* Progress Bar */
+.dream-card-progress {
+  height: 4px;
+  background-color: var(--progress-bg, #e0e0e0);
+  border-radius: 2px;
+  margin: 12px 0;
+  position: relative;
+  display: none;
+}
+
+.dream-card-progress-bar {
+  height: 100%;
+  background-color: var(--progress-color, #4caf50);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.dream-card-progress-text {
+  position: absolute;
+  right: 0;
+  top: -18px;
+  font-size: 0.8em;
+  color: var(--text-secondary, #666);
+}
+
+/* Footer */
+.dream-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color, #eee);
+  display: none;
+}
+
+.dream-card-stats,
+.dream-card-members {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.dream-card-stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary, #666);
+  font-size: 0.85em;
+}
+
+/* Extended Content */
+.dream-card-extended {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color, #eee);
+  display: none;
+}
+
+.dream-card-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.dream-card-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-secondary, #666);
+}
+
+/* Tags */
+.dream-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.dream-card-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background-color: var(--tag-bg, #f5f5f5);
+  border-radius: 12px;
+  font-size: 0.8em;
+  color: var(--text-secondary, #666);
+}
+
+/* Assignees */
+.dream-card-assignee-list {
+  margin: 12px 0;
+}
+
+.dream-card-assignee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  color: var(--text-secondary, #666);
+  font-size: 0.9em;
+}
+
+/* Metrics */
+.dream-card-metrics {
+  display: flex;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.dream-card-metric {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary, #666);
+  font-size: 0.85em;
+}
+
+/* Comments */
+.dream-card-comments {
+  margin: 16px 0;
+}
+
+.dream-card-comment {
+  padding: 8px;
+  margin: 8px 0;
+  background-color: var(--comment-bg, #f5f5f5);
+  border-radius: 4px;
+}
+
+.dream-comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 0.85em;
+  color: var(--text-secondary, #666);
+}
+
+.dream-comment-date {
+  margin-left: auto;
+  font-size: 0.9em;
+}
+
+.dream-comment-content {
+  margin: 4px 0;
+  font-size: 0.9em;
+  color: var(--text-primary, #333);
+}
+
+/* Attachments */
+.dream-card-attachments {
+  margin: 12px 0;
+}
+
+.dream-card-attachment {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.dream-card-attachment a {
+  color: var(--link-color, #2196f3);
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.dream-card-attachment a:hover {
+  text-decoration: underline;
+}
