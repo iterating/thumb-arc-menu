@@ -20,6 +20,7 @@ function KanbanBoard({ boardId }) {
             key={column.keyField}
             headerText={column.headerText}
             keyField={column.keyField}
+            allowToggle={true}
           />
         ))}
       </ColumnsDirective>
