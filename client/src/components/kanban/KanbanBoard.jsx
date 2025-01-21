@@ -3,6 +3,7 @@ import { KanbanComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/
 import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-react-kanban/styles/material.css';
 import { boardTemplates } from './constants';
+import { formatDateTime } from '../../utils/dateTime';
 import './KanbanBoard.css';
 
 // Custom template for Kanban cards
@@ -23,6 +24,8 @@ const cardTemplate = (props) => {
     cursor: 'pointer'
   };
 
+  const formattedDateTime = formatDateTime(props.dueDate, props.dueTime);
+
   return (
     <div className={`card-template ${!props.uiState?.isExpanded ? 'compact' : ''}`} 
          style={cardStyle}
@@ -30,7 +33,12 @@ const cardTemplate = (props) => {
       <div className="e-card-content">
         {/* Header - Always visible */}
         <div className="card-header">
-          <h3>{props.Title || 'Untitled'}</h3>
+          <div className="header-main">
+            <h3>{props.Title || 'Untitled'}</h3>
+            {formattedDateTime && (
+              <span className="due-date">{formattedDateTime}</span>
+            )}
+          </div>
           {props.Priority && (
             <span className={`priority-tag ${props.Priority.toLowerCase()}`}>
               {props.Priority}
@@ -39,15 +47,33 @@ const cardTemplate = (props) => {
         </div>
 
         {/* Body - Toggleable */}
-        {props.uiState?.isExpanded !== false && props.Summary && (
+        {props.uiState?.isExpanded !== false && (
           <div className="card-body">
-            {props.Summary}
+            {props.Summary && <div className="card-summary">{props.Summary}</div>}
+            {props.steps && props.steps.length > 0 && (
+              <div className="card-steps">
+                {props.steps.map((step, index) => (
+                  <div key={index} className="step-item">
+                    <input 
+                      type="checkbox" 
+                      checked={step.isComplete} 
+                      readOnly 
+                    />
+                    <span className="step-name">{step.name}</span>
+                    {formatDateTime(step.dueDate, step.dueTime) && (
+                      <span className="step-due">
+                        {formatDateTime(step.dueDate, step.dueTime)}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {/* Footer - Always visible */}
         <div className="card-footer">
-          {props.DueDate && <span>Due: {props.DueDate}</span>}
           {props.Status && <span>Status: {props.Status}</span>}
         </div>
       </div>
@@ -60,7 +86,7 @@ function KanbanBoard({ boardId }) {
 
   // Prevent accidental double-clicks
   const handleCardDoubleClick = (e) => {
-    e.cancel = true; // Cancel default double-click behavior
+    e.cancel = true;
   };
 
   return (
@@ -70,12 +96,6 @@ function KanbanBoard({ boardId }) {
       cardSettings={{ 
         template: cardTemplate,
         headerField: "Title"
-      }}
-      dialogSettings={{
-        showHeader: false,
-        enableResize: false,
-        width: '300px',
-        height: '300px'
       }}
       cardDoubleClick={handleCardDoubleClick}
     >
