@@ -14,13 +14,13 @@ import {
   Eye,
   Share2
 } from 'react-feather';
-import { useDreamCardService } from '../../hooks/useDreamCardService';
-import { dreamStorage } from '../../storage/genericStorage';
-import DreamCardModel from '../../models/DreamCard';
-import { formatDateForDisplay } from '../../utils/dateManager';
-import './DreamCard.css';
-import PencilIcon from '../Icons/PencilIcon';
-import ProgressBarIcon from '../Icons/ProgressBarIcon';
+import { useDreamCardService } from '../../../hooks/useDreamCardService';
+import { dreamStorage } from '../../../storage/genericStorage';
+import DreamCardModel from '../../../models/DreamCard';
+import { formatDateForDisplay } from '../../../utils/dateManager';
+import './KanbanCard.css';
+import PencilIcon from '../../Icons/PencilIcon';
+import ProgressBarIcon from '../../Icons/ProgressBarIcon';
 
 const POLL_INTERVAL = 8000;
 
