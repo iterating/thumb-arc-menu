@@ -3,6 +3,26 @@ import { KanbanComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/
 import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-react-kanban/styles/material.css';
 
+// Add custom styles for the Kanban dialog
+const dialogStyles = `
+  .e-dialog .e-footer-content {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 1rem;
+  }
+
+  .e-dialog .e-footer-content button {
+    width: auto;
+    min-width: 80px;
+    margin: 0;
+  }
+
+  .e-dialog .e-dlg-content {
+    padding: 1rem;
+  }
+`;
+
 function DreamBuilder() {
   const data = [
     {
@@ -25,6 +45,32 @@ function DreamBuilder() {
     }
   ];
 
+  const cardSettings = {
+    contentField: "Summary",
+    headerField: "Title"
+  };
+
+  const dialogSettings = {
+    fields: [
+      { text: 'ID', key: 'Id', type: 'TextBox', validationRules: { required: true, number: true } },
+      { text: 'Status', key: 'Status', type: 'DropDown' },
+      { text: 'Title', key: 'Title', type: 'TextBox', validationRules: { required: true } },
+      { text: 'Summary', key: 'Summary', type: 'TextArea' }
+    ]
+  };
+
+  React.useEffect(() => {
+    // Add the custom styles to the document
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = dialogStyles;
+    document.head.appendChild(styleSheet);
+
+    return () => {
+      // Clean up the styles when component unmounts
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
+
   return (
     <div className="page">
       <h1>Dream Builder</h1>
@@ -33,10 +79,9 @@ function DreamBuilder() {
           id="kanban"
           dataSource={data}
           keyField="Status"
-          cardSettings={{
-            contentField: "Summary",
-            headerField: "Title"
-          }}
+          cardSettings={cardSettings}
+          dialogSettings={dialogSettings}
+          enablePersistence={true}
         >
           <ColumnsDirective>
             <ColumnDirective headerText="To Do" keyField="To Do" />

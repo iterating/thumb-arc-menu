@@ -16,6 +16,15 @@
   },
   "dependencies": {
     "@syncfusion/ej2-base": "^28.1.33",
+    "@syncfusion/ej2-buttons": "^28.1.39",
+    "@syncfusion/ej2-calendars": "^28.1.39",
+    "@syncfusion/ej2-data": "^28.1.33",
+    "@syncfusion/ej2-dropdowns": "^28.1.39",
+    "@syncfusion/ej2-inputs": "^28.1.37",
+    "@syncfusion/ej2-layouts": "^28.1.33",
+    "@syncfusion/ej2-lists": "^28.1.37",
+    "@syncfusion/ej2-navigations": "^28.1.39",
+    "@syncfusion/ej2-popups": "^28.1.39",
     "@syncfusion/ej2-react-base": "^28.1.38",
     "@syncfusion/ej2-react-kanban": "^28.1.39"
   }
