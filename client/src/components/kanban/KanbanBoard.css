@@ -1,0 +1,66 @@
+.card-template {
+    padding: 8px;
+    text-align: left;
+}
+
+.e-card-template-wrap {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 4px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.priority-tag {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.priority-tag.high {
+    background-color: #ffecec;
+    color: #ff5252;
+}
+
+.priority-tag.medium {
+    background-color: #fff4e5;
+    color: #ff9800;
+}
+
+.priority-tag.low {
+    background-color: #e8f5e9;
+    color: #4caf50;
+}
+
+.e-card-content {
+    padding: 12px;
+    text-align: left;
+}
+
+.card-body {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.card-footer {
+    font-size: 12px;
+    color: #888;
+    text-align: left;
+}
