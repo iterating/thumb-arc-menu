@@ -13,8 +13,23 @@ const cardTemplate = (props) => {
     return null;
   }
   
+  const uiState = props.uiState || {
+    backgroundColor: '#ffffff',
+    textColor: '#333333',
+    isExpanded: true,
+    isHighlighted: false,
+    customStyles: {}
+  };
+
+  const cardStyle = {
+    backgroundColor: uiState.backgroundColor,
+    color: uiState.textColor,
+    ...(uiState.isHighlighted && { border: '2px solid #1976d2' }),
+    ...uiState.customStyles
+  };
+
   return (
-    <div className="card-template">
+    <div className={`card-template ${!uiState.isExpanded ? 'compact' : ''}`} style={cardStyle}>
       <div className="e-card-content">
         <div className="card-header">
           <h3>{props.Title || 'Untitled'}</h3>
@@ -24,10 +39,12 @@ const cardTemplate = (props) => {
             </span>
           )}
         </div>
-        <div className="card-body">
-          {props.Summary}
-        </div>
-        {props.DueDate && (
+        {uiState.isExpanded && (
+          <div className="card-body">
+            {props.Summary}
+          </div>
+        )}
+        {props.DueDate && uiState.isExpanded && (
           <div className="card-footer">
             Due: {props.DueDate}
           </div>

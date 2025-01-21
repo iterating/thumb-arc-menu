@@ -53,25 +53,53 @@ export const boardTemplates = {
         Id: 1,
         Title: 'Travel the world',
         Status: 'Dreams',
-        Summary: 'Visit at least 10 countries in 5 years'
+        Summary: 'Visit at least 10 countries in 5 years',
+        uiState: {
+          backgroundColor: '#ffffff',
+          textColor: '#333333',
+          isExpanded: true,
+          isHighlighted: false,
+          customStyles: {}
+        }
       },
       {
         Id: 2,
         Title: 'Learn piano',
         Status: 'Goals',
-        Summary: 'Take piano lessons and practice regularly'
+        Summary: 'Take piano lessons and practice regularly',
+        uiState: {
+          backgroundColor: '#f8f9fa',
+          textColor: '#333333',
+          isExpanded: true,
+          isHighlighted: false,
+          customStyles: {}
+        }
       },
       {
         Id: 3,
         Title: 'Weekly practice schedule',
         Status: 'Plans',
-        Summary: 'Create a weekly schedule for piano practice'
+        Summary: 'Create a weekly schedule for piano practice',
+        uiState: {
+          backgroundColor: '#ffffff',
+          textColor: '#333333',
+          isExpanded: true,
+          isHighlighted: false,
+          customStyles: {}
+        }
       },
       {
         Id: 4,
         Title: 'First recital',
         Status: 'Achievements',
-        Summary: 'Performed at first piano recital'
+        Summary: 'Performed at first piano recital',
+        uiState: {
+          backgroundColor: '#ffffff',
+          textColor: '#333333',
+          isExpanded: true,
+          isHighlighted: false,
+          customStyles: {}
+        }
       }
     ]
   },
@@ -86,19 +114,40 @@ export const boardTemplates = {
         Id: 1,
         Title: 'Project proposal',
         Status: 'To Do',
-        Summary: 'Write project proposal for new client'
+        Summary: 'Write project proposal for new client',
+        uiState: {
+          backgroundColor: '#ffffff',
+          textColor: '#333333',
+          isExpanded: true,
+          isHighlighted: false,
+          customStyles: {}
+        }
       },
       {
         Id: 2,
         Title: 'Client meeting',
         Status: 'In Progress',
-        Summary: 'Prepare presentation for client meeting'
+        Summary: 'Prepare presentation for client meeting',
+        uiState: {
+          backgroundColor: '#f8f9fa',
+          textColor: '#333333',
+          isExpanded: true,
+          isHighlighted: false,
+          customStyles: {}
+        }
       },
       {
         Id: 3,
         Title: 'Documentation',
         Status: 'Done',
-        Summary: 'Complete project documentation'
+        Summary: 'Complete project documentation',
+        uiState: {
+          backgroundColor: '#ffffff',
+          textColor: '#333333',
+          isExpanded: true,
+          isHighlighted: false,
+          customStyles: {}
+        }
       }
     ]
   }
