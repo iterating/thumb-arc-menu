@@ -30,8 +30,8 @@ const ArcMenu = () => {
   const DEBUG_PATH = false;  // Toggle gray connecting path only
   const DEBUG_ARC = true;  // Toggle orange arc path
   const MAX_POINTS = 100;  // Maximum number of points to store
-  const MIN_MENU_ANGLE = Math.PI / 6;  // Minimum angle (in radians) to keep menu open (30 degrees)
-  const EDGE_THRESHOLD = 100;  // Distance from edge to consider "near edge" in pixels
+  const MIN_MENU_ANGLE = Math.PI / 12;  // Minimum angle (in radians) to keep menu open (15 degrees)
+  const EDGE_THRESHOLD = 150;  // Distance from edge to consider "near edge" in pixels
   const CLOSE_ANIMATION_MS = 1000;  // Closing animation duration in milliseconds
   const DRAG_DELAY_MS = 150;  // Delay before considering it a drag
   const MIN_DRAG_DISTANCE = 10;  // Minimum distance to move before considering it a drag
@@ -107,6 +107,29 @@ const ArcMenu = () => {
       endAngle
     };
   }, []);
+
+  // Helper function to clean SVG paths
+  const cleanSvgPaths = useCallback(() => {
+    if (connectingPathRef.current) {
+      connectingPathRef.current.setAttribute('d', '');
+    }
+    if (debugArcPathRef.current) {
+      debugArcPathRef.current.setAttribute('d', '');
+    }
+  }, []);
+
+  // Helper function to start cleanup animation
+  const cleanup = useCallback(() => {
+    cleanSvgPaths();
+    setIsClosing(true);
+    setIsActive(false);
+  }, [cleanSvgPaths]);
+
+  useEffect(() => {
+    return () => {
+      cleanSvgPaths();
+    };
+  }, [cleanSvgPaths]);
 
   const handleMove = useCallback((e) => {
     if (!isActive) return;
@@ -280,31 +303,51 @@ const ArcMenu = () => {
       document.removeEventListener('touchend', handleTouchEnd);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isActive, circleState]);
+  }, [isActive, circleState, cleanup]);
 
-  // Helper function to clean SVG paths
-  const cleanSvgPaths = useCallback(() => {
-    if (connectingPathRef.current) {
-      connectingPathRef.current.setAttribute('d', '');
-    }
-    if (debugArcPathRef.current) {
-      debugArcPathRef.current.setAttribute('d', '');
-    }
-  }, []);
-
-  // Helper function to start cleanup animation
-  const cleanup = useCallback(() => {
-    cleanSvgPaths();
-    setIsClosing(true);
-    setIsActive(false);
-  }, [cleanSvgPaths]);
-
-  // Cleanup SVG on unmount
   useEffect(() => {
-    return () => {
-      cleanSvgPaths();
+    const handleMouseDownOutside = (e) => {
+      console.log('Mousedown detected:', {
+        lockedCircleState: !!lockedCircleState,
+        isActive,
+        isClosing,
+        clickX: e.clientX,
+        clickY: e.clientY
+      });
+
+      // Only handle when menu is locked open and not animating
+      if (!lockedCircleState || isClosing) {
+        console.log('Mousedown ignored: menu not in stable open state');
+        return;
+      }
+      
+      // Get click coordinates
+      const clickX = e.clientX;
+      const clickY = e.clientY;
+      
+      // Calculate distance from center to click
+      const distanceFromCenter = Math.sqrt(
+        Math.pow(clickX - lockedCircleState.centerX, 2) + 
+        Math.pow(clickY - lockedCircleState.centerY, 2)
+      );
+
+      console.log('Distance check:', {
+        distanceFromCenter,
+        radius: lockedCircleState.radius,
+        diff: Math.abs(distanceFromCenter - lockedCircleState.radius),
+        threshold: BUTTON_SIZE
+      });
+      
+      // If click is outside the arc's radius, close the menu
+      if (Math.abs(distanceFromCenter - lockedCircleState.radius) > BUTTON_SIZE) {
+        console.log('Closing menu due to outside mousedown');
+        cleanup();
+      }
     };
-  }, [cleanSvgPaths]);
+
+    document.addEventListener('mousedown', handleMouseDownOutside);
+    return () => document.removeEventListener('mousedown', handleMouseDownOutside);
+  }, [lockedCircleState, isClosing, cleanup]);
 
   // Handle the closing animation completion
   useEffect(() => {
@@ -385,7 +428,7 @@ const ArcMenu = () => {
         opacity: ${isClosing ? 0 : 1};
       `;
     });
-  }, [isActive, pathPoints, circleState, lockedCircleState, isClosing]);
+  }, [isActive, pathPoints, circleState, lockedCircleState, isClosing, cleanup]);
 
   // Update SVG path
   useLayoutEffect(() => {
