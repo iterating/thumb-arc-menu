@@ -1,0 +1,57 @@
+.page-header {
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header-container {
+  display: flex;
+  align-items: stretch;
+  min-height: 48px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border-right: 1px solid #e0e0e0;
+}
+
+.header-content {
+  flex: 1;
+  display: flex;
+}
+
+/* Hamburger menu button styling */
+.hamburger-menu {
+  padding: 8px !important;
+  background: transparent !important;
+  border: none !important;
+  color: #333 !important;
+  min-width: 40px !important;
+}
+
+.hamburger-menu:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-radius: 4px;
+}
+
+.hamburger-menu .e-btn-icon {
+  font-size: 20px;
+  margin: 0 !important;
+}
+
+/* Dropdown popup styling */
+.e-dropdown-popup {
+  background: rgba(255, 255, 255, 0.9) !important; /* This controls the transparency */
+  backdrop-filter: blur(10px) !important; /* This adds the blur effect */
+}
+
+/* If you want solid background instead, uncomment this:
+.e-dropdown-popup {
+  background: #ffffff !important;
+} */
