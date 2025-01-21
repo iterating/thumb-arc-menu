@@ -13,5 +13,10 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@syncfusion/ej2-base": "^28.1.33",
+    "@syncfusion/ej2-react-base": "^28.1.38",
+    "@syncfusion/ej2-react-kanban": "^28.1.39"
   }
 }

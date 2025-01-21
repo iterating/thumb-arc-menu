@@ -14,6 +14,7 @@
     "@syncfusion/ej2-notifications": "^28.1.33",
     "@syncfusion/ej2-react-base": "^28.1.38",
     "@syncfusion/ej2-react-buttons": "^28.1.39",
+    "@syncfusion/ej2-react-kanban": "^28.1.39",
     "@syncfusion/ej2-react-navigations": "^28.1.39",
     "@syncfusion/ej2-react-notifications": "^28.1.33",
     "react": "^18.3.1",
