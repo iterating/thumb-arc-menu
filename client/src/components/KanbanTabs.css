@@ -2,22 +2,28 @@
   width: 100%;
   background: #fff;
   border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 100; /* Ensure it stays above other content */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow to show elevation */
 }
 
 .tab-list {
   display: flex;
   gap: 4px;
   padding: 0 16px;
+  height: 48px; /* Fixed height for consistency */
 }
 
 .tab-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 16px;
+  padding: 0 16px;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
+  height: 100%; /* Fill the tab-list height */
 }
 
 .tab-item:hover {
@@ -26,11 +32,13 @@
 
 .tab-item.active {
   border-bottom-color: #0078d4;
+  background: rgba(0, 120, 212, 0.05);
 }
 
 .tab-text {
   font-size: 14px;
   color: #333;
+  font-weight: 500;
 }
 
 /* Dropdown button styling */
@@ -39,8 +47,14 @@
   min-height: 24px;
   font-size: 14px;
   line-height: 1;
+  background: transparent;
 }
 
 .tab-item .e-dropdown-btn:hover {
   background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Active tab dropdown styling */
+.tab-item.active .e-dropdown-btn {
+  color: #0078d4;
 }

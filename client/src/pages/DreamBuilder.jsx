@@ -4,6 +4,7 @@ import KanbanTabs from '../components/KanbanTabs';
 import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-react-navigations/styles/material.css';
 import '@syncfusion/ej2-react-kanban/styles/material.css';
+import './DreamBuilder.css';
 
 function DreamBuilder() {
   const [boards] = useState([
@@ -13,13 +14,13 @@ function DreamBuilder() {
   const [activeBoard, setActiveBoard] = useState('personal');
 
   return (
-    <div className="page" style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="dream-builder full-height flex-column overflow-hidden">
       <KanbanTabs
         boards={boards}
         activeBoard={activeBoard}
         onBoardChange={setActiveBoard}
       />
-      <div style={{ flex: 1, padding: '16px', overflow: 'auto' }}>
+      <div className="kanban-container flex-1 overflow-auto relative">
         <KanbanBoard key={activeBoard} boardId={activeBoard} />
       </div>
     </div>

@@ -5,6 +5,7 @@
   margin: 0;
   height: 100vh;
   text-align: center;
+  overflow: hidden; /* Prevent scrolling at root level */
 }
 
 .logo {
@@ -48,11 +49,19 @@
   display: flex;
   flex-direction: column;
   background: var(--background-color, #f5f5f5);
+  overflow: hidden; /* Prevent scrolling at app level */
+}
+
+.app-content {
+  flex: 1;
+  overflow: hidden; /* Let child components handle their own scrolling */
+  position: relative; /* Create stacking context for sticky elements */
 }
 
 .content-area {
   flex: 1;
-  padding: 0 20px;
+  /* padding: 0 20px; */
+  padding: 0px;
   overflow-y: auto;
 }
 
