@@ -59,6 +59,66 @@ const cardTemplate = (props) => {
 }
 ```
 
+## Adding Interactive Features
+
+### 1. Managing Card State
+Instead of storing UI state in the card data, use React's useState:
+```javascript
+function KanbanBoard({ boardId }) {
+  // Track state for multiple cards
+  const [expandedCards, setExpandedCards] = useState(new Set());
+
+  const toggleCardExpand = (cardId) => {
+    setExpandedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
+  };
+}
+```
+
+### 2. Adding Click Handlers
+In your template, handle clicks properly:
+```javascript
+const cardTemplate = (props) => {
+  const handleClick = (e) => {
+    // Prevent event from bubbling to Kanban's handlers
+    e.stopPropagation();
+    if (props.onToggleExpand) {
+      props.onToggleExpand(props.Id);
+    }
+  };
+
+  return (
+    <div className="card-template" onClick={handleClick}>
+      {/* card content */}
+    </div>
+  );
+};
+```
+
+### 3. Conditional Rendering with Transitions
+Use CSS for smooth transitions:
+```css
+.card-body {
+    max-height: 300px;
+    opacity: 1;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.card-template.compact .card-body {
+    max-height: 0;
+    margin: 0;
+    opacity: 0;
+}
+```
+
 ## Best Practices
 
 1. Always add null checks (`&&`) for optional fields
@@ -74,3 +134,31 @@ const cardTemplate = (props) => {
 - Status/Priority: Use color-coded spans like the priority tag
 - Links: Wrap in an anchor tag
 - Numbers: Consider formatting (e.g., currency, percentages)
+
+## State Management and Custom Events
+
+### 1. State Management:
+   - Keep UI state separate from data state
+   - Use React state for UI interactions
+   - Avoid modifying the data source directly
+
+### 2. Event Handling:
+   - Stop event propagation when needed
+   - Use individual handlers instead of global ones
+   - Keep handlers close to where they're used
+
+### 3. Performance:
+   - Only update what needs to change
+   - Avoid full board refreshes
+   - Use efficient data structures (like Set for lookups)
+
+### 4. Animations:
+   - Use CSS transitions for smooth effects
+   - Handle overflow properly
+   - Consider both expanded and collapsed states
+
+### 5. General:
+   - Always add null checks for optional fields
+   - Follow existing naming conventions
+   - Keep styling consistent
+   - Consider the card's layout and spacing

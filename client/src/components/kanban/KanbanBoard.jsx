@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { KanbanComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-kanban';
 import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-react-kanban/styles/material.css';
@@ -7,29 +7,27 @@ import './KanbanBoard.css';
 
 // Custom template for Kanban cards
 const cardTemplate = (props) => {
-  console.log('Card Template Props:', props);
   if (!props) {
-    console.log('No props');
     return null;
   }
-  
-  const uiState = props.uiState || {
-    backgroundColor: '#ffffff',
-    textColor: '#333333',
-    isExpanded: true,
-    isHighlighted: false,
-    customStyles: {}
-  };
 
+  const handleClick = (e) => {
+    // Stop event from bubbling to Kanban's click handler
+    e.stopPropagation();
+    if (props.onToggleExpand) {
+      props.onToggleExpand(props.Id);
+    }
+  };
+  
   const cardStyle = {
-    backgroundColor: uiState.backgroundColor,
-    color: uiState.textColor,
-    ...(uiState.isHighlighted && { border: '2px solid #1976d2' }),
-    ...uiState.customStyles
+    backgroundColor: '#ffffff',
+    cursor: 'pointer'
   };
 
   return (
-    <div className={`card-template ${!uiState.isExpanded ? 'compact' : ''}`} style={cardStyle}>
+    <div className={`card-template ${!props.isExpanded ? 'compact' : ''}`} 
+         style={cardStyle}
+         onClick={handleClick}>
       <div className="e-card-content">
         <div className="card-header">
           <h3>{props.Title || 'Untitled'}</h3>
@@ -39,14 +37,9 @@ const cardTemplate = (props) => {
             </span>
           )}
         </div>
-        {uiState.isExpanded && (
+        {props.isExpanded && props.Summary && (
           <div className="card-body">
             {props.Summary}
-          </div>
-        )}
-        {props.DueDate && uiState.isExpanded && (
-          <div className="card-footer">
-            Due: {props.DueDate}
           </div>
         )}
       </div>
@@ -55,16 +48,35 @@ const cardTemplate = (props) => {
 };
 
 function KanbanBoard({ boardId }) {
-  // Get the template for the current board
   const template = boardTemplates[boardId];
-  console.log('Template Data:', template?.data);
+  const [expandedCards, setExpandedCards] = useState(new Set());
+
+  const toggleCardExpand = (cardId) => {
+    setExpandedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
+  };
+
+  const cardTemplateWithExpand = (props) => {
+    return cardTemplate({
+      ...props,
+      isExpanded: expandedCards.has(props.Id),
+      onToggleExpand: toggleCardExpand
+    });
+  };
 
   return (
     <KanbanComponent
       dataSource={template.data}
       keyField="Status"
       cardSettings={{ 
-        template: cardTemplate,
+        template: cardTemplateWithExpand,
         headerField: "Title"
       }}
     >
