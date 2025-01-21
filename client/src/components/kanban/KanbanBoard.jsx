@@ -28,6 +28,7 @@ const cardTemplate = (props) => {
          style={cardStyle}
          onClick={handleClick}>
       <div className="e-card-content">
+        {/* Header - Always visible */}
         <div className="card-header">
           <h3>{props.Title || 'Untitled'}</h3>
           {props.Priority && (
@@ -36,11 +37,19 @@ const cardTemplate = (props) => {
             </span>
           )}
         </div>
+
+        {/* Body - Toggleable */}
         {props.uiState?.isExpanded !== false && props.Summary && (
           <div className="card-body">
             {props.Summary}
           </div>
         )}
+
+        {/* Footer - Always visible */}
+        <div className="card-footer">
+          {props.DueDate && <span>Due: {props.DueDate}</span>}
+          {props.Status && <span>Status: {props.Status}</span>}
+        </div>
       </div>
     </div>
   );
