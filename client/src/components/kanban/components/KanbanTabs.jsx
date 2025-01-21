@@ -2,9 +2,18 @@ import React from 'react';
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-react-splitbuttons/styles/material.css';
-import './KanbanTabs.css';
+import '../styles/KanbanTabs.css';
 
-function KanbanTabs({ boards, activeBoard, onBoardChange }) {
+function KanbanTabs({ 
+  // Support both old and new prop patterns
+  activeTab, setActiveTab,  // Old props
+  boards = [               // New prop with default
+    { id: 'personal', name: 'Personal' },
+    { id: 'work', name: 'Work' }
+  ],
+  activeBoard = activeTab, // Use activeTab if provided
+  onBoardChange = setActiveTab // Use setActiveTab if provided
+}) {
   return (
     <div className="kanban-tabs">
       <div className="tab-container">

@@ -38,3 +38,68 @@ export const BOARD_TEMPLATES = {
     ]
   }
 };
+
+// Board templates
+export const boardTemplates = {
+  personal: {
+    columns: [
+      { headerText: 'Dreams', keyField: 'Dreams' },
+      { headerText: 'Goals', keyField: 'Goals' },
+      { headerText: 'Plans', keyField: 'Plans' },
+      { headerText: 'Achievements', keyField: 'Achievements' }
+    ],
+    data: [
+      {
+        Id: 1,
+        Title: 'Travel the world',
+        Status: 'Dreams',
+        Summary: 'Visit at least 10 countries in 5 years'
+      },
+      {
+        Id: 2,
+        Title: 'Learn piano',
+        Status: 'Goals',
+        Summary: 'Take piano lessons and practice regularly'
+      },
+      {
+        Id: 3,
+        Title: 'Weekly practice schedule',
+        Status: 'Plans',
+        Summary: 'Create a weekly schedule for piano practice'
+      },
+      {
+        Id: 4,
+        Title: 'First recital',
+        Status: 'Achievements',
+        Summary: 'Performed at first piano recital'
+      }
+    ]
+  },
+  work: {
+    columns: [
+      { headerText: 'To Do', keyField: 'To Do' },
+      { headerText: 'In Progress', keyField: 'In Progress' },
+      { headerText: 'Done', keyField: 'Done' }
+    ],
+    data: [
+      {
+        Id: 1,
+        Title: 'Project proposal',
+        Status: 'To Do',
+        Summary: 'Write project proposal for new client'
+      },
+      {
+        Id: 2,
+        Title: 'Client meeting',
+        Status: 'In Progress',
+        Summary: 'Prepare presentation for client meeting'
+      },
+      {
+        Id: 3,
+        Title: 'Documentation',
+        Status: 'Done',
+        Summary: 'Complete project documentation'
+      }
+    ]
+  }
+};
