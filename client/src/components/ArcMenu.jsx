@@ -170,16 +170,17 @@ const ArcMenu = () => {
     const maxRise = Math.min(availableSpace * 0.5, window.innerHeight * 0.4);
     const fanSpread = maxRise * percentToMargin;
     
-    console.log('Fan %:', Math.round(percentToMargin * 100) + '%', {
-      distanceMoved,
-      availableSpace,
-      startX: touchStartRef.current.x,
-      currentX: clampedX,
-      marginX,
-      maxRise,
-      fanSpread,
-      arcDirection
-    });
+    // Log fan spread percentage and related metrics
+    // console.log('Fan %:', Math.round(percentToMargin * 100) + '%', {
+    //   distanceMoved,
+    //   availableSpace,
+    //   startX: touchStartRef.current.x,
+    //   currentX: clampedX,
+    //   marginX,
+    //   maxRise,
+    //   fanSpread,
+    //   arcDirection
+    // });
     
     // Y position is purely based on fan spread, ignore mouse Y
     const currentY = Math.max(BUTTON_SIZE / 2, touchStartRef.current.y - fanSpread);
@@ -193,15 +194,16 @@ const ArcMenu = () => {
     const distance = getDistance(currentX, currentY, lastPoint.x, lastPoint.y);
     
     if (distance >= SAMPLE_DISTANCE) {
-      console.log('Buttons moving:', {
-        startX: touchStartRef.current.x,
-        startY: touchStartRef.current.y,
-        currentX,
-        currentY,
-        arcDirection,
-        dx,
-        distance
-      });
+      // Log button movement details
+      // console.log('Buttons moving:', {
+      //   startX: touchStartRef.current.x,
+      //   startY: touchStartRef.current.y,
+      //   currentX,
+      //   currentY,
+      //   arcDirection,
+      //   dx,
+      //   distance
+      // });
       lastPointRef.current = currentPoint;
       
       // Only update circle state, skip path points for performance
@@ -237,7 +239,8 @@ const ArcMenu = () => {
 
   useEffect(() => {
     const handleTouchEnd = () => {
-      console.log('Document touch end');
+      // Log touch end event
+      // console.log('Document touch end');
       isMouseDownRef.current = false;
       
       if (isActive) {
@@ -267,7 +270,8 @@ const ArcMenu = () => {
     };
 
     const handleMouseUp = () => {
-      console.log('Document mouse up');
+      // Log mouse up event
+      // console.log('Document mouse up');
       isMouseDownRef.current = false;
       
       if (isActive) {
@@ -307,17 +311,19 @@ const ArcMenu = () => {
 
   useEffect(() => {
     const handleMouseDownOutside = (e) => {
-      console.log('Mousedown detected:', {
-        lockedCircleState: !!lockedCircleState,
-        isActive,
-        isClosing,
-        clickX: e.clientX,
-        clickY: e.clientY
-      });
+      // Log mousedown event details
+      // console.log('Mousedown detected:', {
+      //   lockedCircleState: !!lockedCircleState,
+      //   isActive,
+      //   isClosing,
+      //   clickX: e.clientX,
+      //   clickY: e.clientY
+      // });
 
       // Only handle when menu is locked open and not animating
       if (!lockedCircleState || isClosing) {
-        console.log('Mousedown ignored: menu not in stable open state');
+        // Log why mousedown was ignored
+        // console.log('Mousedown ignored: menu not in stable open state');
         return;
       }
       
@@ -331,16 +337,18 @@ const ArcMenu = () => {
         Math.pow(clickY - lockedCircleState.centerY, 2)
       );
 
-      console.log('Distance check:', {
-        distanceFromCenter,
-        radius: lockedCircleState.radius,
-        diff: Math.abs(distanceFromCenter - lockedCircleState.radius),
-        threshold: BUTTON_SIZE
-      });
+      // Log distance calculations for debugging
+      // console.log('Distance check:', {
+      //   distanceFromCenter,
+      //   radius: lockedCircleState.radius,
+      //   diff: Math.abs(distanceFromCenter - lockedCircleState.radius),
+      //   threshold: BUTTON_SIZE
+      // });
       
       // If click is outside the arc's radius, close the menu
       if (Math.abs(distanceFromCenter - lockedCircleState.radius) > BUTTON_SIZE) {
-        console.log('Closing menu due to outside mousedown');
+        // Log menu closure due to outside click
+        // console.log('Closing menu due to outside mousedown');
         cleanup();
       }
     };
@@ -493,14 +501,15 @@ const ArcMenu = () => {
             
             // If we've moved enough or held long enough, start drag
             if (distance >= MIN_DRAG_DISTANCE || Date.now() - touchStartRef.current.time >= DRAG_DELAY_MS) {
-              console.log('Touch movement threshold met:', {
-                startX: touchStartRef.current.x,
-                startY: touchStartRef.current.y,
-                currentX: currentTouch.clientX,
-                currentY: currentTouch.clientY,
-                distance,
-                timeDiff: Date.now() - touchStartRef.current.time
-              });
+              // Log touch movement threshold details
+              // console.log('Touch movement threshold met:', {
+              //   startX: touchStartRef.current.x,
+              //   startY: touchStartRef.current.y,
+              //   currentX: currentTouch.clientX,
+              //   currentY: currentTouch.clientY,
+              //   distance,
+              //   timeDiff: Date.now() - touchStartRef.current.time
+              // });
               setIsActive(true);
               setPathPoints([touchStartRef.current]);
 
@@ -525,7 +534,8 @@ const ArcMenu = () => {
           }, DRAG_DELAY_MS);
         }}
         onMouseDown={(e) => {
-          console.log('Action bar mouse down');
+          // Log action bar mouse down event
+          // console.log('Action bar mouse down');
           touchStartRef.current = { 
             x: e.clientX, 
             y: e.clientY,
@@ -545,14 +555,15 @@ const ArcMenu = () => {
             
             // If we've moved enough or held long enough, start drag
             if (distance >= MIN_DRAG_DISTANCE || Date.now() - touchStartRef.current.time >= DRAG_DELAY_MS) {
-              console.log('Movement threshold met:', {
-                startX: touchStartRef.current.x,
-                startY: touchStartRef.current.y,
-                currentX: e.clientX,
-                currentY: e.clientY,
-                distance,
-                timeDiff: Date.now() - touchStartRef.current.time
-              });
+              // Log movement threshold details
+              // console.log('Movement threshold met:', {
+              //   startX: touchStartRef.current.x,
+              //   startY: touchStartRef.current.y,
+              //   currentX: e.clientX,
+              //   currentY: e.clientY,
+              //   distance,
+              //   timeDiff: Date.now() - touchStartRef.current.time
+              // });
               setIsActive(true);
               setPathPoints([touchStartRef.current]);
 
@@ -590,7 +601,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
                 // Handle button click
-                console.log('Button clicked!');
+                // console.log('Button clicked!');
               }
             }
           }}
@@ -611,7 +622,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
                 // Handle button click
-                console.log('Button clicked!');
+                // console.log('Button clicked!');
               }
             }
           }}
@@ -632,7 +643,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
                 // Handle button click
-                console.log('Button clicked!');
+                // console.log('Button clicked!');
               }
             }
           }}
@@ -653,7 +664,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
                 // Handle button click
-                console.log('Button clicked!');
+                // console.log('Button clicked!');
               }
             }
           }}
@@ -674,7 +685,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
                 // Handle button click
-                console.log('Button clicked!');
+                // console.log('Button clicked!');
               }
             }
           }}
@@ -695,7 +706,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
                 // Handle button click
-                console.log('Button clicked!');
+                // console.log('Button clicked!');
               }
             }
           }}
@@ -716,7 +727,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
                 // Handle button click
-                console.log('Button clicked!');
+                // console.log('Button clicked!');
               }
             }
           }}
