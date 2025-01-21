@@ -4,6 +4,7 @@ import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-react-kanban/styles/material.css';
 import { boardTemplates } from './constants';
 import { formatDateTime } from '../../utils/dateTime';
+import ProgressBar from '../common/ProgressBar';
 import './KanbanBoard.css';
 
 // Custom template for Kanban cards
@@ -17,6 +18,12 @@ const cardTemplate = (props) => {
     if (!props.uiState) props.uiState = {};
     props.uiState.isExpanded = !props.uiState.isExpanded;
     forceUpdate({});
+  };
+
+  const handleEdit = (e) => {
+    e.stopPropagation();
+    // Edit handler will be implemented later
+    console.log('Edit clicked');
   };
   
   const cardStyle = {
@@ -33,17 +40,31 @@ const cardTemplate = (props) => {
       <div className="e-card-content">
         {/* Header - Always visible */}
         <div className="card-header">
-          <div className="header-main">
-            <h3>{props.Title || 'Untitled'}</h3>
-            {formattedDateTime && (
-              <span className="due-date">{formattedDateTime}</span>
-            )}
+          {/* First row */}
+          <div className="header-row">
+            <div className="header-date">
+              {formattedDateTime}
+            </div>
+            <div className="header-progress">
+              <ProgressBar 
+                value={25} 
+                height="4px" 
+                width="60px"
+                showValue={false}
+              />
+            </div>
           </div>
-          {props.Priority && (
-            <span className={`priority-tag ${props.Priority.toLowerCase()}`}>
-              {props.Priority}
-            </span>
-          )}
+          {/* Second row */}
+          <div className="header-row">
+            <h3 className="card-title">{props.Title || 'Untitled'}</h3>
+            <button 
+              className="edit-button" 
+              onClick={handleEdit}
+              title="Edit card"
+            >
+              ✎
+            </button>
+          </div>
         </div>
 
         {/* Body - Toggleable */}

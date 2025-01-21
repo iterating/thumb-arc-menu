@@ -1,0 +1,17 @@
+/* Override Syncfusion's default styles */
+.e-progressbar {
+    min-width: 0;  /* Allow the progress bar to shrink below default min-width */
+}
+
+/* Remove any unwanted padding/margins */
+.e-progressbar .e-progress {
+    margin: 0;
+    padding: 0;
+}
+
+/* Make sure text is centered and sized appropriately */
+.e-progressbar .e-progress-text {
+    font-size: 11px;
+    line-height: 1;
+    font-weight: normal;
+}
