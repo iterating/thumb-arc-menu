@@ -132,6 +132,12 @@ const ArcMenu = () => {
   }, [cleanSvgPaths]);
 
   const handleMove = useCallback((e) => {
+    // If mouse isn't down but menu is active, close it (fixes micro-drag issue)
+    if (!isMouseDownRef.current && isActive) {
+      cleanup();
+      return;
+    }
+
     if (!isActive) return;
 
     const currentX = e.clientX ?? e.touches?.[0]?.clientX;
