@@ -4,15 +4,30 @@
   border-bottom: 1px solid #e0e0e0;
   position: sticky;
   top: 0;
-  z-index: 100; /* Ensure it stays above other content */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow to show elevation */
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tab-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+  padding: 0 8px;
 }
 
 .tab-list {
   display: flex;
   gap: 4px;
-  padding: 0 16px;
-  height: 48px; /* Fixed height for consistency */
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.tab-list::-webkit-scrollbar {
+  display: none;
 }
 
 .tab-item {
@@ -23,7 +38,8 @@
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
-  height: 100%; /* Fill the tab-list height */
+  height: 100%;
+  white-space: nowrap;
 }
 
 .tab-item:hover {
@@ -57,4 +73,29 @@
 /* Active tab dropdown styling */
 .tab-item.active .e-dropdown-btn {
   color: #0078d4;
+}
+
+/* Right-side actions area */
+.tab-actions {
+  margin-left: 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* Main menu button styling */
+.main-menu-btn {
+  padding: 6px 12px !important;
+  background: #f5f5f5 !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 4px !important;
+  color: #333 !important;
+  font-weight: 500 !important;
+}
+
+.main-menu-btn:hover {
+  background: #e8e8e8 !important;
+}
+
+.main-menu-btn .e-btn-icon {
+  margin-right: 4px;
 }
