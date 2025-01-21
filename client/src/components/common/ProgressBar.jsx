@@ -21,11 +21,7 @@ const ProgressBar = ({
             height={height}
             orientation='Horizontal'
             theme='Material'
-            container={{
-                width: 0,
-                height: 0,
-                type: 'RoundedRectangle'
-            }}
+            background='transparent'
             axes={[{
                 minimum: 0,
                 maximum: 100,
@@ -36,10 +32,18 @@ const ProgressBar = ({
                 pointers: [{
                     value: normalizedValue,
                     height: 4,
-                    width: 4,
+                    width: '100%',
                     type: 'Bar',
-                    roundedCornerRadius: 2,
-                    color: '#666'
+                    color: '#666',
+                    border: { width: 0 }
+                }],
+                ranges: [{
+                    start: 0,
+                    end: 100,
+                    startWidth: 4,
+                    endWidth: 4,
+                    color: '#eee',
+                    border: { width: 0 }
                 }]
             }]}
         />

@@ -54,6 +54,9 @@ export const boardTemplates = {
         Title: 'Travel the world',
         Status: 'Dreams',
         Summary: 'Visit at least 10 countries in 5 years',
+        dueDate: '2025-12-31',
+        dueTime: '1700',
+        progress: 15,
         uiState: {
           backgroundColor: '#ffffff',
           textColor: '#333333',
@@ -67,6 +70,9 @@ export const boardTemplates = {
         Title: 'Learn piano',
         Status: 'Goals',
         Summary: 'Take piano lessons and practice regularly',
+        dueDate: '2024-06-30',
+        dueTime: '2:30pm',
+        progress: 45,
         uiState: {
           backgroundColor: '#f8f9fa',
           textColor: '#333333',
@@ -80,6 +86,8 @@ export const boardTemplates = {
         Title: 'Weekly practice schedule',
         Status: 'Plans',
         Summary: 'Create a weekly schedule for piano practice',
+        dueDate: '2024-02-01',
+        progress: 80,
         uiState: {
           backgroundColor: '#ffffff',
           textColor: '#333333',
@@ -93,6 +101,9 @@ export const boardTemplates = {
         Title: 'First recital',
         Status: 'Achievements',
         Summary: 'Performed at first piano recital',
+        dueDate: '2024-03-15',
+        dueTime: '7:00pm',
+        progress: 100,
         uiState: {
           backgroundColor: '#ffffff',
           textColor: '#333333',

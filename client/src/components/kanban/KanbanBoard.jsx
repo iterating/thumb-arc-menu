@@ -47,7 +47,7 @@ const cardTemplate = (props) => {
             </div>
             <div className="header-progress">
               <ProgressBar 
-                value={25} 
+                value={props.progress || 0} 
                 height="4px" 
                 width="60px"
                 showValue={false}
