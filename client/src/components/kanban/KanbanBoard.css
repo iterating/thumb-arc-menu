@@ -1,23 +1,15 @@
+/* Fix for Syncfusion card hover movement */
+/* This is really important and don't delete it */
+.e-kanban .e-content-row .e-content-cells .e-card-wrapper .e-card,
+.e-kanban .e-content-row .e-content-cells .e-card-wrapper .e-card:hover,
+.e-kanban .e-content-row .e-content-cells .e-card-wrapper .e-card:active,
+.e-kanban .e-content-row .e-content-cells .e-card-wrapper .e-card:focus {
+    padding: 0 !important;
+}
+
+/* Our card styles */
 .card-template {
     padding: 8px;
-    text-align: left;
-    transition: all 0.2s ease;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-}
-
-.card-template.compact {
-    padding: 4px;
-}
-
-.card-template.compact .card-header {
-    margin-bottom: 0;
-}
-
-.e-card-template-wrap {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 4px;
 }
 
 .e-card-content {
@@ -30,14 +22,12 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
-    text-align: left;
 }
 
 .card-header h3 {
     margin: 0;
     font-size: 14px;
     font-weight: bold;
-    color: #333;
 }
 
 .priority-tag {
@@ -68,21 +58,4 @@
     line-height: 1.4;
     margin-bottom: 8px;
     text-align: left;
-    max-height: 300px;
-    opacity: 1;
-    transition: all 0.2s ease;
-    overflow: hidden;
-}
-
-.card-template.compact .card-body {
-    max-height: 0;
-    margin: 0;
-    opacity: 0;
-}
-
-.card-footer {
-    font-size: 12px;
-    color: #888;
-    text-align: left;
-    opacity: 0.8;
 }

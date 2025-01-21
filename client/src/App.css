@@ -15,10 +15,10 @@
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  /* filter: drop-shadow(0 0 2em #646cffaa); */
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  /* filter: drop-shadow(0 0 2em #61dafbaa); */
 }
 
 @keyframes logo-spin {
@@ -92,7 +92,7 @@
 }
 
 .nav-button:hover {
-  color: var(--primary-color, #1976d2);
+  /* color: var(--primary-color, #1976d2); */
 }
 
 .nav-button.active {
@@ -128,7 +128,7 @@
 }
 
 .theme-select:hover {
-  border-color: var(--primary-color, #1976d2);
+  /* border-color: var(--primary-color, #1976d2); */
 }
 
 .theme-select:focus {
@@ -254,7 +254,7 @@
 }
 
 .menu-button:hover {
-  transform: scale(1.1);
+  /* transform: scale(1.1); */
   background: white;
 }
 
