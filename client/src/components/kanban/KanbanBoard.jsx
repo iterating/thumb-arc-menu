@@ -57,13 +57,15 @@ const cardTemplate = (props) => {
           {/* Second row */}
           <div className="header-row">
             <h3 className="card-title">{props.Title || 'Untitled'}</h3>
-            <button 
-              className="edit-button" 
-              onClick={handleEdit}
-              title="Edit card"
-            >
-              ✎
-            </button>
+            {props.uiState?.isExpanded !== false && (
+              <button 
+                className="edit-button" 
+                onClick={handleEdit}
+                title="Edit card"
+              >
+                ✎
+              </button>
+            )}
           </div>
         </div>
 
