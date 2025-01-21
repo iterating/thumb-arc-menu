@@ -7,16 +7,17 @@ import './KanbanBoard.css';
 
 // Custom template for Kanban cards
 const cardTemplate = (props) => {
-  if (!props) {
-    return null;
-  }
+  const [, forceUpdate] = useState();
+  
+  if (!props) return null;
 
   const handleClick = (e) => {
-    // Stop event from bubbling to Kanban's click handler
     e.stopPropagation();
-    if (props.onToggleExpand) {
-      props.onToggleExpand(props.Id);
-    }
+    // Toggle in data for persistence
+    if (!props.uiState) props.uiState = {};
+    props.uiState.isExpanded = !props.uiState.isExpanded;
+    // Force just this card to update
+    forceUpdate({});
   };
   
   const cardStyle = {
@@ -25,7 +26,7 @@ const cardTemplate = (props) => {
   };
 
   return (
-    <div className={`card-template ${!props.isExpanded ? 'compact' : ''}`} 
+    <div className={`card-template ${!props.uiState?.isExpanded ? 'compact' : ''}`} 
          style={cardStyle}
          onClick={handleClick}>
       <div className="e-card-content">
@@ -37,7 +38,7 @@ const cardTemplate = (props) => {
             </span>
           )}
         </div>
-        {props.isExpanded && props.Summary && (
+        {props.uiState?.isExpanded !== false && props.Summary && (
           <div className="card-body">
             {props.Summary}
           </div>
@@ -49,34 +50,13 @@ const cardTemplate = (props) => {
 
 function KanbanBoard({ boardId }) {
   const template = boardTemplates[boardId];
-  const [expandedCards, setExpandedCards] = useState(new Set());
-
-  const toggleCardExpand = (cardId) => {
-    setExpandedCards(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(cardId)) {
-        newSet.delete(cardId);
-      } else {
-        newSet.add(cardId);
-      }
-      return newSet;
-    });
-  };
-
-  const cardTemplateWithExpand = (props) => {
-    return cardTemplate({
-      ...props,
-      isExpanded: expandedCards.has(props.Id),
-      onToggleExpand: toggleCardExpand
-    });
-  };
 
   return (
     <KanbanComponent
       dataSource={template.data}
       keyField="Status"
       cardSettings={{ 
-        template: cardTemplateWithExpand,
+        template: cardTemplate,
         headerField: "Title"
       }}
     >
