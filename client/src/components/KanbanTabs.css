@@ -1,17 +1,46 @@
 .kanban-tabs {
   width: 100%;
   background: #fff;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.kanban-tabs .e-tab {
-  background: transparent;
-  border: none;
+.tab-list {
+  display: flex;
+  gap: 4px;
+  padding: 0 16px;
 }
 
-.kanban-tabs .e-tab .e-tab-header {
-  background: transparent;
+.tab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
 }
 
-.kanban-tabs .e-tab .e-tab-header .e-toolbar-item .e-tab-text {
+.tab-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.tab-item.active {
+  border-bottom-color: #0078d4;
+}
+
+.tab-text {
+  font-size: 14px;
   color: #333;
+}
+
+/* Dropdown button styling */
+.tab-item .e-dropdown-btn.e-small {
+  padding: 4px 8px;
+  min-height: 24px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.tab-item .e-dropdown-btn:hover {
+  background-color: rgba(0, 0, 0, 0.08);
 }

@@ -1,30 +1,35 @@
 import React from 'react';
-import { TabComponent } from '@syncfusion/ej2-react-navigations';
+import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 import '@syncfusion/ej2-base/styles/material.css';
-import '@syncfusion/ej2-react-navigations/styles/material.css';
+import '@syncfusion/ej2-react-splitbuttons/styles/material.css';
 import './KanbanTabs.css';
 
 function KanbanTabs({ boards, activeBoard, onBoardChange }) {
-  const handleSelecting = (e) => {
-    if (e.selectingIndex !== undefined) {
-      const selectedBoard = boards[e.selectingIndex];
-      if (selectedBoard) {
-        onBoardChange(selectedBoard.id);
-      }
-    }
-  };
-
   return (
     <div className="kanban-tabs">
-      <TabComponent
-        heightAdjustMode="Auto"
-        overflowMode="Scrollable"
-        selectedItem={boards.findIndex(b => b.id === activeBoard)}
-        selecting={handleSelecting}
-        items={boards.map(board => ({
-          header: { text: board.name }
-        }))}
-      />
+      <div className="tab-list">
+        {boards.map(board => (
+          <div 
+            key={board.id}
+            className={`tab-item ${board.id === activeBoard ? 'active' : ''}`}
+            onClick={() => onBoardChange(board.id)}
+          >
+            <span className="tab-text">{board.name}</span>
+            <DropDownButtonComponent
+              items={[
+                { text: 'Add Card', id: 'add' },
+                { text: 'Edit Board', id: 'edit' },
+                { text: 'Delete Board', id: 'delete' }
+              ]}
+              cssClass="e-small"
+              iconCss="e-icons e-down"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent tab selection when clicking dropdown
+              }}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
