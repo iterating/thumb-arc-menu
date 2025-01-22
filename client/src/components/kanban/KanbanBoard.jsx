@@ -85,6 +85,7 @@ const cardTemplate = (props) => {
 };
 
 const KanbanBoard = ({ boardId }) => {
+  const [boardData, setBoardData] = useState(boardTemplates[boardId].data);
   const [selectedCard, setSelectedCard] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const kanbanRef = useRef(null);
@@ -93,13 +94,17 @@ const KanbanBoard = ({ boardId }) => {
   // Load saved data on mount
   useEffect(() => {
     const loadSavedData = async () => {
+      console.log('Loading saved data for board:', boardId);
       const savedData = await kanbanStorage.getItem(`board_${boardId}`);
+      console.log('Loaded data:', savedData);
       if (savedData) {
-        template.data = savedData;
+        setBoardData(savedData);
+      } else {
+        setBoardData(template.data);
       }
     };
     loadSavedData();
-  }, [boardId]);
+  }, [boardId, template.data]);
 
   // Prevent accidental double-clicks
   const handleCardDoubleClick = (e) => {
@@ -120,26 +125,28 @@ const KanbanBoard = ({ boardId }) => {
     if (kanbanRef.current) {
       kanbanRef.current.updateCard(updatedCard);
       
-      // Update template data
-      const cardIndex = template.data.findIndex(item => item.Id === updatedCard.Id);
-      if (cardIndex !== -1) {
-        template.data[cardIndex] = { ...updatedCard };
-        // Save to storage
-        kanbanStorage.setItem(`board_${boardId}`, template.data);
-      }
+      // Update state and storage
+      const newData = boardData.map(item => 
+        item.Id === updatedCard.Id ? { ...updatedCard } : item
+      );
+      setBoardData(newData);
+      kanbanStorage.setItem(`board_${boardId}`, newData);
+      console.log('Saved updated card:', updatedCard);
     }
   };
 
   const handleDragStop = (args) => {
     if (args.data && args.data[0]) {
       const card = args.data[0];
-      // Update template data
-      const cardIndex = template.data.findIndex(item => item.Id === card.Id);
-      if (cardIndex !== -1) {
-        template.data[cardIndex] = { ...card };
-        // Save to storage
-        kanbanStorage.setItem(`board_${boardId}`, template.data);
-      }
+      console.log('Card dragged:', card);
+      
+      // Update state and storage
+      const newData = boardData.map(item => 
+        item.Id === card.Id ? { ...card } : item
+      );
+      setBoardData(newData);
+      kanbanStorage.setItem(`board_${boardId}`, newData);
+      console.log('Saved board data after drag:', newData);
     }
   };
 
@@ -147,7 +154,7 @@ const KanbanBoard = ({ boardId }) => {
     <>
       <KanbanComponent
         ref={kanbanRef}
-        dataSource={template.data.map(item => ({
+        dataSource={boardData.map(item => ({
           ...item,
           onOpenModal: handleOpenModal,
           onUpdate: handleCardUpdate
