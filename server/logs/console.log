@@ -163,5 +163,65 @@
     "timestamp": "2025-01-22T04:43:29.354Z",
     "type": "log",
     "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:43:55.843Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:43:57.542Z",
+    "type": "log",
+    "message": "DreamCardEditModal - handleOverlayClick:"
+  },
+  {
+    "timestamp": "2025-01-22T04:43:58.843Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:44:00.036Z",
+    "type": "log",
+    "message": "DreamCardEditModal - handleOverlayClick:"
+  },
+  {
+    "timestamp": "2025-01-22T04:44:01.906Z",
+    "type": "log",
+    "message": "Card dragged: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Plans\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:44:03.838Z",
+    "type": "log",
+    "message": "Card dragged: [Circular]"
+  },
+  {
+    "timestamp": "2025-01-22T04:44:05.127Z",
+    "type": "log",
+    "message": "Card dragged: [Circular]"
+  },
+  {
+    "timestamp": "2025-01-22T04:44:06.230Z",
+    "type": "log",
+    "message": "Card dragged: [Circular]"
+  },
+  {
+    "timestamp": "2025-01-22T04:44:09.435Z",
+    "type": "log",
+    "message": "Card dragged: [Circular]"
+  },
+  {
+    "timestamp": "2025-01-22T04:44:19.433Z",
+    "type": "log",
+    "message": "Card dragged: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Plans\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:44:21.300Z",
+    "type": "log",
+    "message": "Card dragged: [Circular]"
+  },
+  {
+    "timestamp": "2025-01-22T04:44:23.076Z",
+    "type": "log",
+    "message": "Card dragged: [Circular]"
   }
 ]

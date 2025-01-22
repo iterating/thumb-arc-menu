@@ -132,17 +132,6 @@ const KanbanBoard = ({ boardId }) => {
     }
   };
 
-  const handleDragStop = (args) => {
-    if (args.data && args.data[0] && !isLoading) {
-      const card = args.data[0];
-      console.log('Card dragged:', card);
-      const newData = boardData.map(item => 
-        item.Id === card.Id ? card : item
-      );
-      setBoardData(newData);
-    }
-  };
-
   // Prevent accidental double-clicks
   const handleCardDoubleClick = (e) => {
     if (e) {
@@ -174,7 +163,6 @@ const KanbanBoard = ({ boardId }) => {
       }}
       cardClick={handleCardClick}
       cardDoubleClick={handleCardDoubleClick}
-      dragStop={handleDragStop}
       allowDragAndDrop={true}
       enablePersistence={true}
     >
