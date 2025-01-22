@@ -10,7 +10,7 @@ import DreamCardEditModal from '../modals/DreamCardEditModal';
 import './KanbanBoard.css';
 
 // Custom template for Kanban cards
-const cardTemplate = (props) => {
+const cardTemplate = ({ setSelectedCard, setEditModalOpen, ...props }) => {
   if (!props) return null;
   
   const cardStyle = {
@@ -20,10 +20,6 @@ const cardTemplate = (props) => {
 
   const formattedDateTime = formatDateTime(props.dueDate, props.dueTime);
   const isExpanded = props.uiState?.isExpanded !== false;  // Default to expanded if undefined
-
-  // Get parent's state setters from window
-  const setSelectedCard = window.kanbanSetters?.setSelectedCard;
-  const setEditModalOpen = window.kanbanSetters?.setEditModalOpen;
 
   return (
     <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
@@ -51,12 +47,8 @@ const cardTemplate = (props) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   console.log('Opening modal for card:', props);
-                  if (setSelectedCard && setEditModalOpen) {
-                    setSelectedCard(props);
-                    setEditModalOpen(true);
-                  } else {
-                    console.log('Modal setters not found');
-                  }
+                  setSelectedCard(props);
+                  setEditModalOpen(true);
                 }}
                 title="Edit card"
               >
@@ -84,17 +76,6 @@ const KanbanBoard = ({ boardId }) => {
   const [boardData, setBoardData] = useState([]);
   const kanbanRef = useRef(null);
   const template = boardTemplates[boardId];
-
-  // Make setters available globally
-  useEffect(() => {
-    window.kanbanSetters = {
-      setSelectedCard,
-      setEditModalOpen
-    };
-    return () => {
-      delete window.kanbanSetters;
-    };
-  }, []);
 
   // Initialize data
   useEffect(() => {
@@ -165,12 +146,19 @@ const KanbanBoard = ({ boardId }) => {
     return <div>Loading...</div>;
   }
 
+  // Add setters to each card's props
+  const dataWithSetters = boardData.map(card => ({
+    ...card,
+    setSelectedCard,
+    setEditModalOpen
+  }));
+
   return (
     <>
       <KanbanComponent
         ref={kanbanRef}
         id={`board_${boardId}`}
-        dataSource={boardData}
+        dataSource={dataWithSetters}
         keyField="Status"
         cardSettings={{ 
           template: cardTemplate,
