@@ -663,7 +663,7 @@ const DreamCard = ({
       }}
     >
       {renderBasicContent()}
-      {renderExtendedContent()}
+      {isExpanded && renderExtendedContent()}
     </div>
   );
 };
@@ -672,14 +672,14 @@ DreamCard.propTypes = {
   cardUuid: PropTypes.string,
   card: PropTypes.object,
   onUpdate: PropTypes.func,
+  onOpenModal: PropTypes.func,
   isDraggable: PropTypes.bool,
   isSelected: PropTypes.bool,
   onClick: PropTypes.func,
   onDragStart: PropTypes.func,
   onDragEnd: PropTypes.func,
   isNew: PropTypes.bool,
-  className: PropTypes.string,
-  onOpenModal: PropTypes.func
+  className: PropTypes.string
 };
 
 export default React.memo(DreamCard);

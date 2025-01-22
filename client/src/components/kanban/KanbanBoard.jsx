@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { KanbanComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-kanban';
 import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-react-kanban/styles/material.css';
 import { boardTemplates } from './constants';
 import { formatDateTime } from '../../utils/dateTime';
+import { kanbanStorage } from '../../storage/genericStorage';
 import ProgressBar from '../common/ProgressBar';
 import DreamCardEditModal from '../modals/DreamCardEditModal';
 import './KanbanBoard.css';
@@ -89,6 +90,17 @@ const KanbanBoard = ({ boardId }) => {
   const kanbanRef = useRef(null);
   const template = boardTemplates[boardId];
 
+  // Load saved data on mount
+  useEffect(() => {
+    const loadSavedData = async () => {
+      const savedData = await kanbanStorage.getItem(`board_${boardId}`);
+      if (savedData) {
+        template.data = savedData;
+      }
+    };
+    loadSavedData();
+  }, [boardId]);
+
   // Prevent accidental double-clicks
   const handleCardDoubleClick = (e) => {
     e.cancel = true;
@@ -107,6 +119,27 @@ const KanbanBoard = ({ boardId }) => {
   const handleCardUpdate = (updatedCard) => {
     if (kanbanRef.current) {
       kanbanRef.current.updateCard(updatedCard);
+      
+      // Update template data
+      const cardIndex = template.data.findIndex(item => item.Id === updatedCard.Id);
+      if (cardIndex !== -1) {
+        template.data[cardIndex] = { ...updatedCard };
+        // Save to storage
+        kanbanStorage.setItem(`board_${boardId}`, template.data);
+      }
+    }
+  };
+
+  const handleDragStop = (args) => {
+    if (args.data && args.data[0]) {
+      const card = args.data[0];
+      // Update template data
+      const cardIndex = template.data.findIndex(item => item.Id === card.Id);
+      if (cardIndex !== -1) {
+        template.data[cardIndex] = { ...card };
+        // Save to storage
+        kanbanStorage.setItem(`board_${boardId}`, template.data);
+      }
     }
   };
 
@@ -125,6 +158,7 @@ const KanbanBoard = ({ boardId }) => {
           headerField: "Title"
         }}
         cardDoubleClick={handleCardDoubleClick}
+        dragStop={handleDragStop}
       >
         <ColumnsDirective>
           {template.columns.map(column => (
@@ -143,7 +177,7 @@ const KanbanBoard = ({ boardId }) => {
           card={selectedCard} 
           onClose={handleCloseModal}
           onSave={(updatedCard) => {
-            console.log('Updated card:', updatedCard);
+            handleCardUpdate(updatedCard);
             handleCloseModal();
           }}
         />
