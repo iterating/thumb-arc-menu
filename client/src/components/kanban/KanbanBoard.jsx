@@ -15,9 +15,14 @@ const cardTemplate = (props) => {
 
   const handleClick = (e) => {
     e.stopPropagation();
-    if (!props.uiState) props.uiState = {};
-    props.uiState.isExpanded = !props.uiState.isExpanded;
-    props.onUpdate?.(props);
+    const updatedCard = {
+      ...props,
+      uiState: {
+        ...props.uiState,
+        isExpanded: !props.uiState?.isExpanded
+      }
+    };
+    props.onUpdate?.(updatedCard);
   };
 
   const handleEdit = (e) => {
@@ -31,15 +36,15 @@ const cardTemplate = (props) => {
   };
 
   const formattedDateTime = formatDateTime(props.dueDate, props.dueTime);
+  const isExpanded = props.uiState?.isExpanded !== false;  // Default to expanded if undefined
 
   return (
-    <div className={`card-template ${!props.uiState?.isExpanded ? 'compact' : ''}`} 
+    <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
          style={cardStyle}
          onClick={handleClick}>
       <div className="e-card-content">
         {/* Header - Always visible */}
         <div className="card-header">
-          {/* First row */}
           <div className="header-row">
             <div className="header-date">
               {formattedDateTime}
@@ -53,10 +58,9 @@ const cardTemplate = (props) => {
               />
             </div>
           </div>
-          {/* Second row */}
           <div className="header-row">
             <h3 className="card-title">{props.Title || 'Untitled'}</h3>
-            {props.uiState?.isExpanded !== false && (
+            {isExpanded && (
               <button 
                 className="edit-button" 
                 onClick={handleEdit}
@@ -69,7 +73,7 @@ const cardTemplate = (props) => {
         </div>
 
         {/* Body - Toggleable */}
-        {props.uiState?.isExpanded !== false && (
+        {isExpanded && (
           <div className="card-body">
             {props.Summary && <div className="card-summary">{props.Summary}</div>}
           </div>
@@ -146,12 +150,19 @@ const KanbanBoard = ({ boardId }) => {
     return <div>Loading...</div>;
   }
 
+  // Add handlers to each card in the data
+  const dataWithHandlers = boardData.map(card => ({
+    ...card,
+    onUpdate: handleCardUpdate,
+    onOpenModal: handleOpenModal
+  }));
+
   return (
     <>
       <KanbanComponent
         ref={kanbanRef}
         id={`board_${boardId}`}
-        dataSource={boardData}
+        dataSource={dataWithHandlers}
         keyField="Status"
         cardSettings={{ 
           template: cardTemplate,
@@ -161,6 +172,10 @@ const KanbanBoard = ({ boardId }) => {
         dragStop={handleDragStop}
         allowDragAndDrop={true}
         enablePersistence={true}
+        persistenceSettings={{
+          saveUrl: '/save',
+          loadUrl: '/load'
+        }}
       >
         <ColumnsDirective>
           {template.columns.map(column => (
