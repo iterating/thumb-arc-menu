@@ -73,5 +73,95 @@
     "timestamp": "2025-01-22T04:39:49.231Z",
     "type": "log",
     "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:40:29.896Z",
+    "type": "log",
+    "message": "Card dragged: {\"Id\":3,\"Title\":\"Weekly practice schedule\",\"Status\":\"Goals\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01\",\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":false,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:40:38.852Z",
+    "type": "log",
+    "message": "Card dragged: {\"Id\":3,\"Title\":\"Weekly practice schedule\",\"Status\":\"Goals\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01\",\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:40:53.187Z",
+    "type": "log",
+    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:40:56.028Z",
+    "type": "log",
+    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:40:58.696Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:41:01.986Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:41:05.457Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:41:12.422Z",
+    "type": "log",
+    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:41:16.248Z",
+    "type": "log",
+    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:41:18.533Z",
+    "type": "log",
+    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:41:20.721Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:41:23.590Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:43:00.888Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:43:04.834Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:43:12.793Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:43:16.266Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:43:26.545Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:43:29.354Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   }
 ]

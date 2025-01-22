@@ -10,9 +10,10 @@ import DreamCardEditModal from '../modals/DreamCardEditModal';
 import './KanbanBoard.css';
 
 // Custom template for Kanban cards
-const cardTemplate = ({ setSelectedCard, setEditModalOpen, ...props }) => {
+const cardTemplate = (props) => {
   if (!props) return null;
   
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const cardStyle = {
     backgroundColor: '#ffffff',
     cursor: 'pointer'
@@ -21,57 +22,71 @@ const cardTemplate = ({ setSelectedCard, setEditModalOpen, ...props }) => {
   const formattedDateTime = formatDateTime(props.dueDate, props.dueTime);
   const isExpanded = props.uiState?.isExpanded !== false;  // Default to expanded if undefined
 
+  const handleSave = (updatedCard) => {
+    setEditModalOpen(false);
+    if (props.kanbanRef?.current) {
+      props.kanbanRef.current.updateCard(updatedCard);
+    }
+  };
+
   return (
-    <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
-         style={cardStyle}>
-      <div className="e-card-content">
-        {/* Header - Always visible */}
-        <div className="card-header">
-          <div className="header-row">
-            <div className="header-date">
-              {formattedDateTime}
+    <>
+      <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
+           style={cardStyle}>
+        <div className="e-card-content">
+          {/* Header - Always visible */}
+          <div className="card-header">
+            <div className="header-row">
+              <div className="header-date">
+                {formattedDateTime}
+              </div>
+              <div className="header-progress">
+                <ProgressBar 
+                  value={props.progress || 0} 
+                  height="4px" 
+                  width="60px"
+                />
+              </div>
             </div>
-            <div className="header-progress">
-              <ProgressBar 
-                value={props.progress || 0} 
-                height="4px" 
-                width="60px"
-              />
+            <div className="header-row">
+              <div className="header-title">{props.Title}</div>
+              {isExpanded && (
+                <button 
+                  className="edit-button" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('Opening modal for card:', props);
+                    setEditModalOpen(true);
+                  }}
+                  title="Edit card"
+                >
+                  ✎
+                </button>
+              )}
             </div>
           </div>
-          <div className="header-row">
-            <div className="header-title">{props.Title}</div>
-            {isExpanded && (
-              <button 
-                className="edit-button" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log('Opening modal for card:', props);
-                  setSelectedCard(props);
-                  setEditModalOpen(true);
-                }}
-                title="Edit card"
-              >
-                ✎
-              </button>
-            )}
-          </div>
+          
+          {/* Body - Only visible when expanded */}
+          {isExpanded && (
+            <div className="card-body">
+              <div className="body-summary">{props.Summary}</div>
+            </div>
+          )}
         </div>
-        
-        {/* Body - Only visible when expanded */}
-        {isExpanded && (
-          <div className="card-body">
-            <div className="body-summary">{props.Summary}</div>
-          </div>
-        )}
       </div>
-    </div>
+
+      {editModalOpen && (
+        <DreamCardEditModal 
+          card={props}
+          onClose={() => setEditModalOpen(false)}
+          onSave={handleSave}
+        />
+      )}
+    </>
   );
 };
 
 const KanbanBoard = ({ boardId }) => {
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [boardData, setBoardData] = useState([]);
   const kanbanRef = useRef(null);
@@ -137,65 +152,43 @@ const KanbanBoard = ({ boardId }) => {
     }
   };
 
-  const handleCloseModal = () => {
-    setSelectedCard(null);
-    setEditModalOpen(false);
-  };
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  // Add setters to each card's props
-  const dataWithSetters = boardData.map(card => ({
+  // Add kanbanRef to each card's props
+  const dataWithRef = boardData.map(card => ({
     ...card,
-    setSelectedCard,
-    setEditModalOpen
+    kanbanRef
   }));
 
   return (
-    <>
-      <KanbanComponent
-        ref={kanbanRef}
-        id={`board_${boardId}`}
-        dataSource={dataWithSetters}
-        keyField="Status"
-        cardSettings={{ 
-          template: cardTemplate,
-          headerField: "Title"
-        }}
-        cardClick={handleCardClick}
-        cardDoubleClick={handleCardDoubleClick}
-        dragStop={handleDragStop}
-        allowDragAndDrop={true}
-        enablePersistence={true}
-      >
-        <ColumnsDirective>
-          {template.columns.map(column => (
-            <ColumnDirective
-              key={column.keyField}
-              headerText={column.headerText}
-              keyField={column.keyField}
-              allowToggle={true}
-            />
-          ))}
-        </ColumnsDirective>
-      </KanbanComponent>
-
-      {editModalOpen && selectedCard && (
-        <DreamCardEditModal 
-          card={selectedCard} 
-          onClose={handleCloseModal}
-          onSave={(updatedCard) => {
-            const newData = boardData.map(item => 
-              item.Id === updatedCard.Id ? updatedCard : item
-            );
-            setBoardData(newData);
-            handleCloseModal();
-          }}
-        />
-      )}
-    </>
+    <KanbanComponent
+      ref={kanbanRef}
+      id={`board_${boardId}`}
+      dataSource={dataWithRef}
+      keyField="Status"
+      cardSettings={{ 
+        template: cardTemplate,
+        headerField: "Title"
+      }}
+      cardClick={handleCardClick}
+      cardDoubleClick={handleCardDoubleClick}
+      dragStop={handleDragStop}
+      allowDragAndDrop={true}
+      enablePersistence={true}
+    >
+      <ColumnsDirective>
+        {template.columns.map(column => (
+          <ColumnDirective
+            key={column.keyField}
+            headerText={column.headerText}
+            keyField={column.keyField}
+            allowToggle={true}
+          />
+        ))}
+      </ColumnsDirective>
+    </KanbanComponent>
   );
 };
 
