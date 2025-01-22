@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { KanbanComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-kanban';
+import { extend } from '@syncfusion/ej2-base';
 import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-react-kanban/styles/material.css';
 import { boardTemplates } from './constants';
 import { formatDateTime } from '../../utils/dateTime';
-import { kanbanStorage } from '../../storage/genericStorage';
 import ProgressBar from '../common/ProgressBar';
 import DreamCardEditModal from '../modals/DreamCardEditModal';
 import './KanbanBoard.css';
@@ -85,26 +85,47 @@ const cardTemplate = (props) => {
 };
 
 const KanbanBoard = ({ boardId }) => {
-  const [boardData, setBoardData] = useState(boardTemplates[boardId].data);
   const [selectedCard, setSelectedCard] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [boardData, setBoardData] = useState([]);
   const kanbanRef = useRef(null);
   const template = boardTemplates[boardId];
 
-  // Load saved data on mount
+  // Initialize data
   useEffect(() => {
-    const loadSavedData = async () => {
-      console.log('Loading saved data for board:', boardId);
-      const savedData = await kanbanStorage.getItem(`board_${boardId}`);
-      console.log('Loaded data:', savedData);
-      if (savedData) {
-        setBoardData(savedData);
-      } else {
-        setBoardData(template.data);
-      }
-    };
-    loadSavedData();
-  }, [boardId, template.data]);
+    setIsLoading(true);
+    try {
+      // Use extend to create a deep copy of the template data
+      const data = extend([], boardTemplates[boardId].data, null, true);
+      setBoardData(data);
+    } catch (error) {
+      console.error('Error initializing board data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [boardId]);
+
+  const handleCardUpdate = (updatedCard) => {
+    if (kanbanRef.current && !isLoading) {
+      console.log('Updating card:', updatedCard);
+      const newData = boardData.map(item => 
+        item.Id === updatedCard.Id ? updatedCard : item
+      );
+      setBoardData(newData);
+    }
+  };
+
+  const handleDragStop = (args) => {
+    if (args.data && args.data[0] && !isLoading) {
+      const card = args.data[0];
+      console.log('Card dragged:', card);
+      const newData = boardData.map(item => 
+        item.Id === card.Id ? card : item
+      );
+      setBoardData(newData);
+    }
+  };
 
   // Prevent accidental double-clicks
   const handleCardDoubleClick = (e) => {
@@ -121,44 +142,16 @@ const KanbanBoard = ({ boardId }) => {
     setEditModalOpen(false);
   };
 
-  const handleCardUpdate = (updatedCard) => {
-    if (kanbanRef.current) {
-      kanbanRef.current.updateCard(updatedCard);
-      
-      // Update state and storage
-      const newData = boardData.map(item => 
-        item.Id === updatedCard.Id ? { ...updatedCard } : item
-      );
-      setBoardData(newData);
-      kanbanStorage.setItem(`board_${boardId}`, newData);
-      console.log('Saved updated card:', updatedCard);
-    }
-  };
-
-  const handleDragStop = (args) => {
-    if (args.data && args.data[0]) {
-      const card = args.data[0];
-      console.log('Card dragged:', card);
-      
-      // Update state and storage
-      const newData = boardData.map(item => 
-        item.Id === card.Id ? { ...card } : item
-      );
-      setBoardData(newData);
-      kanbanStorage.setItem(`board_${boardId}`, newData);
-      console.log('Saved board data after drag:', newData);
-    }
-  };
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
       <KanbanComponent
         ref={kanbanRef}
-        dataSource={boardData.map(item => ({
-          ...item,
-          onOpenModal: handleOpenModal,
-          onUpdate: handleCardUpdate
-        }))}
+        id={`board_${boardId}`}
+        dataSource={boardData}
         keyField="Status"
         cardSettings={{ 
           template: cardTemplate,
@@ -166,6 +159,8 @@ const KanbanBoard = ({ boardId }) => {
         }}
         cardDoubleClick={handleCardDoubleClick}
         dragStop={handleDragStop}
+        allowDragAndDrop={true}
+        enablePersistence={true}
       >
         <ColumnsDirective>
           {template.columns.map(column => (

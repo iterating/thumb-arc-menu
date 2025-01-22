@@ -1,0 +1,17 @@
+[
+  {
+    "timestamp": "2025-01-22T03:45:45.960Z",
+    "type": "log",
+    "message": "Card dragged: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Dreams\",\"Summary\":\"Take piano lessons and practice regularly\",\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T03:45:50.504Z",
+    "type": "log",
+    "message": "Card dragged: {\"Id\":3,\"Title\":\"Weekly practice schedule\",\"Status\":\"Goals\",\"Summary\":\"Create a weekly schedule for piano practice\",\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T03:45:51.563Z",
+    "type": "log",
+    "message": "Card dragged: {\"Id\":4,\"Title\":\"First recital\",\"Status\":\"Plans\",\"Summary\":\"Performed at first piano recital\",\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  }
+]
