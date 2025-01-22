@@ -1,0 +1,182 @@
+.inline-datetime {
+  position: relative;
+  display: inline-block;
+}
+
+.inline-datetime-inputs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.inline-datetime-collapsed {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.calendar-icon {
+  color: var(--text-secondary);
+  font-size: 1em;
+  flex-shrink: 0;
+}
+
+.datetime-text {
+  color: var(--text-primary);
+  font-size: 0.9em;
+}
+
+.inline-datetime--compact:hover .calendar-icon,
+.inline-datetime--compact:hover .datetime-text {
+  color: var(--primary-color);
+}
+
+.inline-datetime-date {
+  position: relative;
+  min-width: 0;
+}
+
+.inline-datetime-hours {
+  min-width: 0;
+}
+
+.inline-datetime-colon {
+  justify-self: center;
+  user-select: none;
+  padding: 0 1px;
+}
+
+.inline-datetime-minutes {
+  min-width: 0;
+}
+
+.inline-datetime-ampm {
+  min-width: 0;
+}
+
+.inline-datetime input {
+  width: 100px;
+  padding: 2px 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-size: 0.9em;
+}
+
+.inline-datetime select {
+  width: 45px;
+  padding: 2px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-size: 0.9em;
+  text-align: center;
+}
+
+/* Compact mode styles */
+.inline-datetime--compact {
+  cursor: pointer;
+}
+
+.inline-datetime--compact input,
+.inline-datetime--compact select {
+  border-color: transparent;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: none;
+}
+
+.inline-datetime--compact select {
+  /* Hide the dropdown arrow in compact mode */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.inline-datetime--compact:hover {
+  color: var(--primary-color);
+}
+
+.inline-datetime-clear {
+  padding: 2px 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+
+.inline-datetime-clear:hover {
+  opacity: 1;
+  color: var(--error-color);
+}
+
+.inline-datetime-clear:focus {
+  outline: none;
+}
+
+.colon {
+  color: var(--text-primary);
+  padding: 0 1px;
+  user-select: none;
+}
+
+.inline-datetime-calendar {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  margin-top: 4px;
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+}
+
+/* Calendar theme overrides */
+.inline-datetime .react-calendar {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  width: auto;
+  padding: 8px;
+}
+
+.inline-datetime .react-calendar button {
+  color: var(--text-primary);
+}
+
+.inline-datetime .react-calendar__navigation button:enabled:hover,
+.inline-datetime .react-calendar__navigation button:enabled:focus {
+  background-color: var(--background-secondary);
+}
+
+.inline-datetime .react-calendar__tile:enabled:hover,
+.inline-datetime .react-calendar__tile:enabled:focus {
+  background-color: var(--background-secondary);
+}
+
+.inline-datetime .react-calendar__tile--active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.inline-datetime .react-calendar__tile--now {
+  background: var(--background-secondary);
+}
+
+.inline-datetime .react-calendar__month-view__days__day--neighboringMonth {
+  color: var(--text-secondary);
+}
+
+.inline-datetime input:focus,
+.inline-datetime select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
