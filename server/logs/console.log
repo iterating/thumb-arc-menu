@@ -1,17 +1,7 @@
 [
   {
-    "timestamp": "2025-01-22T04:25:04.549Z",
-    "type": "error",
-    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceSettings persistencesettings \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737519802708:161:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737519802708:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737519802708:89:37)"
-  },
-  {
-    "timestamp": "2025-01-22T04:25:09.423Z",
+    "timestamp": "2025-01-22T04:32:14.314Z",
     "type": "log",
-    "message": "Updating card: {\"Id\":4,\"Title\":\"First recital\",\"Status\":\"Achievements\",\"Summary\":\"Performed at first piano recital\",\"dueDate\":\"2024-03-15\",\"dueTime\":\"7:00pm\",\"progress\":100,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
-  },
-  {
-    "timestamp": "2025-01-22T04:25:14.362Z",
-    "type": "error",
-    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceSettings persistencesettings \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737519802708:161:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737519802708:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737519802708:89:37)"
+    "message": "Card dragged: {\"Id\":1,\"Title\":\"Travel the world\",\"Status\":\"Dreams\",\"Summary\":\"Visit at least 10 countries in 5 years\",\"dueDate\":\"2025-12-31\",\"dueTime\":\"1700\",\"progress\":15,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
   }
 ]

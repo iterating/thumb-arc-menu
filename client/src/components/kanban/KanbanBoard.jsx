@@ -12,23 +12,6 @@ import './KanbanBoard.css';
 // Custom template for Kanban cards
 const cardTemplate = (props) => {
   if (!props) return null;
-
-  const handleClick = (e) => {
-    e.stopPropagation();
-    const updatedCard = {
-      ...props,
-      uiState: {
-        ...props.uiState,
-        isExpanded: !props.uiState?.isExpanded
-      }
-    };
-    props.onUpdate?.(updatedCard);
-  };
-
-  const handleEdit = (e) => {
-    e.stopPropagation();
-    props.onOpenModal?.(props);
-  };
   
   const cardStyle = {
     backgroundColor: '#ffffff',
@@ -40,8 +23,7 @@ const cardTemplate = (props) => {
 
   return (
     <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
-         style={cardStyle}
-         onClick={handleClick}>
+         style={cardStyle}>
       <div className="e-card-content">
         {/* Header - Always visible */}
         <div className="card-header">
@@ -54,16 +36,20 @@ const cardTemplate = (props) => {
                 value={props.progress || 0} 
                 height="4px" 
                 width="60px"
-                showValue={false}
               />
             </div>
           </div>
           <div className="header-row">
-            <h3 className="card-title">{props.Title || 'Untitled'}</h3>
+            <div className="header-title">{props.Title}</div>
             {isExpanded && (
               <button 
                 className="edit-button" 
-                onClick={handleEdit}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (props.data?.onOpenModal) {
+                    props.data.onOpenModal(props);
+                  }
+                }}
                 title="Edit card"
               >
                 ✎
@@ -71,18 +57,13 @@ const cardTemplate = (props) => {
             )}
           </div>
         </div>
-
-        {/* Body - Toggleable */}
+        
+        {/* Body - Only visible when expanded */}
         {isExpanded && (
           <div className="card-body">
-            {props.Summary && <div className="card-summary">{props.Summary}</div>}
+            <div className="body-summary">{props.Summary}</div>
           </div>
         )}
-
-        {/* Footer - Always visible */}
-        <div className="card-footer">
-          {props.Status && <span>Status: {props.Status}</span>}
-        </div>
       </div>
     </div>
   );
@@ -102,7 +83,11 @@ const KanbanBoard = ({ boardId }) => {
     try {
       // Use extend to create a deep copy of the template data
       const data = extend([], boardTemplates[boardId].data, null, true);
-      setBoardData(data);
+      const dataWithHandlers = data.map(card => ({
+        ...card,
+        onOpenModal: handleOpenModal
+      }));
+      setBoardData(dataWithHandlers);
     } catch (error) {
       console.error('Error initializing board data:', error);
     } finally {
@@ -110,13 +95,29 @@ const KanbanBoard = ({ boardId }) => {
     }
   }, [boardId]);
 
-  const handleCardUpdate = (updatedCard) => {
-    if (kanbanRef.current && !isLoading) {
-      console.log('Updating card:', updatedCard);
-      const newData = boardData.map(item => 
-        item.Id === updatedCard.Id ? updatedCard : item
-      );
-      setBoardData(newData);
+  const handleCardClick = (args) => {
+    const card = args.data;
+    if (!card) return;
+
+    // Toggle expanded state
+    const updatedCard = {
+      ...card,
+      uiState: {
+        ...card.uiState,
+        isExpanded: !card.uiState?.isExpanded
+      }
+    };
+
+    // Update the card in our data
+    const newData = boardData.map(item => 
+      item.Id === updatedCard.Id ? updatedCard : item
+    );
+    setBoardData(newData);
+
+    // Update SF's data
+    if (kanbanRef.current) {
+      kanbanRef.current.dataSource = newData;
+      kanbanRef.current.dataBind();
     }
   };
 
@@ -133,7 +134,11 @@ const KanbanBoard = ({ boardId }) => {
 
   // Prevent accidental double-clicks
   const handleCardDoubleClick = (e) => {
-    e.cancel = true;
+    if (e) {
+      e.cancel = true;
+      e.preventDefaults?.();
+      e.stopPropagation?.();
+    }
   };
 
   const handleOpenModal = (card) => {
@@ -150,32 +155,22 @@ const KanbanBoard = ({ boardId }) => {
     return <div>Loading...</div>;
   }
 
-  // Add handlers to each card in the data
-  const dataWithHandlers = boardData.map(card => ({
-    ...card,
-    onUpdate: handleCardUpdate,
-    onOpenModal: handleOpenModal
-  }));
-
   return (
     <>
       <KanbanComponent
         ref={kanbanRef}
         id={`board_${boardId}`}
-        dataSource={dataWithHandlers}
+        dataSource={boardData}
         keyField="Status"
         cardSettings={{ 
           template: cardTemplate,
           headerField: "Title"
         }}
+        cardClick={handleCardClick}
         cardDoubleClick={handleCardDoubleClick}
         dragStop={handleDragStop}
         allowDragAndDrop={true}
         enablePersistence={true}
-        persistenceSettings={{
-          saveUrl: '/save',
-          loadUrl: '/load'
-        }}
       >
         <ColumnsDirective>
           {template.columns.map(column => (
@@ -194,7 +189,10 @@ const KanbanBoard = ({ boardId }) => {
           card={selectedCard} 
           onClose={handleCloseModal}
           onSave={(updatedCard) => {
-            handleCardUpdate(updatedCard);
+            const newData = boardData.map(item => 
+              item.Id === updatedCard.Id ? updatedCard : item
+            );
+            setBoardData(newData);
             handleCloseModal();
           }}
         />
