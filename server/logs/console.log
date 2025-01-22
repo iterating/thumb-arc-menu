@@ -1,227 +1,137 @@
 [
   {
-    "timestamp": "2025-01-22T04:32:14.314Z",
-    "type": "log",
-    "message": "Card dragged: {\"Id\":1,\"Title\":\"Travel the world\",\"Status\":\"Dreams\",\"Summary\":\"Visit at least 10 countries in 5 years\",\"dueDate\":\"2025-12-31\",\"dueTime\":\"1700\",\"progress\":15,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+    "timestamp": "2025-01-22T07:52:53.296Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737530919342:167:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737530919342:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737530919342:89:37)"
   },
   {
-    "timestamp": "2025-01-22T04:34:53.430Z",
-    "type": "log",
-    "message": "No onOpenModal found in props.data"
+    "timestamp": "2025-01-22T07:54:05.960Z",
+    "type": "error",
+    "message": "The above error occurred in the <KanbanComponent2> component:\n\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737530919342:167:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737530919342:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737530919342:89:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
   },
   {
-    "timestamp": "2025-01-22T04:34:55.261Z",
-    "type": "log",
-    "message": "No onOpenModal found in props.data"
+    "timestamp": "2025-01-22T07:54:13.701Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737530919342:167:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737530919342:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737530919342:89:37)"
   },
   {
-    "timestamp": "2025-01-22T04:35:33.546Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:35:38.398Z",
+    "timestamp": "2025-01-22T08:14:33.815Z",
     "type": "log",
     "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:35:51.616Z",
-    "type": "log",
-    "message": "No onOpenModal found in props"
-  },
-  {
-    "timestamp": "2025-01-22T04:35:53.275Z",
-    "type": "log",
-    "message": "No onOpenModal found in props"
-  },
-  {
-    "timestamp": "2025-01-22T04:35:55.142Z",
-    "type": "log",
-    "message": "No onOpenModal found in props"
-  },
-  {
-    "timestamp": "2025-01-22T04:37:37.998Z",
-    "type": "log",
-    "message": "Data bound, reattaching handlers"
-  },
-  {
-    "timestamp": "2025-01-22T04:37:41.813Z",
+    "timestamp": "2025-01-22T08:14:37.287Z",
     "type": "log",
     "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:37:52.681Z",
+    "timestamp": "2025-01-22T08:14:40.071Z",
     "type": "log",
     "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:39:36.503Z",
+    "timestamp": "2025-01-22T08:14:42.737Z",
+    "type": "log",
+    "message": "DreamCardEditModal - Saving data: {\"Id\":3,\"Title\":\"Weekly practice schedulew\",\"Status\":\"Plans\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01T00:00:00.000Z\",\"dueTime\":null,\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"tasks\":[{\"id\":\"1737533673815\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
+  },
+  {
+    "timestamp": "2025-01-22T08:14:47.790Z",
     "type": "log",
     "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:39:39.212Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:39:42.184Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:39:49.231Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:40:29.896Z",
-    "type": "log",
-    "message": "Card dragged: {\"Id\":3,\"Title\":\"Weekly practice schedule\",\"Status\":\"Goals\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01\",\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":false,\"isHighlighted\":false,\"customStyles\":{}}}"
-  },
-  {
-    "timestamp": "2025-01-22T04:40:38.852Z",
-    "type": "log",
-    "message": "Card dragged: {\"Id\":3,\"Title\":\"Weekly practice schedule\",\"Status\":\"Goals\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01\",\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
-  },
-  {
-    "timestamp": "2025-01-22T04:40:53.187Z",
-    "type": "log",
-    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
-  },
-  {
-    "timestamp": "2025-01-22T04:40:56.028Z",
-    "type": "log",
-    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
-  },
-  {
-    "timestamp": "2025-01-22T04:40:58.696Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:41:01.986Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:41:05.457Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:41:12.422Z",
-    "type": "log",
-    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
-  },
-  {
-    "timestamp": "2025-01-22T04:41:16.248Z",
-    "type": "log",
-    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
-  },
-  {
-    "timestamp": "2025-01-22T04:41:18.533Z",
-    "type": "log",
-    "message": "Opening modal for card: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
-  },
-  {
-    "timestamp": "2025-01-22T04:41:20.721Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:41:23.590Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:43:00.888Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:43:04.834Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:43:12.793Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:43:16.266Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:43:26.545Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:43:29.354Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:43:55.843Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
-  },
-  {
-    "timestamp": "2025-01-22T04:43:57.542Z",
+    "timestamp": "2025-01-22T08:15:18.075Z",
     "type": "log",
     "message": "DreamCardEditModal - handleOverlayClick:"
   },
   {
-    "timestamp": "2025-01-22T04:43:58.843Z",
+    "timestamp": "2025-01-22T08:15:19.326Z",
     "type": "log",
     "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:44:00.036Z",
+    "timestamp": "2025-01-22T08:19:27.492Z",
     "type": "log",
-    "message": "DreamCardEditModal - handleOverlayClick:"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:44:01.906Z",
+    "timestamp": "2025-01-22T08:19:31.647Z",
     "type": "log",
-    "message": "Card dragged: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Plans\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:44:03.838Z",
+    "timestamp": "2025-01-22T08:19:32.985Z",
     "type": "log",
-    "message": "Card dragged: [Circular]"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:44:05.127Z",
+    "timestamp": "2025-01-22T08:19:37.071Z",
     "type": "log",
-    "message": "Card dragged: [Circular]"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:44:06.230Z",
-    "type": "log",
-    "message": "Card dragged: [Circular]"
+    "timestamp": "2025-01-22T08:34:30.964Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737534837836:293:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737534837836:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737534837836:89:37)"
   },
   {
-    "timestamp": "2025-01-22T04:44:09.435Z",
+    "timestamp": "2025-01-22T08:34:32.895Z",
     "type": "log",
-    "message": "Card dragged: [Circular]"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:44:19.433Z",
+    "timestamp": "2025-01-22T08:34:54.987Z",
     "type": "log",
-    "message": "Card dragged: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Plans\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:44:21.300Z",
+    "timestamp": "2025-01-22T08:34:57.770Z",
     "type": "log",
-    "message": "Card dragged: [Circular]"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-22T04:44:23.076Z",
+    "timestamp": "2025-01-22T08:35:00.183Z",
     "type": "log",
-    "message": "Card dragged: [Circular]"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:35:54.733Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:36:55.443Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:37:00.034Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:37:12.424Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:38:06.972Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:38:09.107Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:38:11.438Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:38:13.415Z",
+    "type": "log",
+    "message": "DreamCardEditModal - Saving data: {\"Id\":3,\"Title\":\"Weekly practice scheduleq\",\"Status\":\"Plans\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01T00:00:00.000Z\",\"dueTime\":null,\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"tasks\":[{\"id\":\"1737535086972\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
   }
 ]

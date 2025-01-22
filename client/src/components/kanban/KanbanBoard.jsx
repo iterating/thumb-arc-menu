@@ -24,6 +24,13 @@ const cardTemplate = (props) => {
 
   const handleSave = (updatedCard) => {
     setEditModalOpen(false);
+    
+    // Update React state
+    props.onBoardDataChange?.(prev => prev.map(item => 
+      item.Id === updatedCard.Id ? updatedCard : item
+    ));
+
+    // Update SF's data and trigger persistence
     if (props.kanbanRef?.current) {
       props.kanbanRef.current.updateCard(updatedCard);
     }
@@ -110,7 +117,10 @@ const KanbanBoard = ({ boardId }) => {
     const card = args.data;
     if (!card) return;
 
-    // Toggle expanded state
+    // Let SF handle selection
+    args.cancel = false;
+
+    // Handle expansion
     const updatedCard = {
       ...card,
       uiState: {
@@ -118,14 +128,23 @@ const KanbanBoard = ({ boardId }) => {
         isExpanded: !card.uiState?.isExpanded
       }
     };
-    
-    // Update both React and SF state
+
+    // Update React state
     setBoardData(prev => prev.map(item => 
       item.Id === updatedCard.Id ? updatedCard : item
     ));
-    
+
+    // Update SF's data
     if (kanbanRef.current) {
       kanbanRef.current.updateCard(updatedCard);
+    }
+  };
+
+  const handleActionComplete = (args) => {
+    if (args.requestType === 'cardChange') {
+      setBoardData(prev => prev.map(item => 
+        item.Id === args.changedRecords[0].Id ? args.changedRecords[0] : item
+      ));
     }
   };
 
@@ -144,7 +163,8 @@ const KanbanBoard = ({ boardId }) => {
   // Add kanbanRef to each card's props
   const dataWithRef = boardData.map(card => ({
     ...card,
-    kanbanRef
+    kanbanRef,
+    onBoardDataChange: setBoardData
   }));
 
   return (
@@ -159,8 +179,10 @@ const KanbanBoard = ({ boardId }) => {
       }}
       cardClick={handleCardClick}
       cardDoubleClick={handleCardDoubleClick}
+      actionComplete={handleActionComplete}
       allowDragAndDrop={true}
       enablePersistence={true}
+      persistenceKey={`kanban_${boardId}`}
     >
       <ColumnsDirective>
         {template.columns.map(column => (
