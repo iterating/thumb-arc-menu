@@ -118,21 +118,17 @@ const KanbanBoard = ({ boardId }) => {
         isExpanded: !card.uiState?.isExpanded
       }
     };
-
-    // Update the card in our data
-    const newData = boardData.map(item => 
+    
+    // Update both React and SF state
+    setBoardData(prev => prev.map(item => 
       item.Id === updatedCard.Id ? updatedCard : item
-    );
-    setBoardData(newData);
-
-    // Update SF's data
+    ));
+    
     if (kanbanRef.current) {
-      kanbanRef.current.dataSource = newData;
-      kanbanRef.current.dataBind();
+      kanbanRef.current.updateCard(updatedCard);
     }
   };
 
-  // Prevent accidental double-clicks
   const handleCardDoubleClick = (e) => {
     if (e) {
       e.cancel = true;
