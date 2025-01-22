@@ -21,6 +21,10 @@ const cardTemplate = (props) => {
   const formattedDateTime = formatDateTime(props.dueDate, props.dueTime);
   const isExpanded = props.uiState?.isExpanded !== false;  // Default to expanded if undefined
 
+  // Get parent's state setters from window
+  const setSelectedCard = window.kanbanSetters?.setSelectedCard;
+  const setEditModalOpen = window.kanbanSetters?.setEditModalOpen;
+
   return (
     <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
          style={cardStyle}>
@@ -46,8 +50,12 @@ const cardTemplate = (props) => {
                 className="edit-button" 
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (props.data?.onOpenModal) {
-                    props.data.onOpenModal(props);
+                  console.log('Opening modal for card:', props);
+                  if (setSelectedCard && setEditModalOpen) {
+                    setSelectedCard(props);
+                    setEditModalOpen(true);
+                  } else {
+                    console.log('Modal setters not found');
                   }
                 }}
                 title="Edit card"
@@ -77,17 +85,24 @@ const KanbanBoard = ({ boardId }) => {
   const kanbanRef = useRef(null);
   const template = boardTemplates[boardId];
 
+  // Make setters available globally
+  useEffect(() => {
+    window.kanbanSetters = {
+      setSelectedCard,
+      setEditModalOpen
+    };
+    return () => {
+      delete window.kanbanSetters;
+    };
+  }, []);
+
   // Initialize data
   useEffect(() => {
     setIsLoading(true);
     try {
       // Use extend to create a deep copy of the template data
       const data = extend([], boardTemplates[boardId].data, null, true);
-      const dataWithHandlers = data.map(card => ({
-        ...card,
-        onOpenModal: handleOpenModal
-      }));
-      setBoardData(dataWithHandlers);
+      setBoardData(data);
     } catch (error) {
       console.error('Error initializing board data:', error);
     } finally {
@@ -139,11 +154,6 @@ const KanbanBoard = ({ boardId }) => {
       e.preventDefaults?.();
       e.stopPropagation?.();
     }
-  };
-
-  const handleOpenModal = (card) => {
-    setSelectedCard(card);
-    setEditModalOpen(true);
   };
 
   const handleCloseModal = () => {

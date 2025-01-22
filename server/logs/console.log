@@ -3,5 +3,55 @@
     "timestamp": "2025-01-22T04:32:14.314Z",
     "type": "log",
     "message": "Card dragged: {\"Id\":1,\"Title\":\"Travel the world\",\"Status\":\"Dreams\",\"Summary\":\"Visit at least 10 countries in 5 years\",\"dueDate\":\"2025-12-31\",\"dueTime\":\"1700\",\"progress\":15,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}}}"
+  },
+  {
+    "timestamp": "2025-01-22T04:34:53.430Z",
+    "type": "log",
+    "message": "No onOpenModal found in props.data"
+  },
+  {
+    "timestamp": "2025-01-22T04:34:55.261Z",
+    "type": "log",
+    "message": "No onOpenModal found in props.data"
+  },
+  {
+    "timestamp": "2025-01-22T04:35:33.546Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:35:38.398Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:35:51.616Z",
+    "type": "log",
+    "message": "No onOpenModal found in props"
+  },
+  {
+    "timestamp": "2025-01-22T04:35:53.275Z",
+    "type": "log",
+    "message": "No onOpenModal found in props"
+  },
+  {
+    "timestamp": "2025-01-22T04:35:55.142Z",
+    "type": "log",
+    "message": "No onOpenModal found in props"
+  },
+  {
+    "timestamp": "2025-01-22T04:37:37.998Z",
+    "type": "log",
+    "message": "Data bound, reattaching handlers"
+  },
+  {
+    "timestamp": "2025-01-22T04:37:41.813Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T04:37:52.681Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   }
 ]
