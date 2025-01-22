@@ -25,14 +25,18 @@ const cardTemplate = (props) => {
   const handleSave = (updatedCard) => {
     setEditModalOpen(false);
     
-    // Update React state
-    props.onBoardDataChange?.(prev => prev.map(item => 
-      item.Id === updatedCard.Id ? updatedCard : item
+    // Update React state directly through setBoardData
+    props.onBoardDataChange(prev => prev.map(item => 
+      item.Id === updatedCard.Id ? { ...updatedCard, kanbanRef: props.kanbanRef } : item
     ));
 
     // Update SF's data and trigger persistence
     if (props.kanbanRef?.current) {
-      props.kanbanRef.current.updateCard(updatedCard);
+      props.kanbanRef.current.updateCard({
+        ...updatedCard,
+        kanbanRef: props.kanbanRef,
+        onBoardDataChange: props.onBoardDataChange
+      });
     }
   };
 

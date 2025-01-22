@@ -133,5 +133,75 @@
     "timestamp": "2025-01-22T08:38:13.415Z",
     "type": "log",
     "message": "DreamCardEditModal - Saving data: {\"Id\":3,\"Title\":\"Weekly practice scheduleq\",\"Status\":\"Plans\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01T00:00:00.000Z\",\"dueTime\":null,\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"tasks\":[{\"id\":\"1737535086972\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
+  },
+  {
+    "timestamp": "2025-01-22T08:45:53.459Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737535077673:170:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737535077673:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737535077673:89:37)"
+  },
+  {
+    "timestamp": "2025-01-22T08:45:54.950Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:45:57.051Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:45:59.239Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:46:00.516Z",
+    "type": "log",
+    "message": "DreamCardEditModal - Saving data: {\"Id\":3,\"Title\":\"Weekly practice schedule2\",\"Status\":\"Plans\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01T00:00:00.000Z\",\"dueTime\":null,\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"tasks\":[{\"id\":\"1737535554950\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
+  },
+  {
+    "timestamp": "2025-01-22T08:46:09.785Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:46:11.128Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:46:12.940Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:46:14.643Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:46:16.829Z",
+    "type": "log",
+    "message": "DreamCardEditModal - Saving data: {\"Id\":3,\"Title\":\"Weekly practice schedule22\",\"Status\":\"Plans\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01T00:00:00.000Z\",\"dueTime\":null,\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"tasks\":[{\"id\":\"1737535569785\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
+  },
+  {
+    "timestamp": "2025-01-22T08:48:42.699Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:48:45.092Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:48:46.638Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-22T08:48:48.088Z",
+    "type": "log",
+    "message": "DreamCardEditModal - Saving data: {\"Id\":3,\"Title\":\"Weekly practice schedule2\",\"Status\":\"Plans\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01T00:00:00.000Z\",\"dueTime\":null,\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"tasks\":[{\"id\":\"1737535722699\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
   }
 ]
