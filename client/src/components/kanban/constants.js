@@ -56,7 +56,7 @@ export const boardTemplates = {
         Summary: 'Visit at least 10 countries in 5 years',
         dueDate: '2025-12-31',
         dueTime: '1700',
-        progress: 15,
+        progress: 15,  // Just starting
         uiState: {
           backgroundColor: '#ffffff',
           textColor: '#333333',
@@ -72,7 +72,7 @@ export const boardTemplates = {
         Summary: 'Take piano lessons and practice regularly',
         dueDate: '2024-06-30',
         dueTime: '2:30pm',
-        progress: 45,
+        progress: 45,  // Almost halfway
         uiState: {
           backgroundColor: '#f8f9fa',
           textColor: '#333333',
@@ -87,7 +87,7 @@ export const boardTemplates = {
         Status: 'Plans',
         Summary: 'Create a weekly schedule for piano practice',
         dueDate: '2024-02-01',
-        progress: 80,
+        progress: 80,  // Almost done
         uiState: {
           backgroundColor: '#ffffff',
           textColor: '#333333',
@@ -100,14 +100,13 @@ export const boardTemplates = {
         Id: 4,
         Title: 'First recital',
         Status: 'Achievements',
-        Summary: 'Performed at first piano recital',
-        dueDate: '2024-03-15',
-        dueTime: '7:00pm',
-        progress: 100,
+        Summary: 'Successfully performed at first piano recital',
+        dueDate: '2024-01-15',
+        progress: 100,  // Completed
         uiState: {
           backgroundColor: '#ffffff',
           textColor: '#333333',
-          isExpanded: true,
+          isExpanded: false,
           isHighlighted: false,
           customStyles: {}
         }
@@ -116,16 +115,18 @@ export const boardTemplates = {
   },
   work: {
     columns: [
-      { headerText: 'To Do', keyField: 'To Do' },
-      { headerText: 'In Progress', keyField: 'In Progress' },
+      { headerText: 'To Do', keyField: 'ToDo' },
+      { headerText: 'In Progress', keyField: 'InProgress' },
       { headerText: 'Done', keyField: 'Done' }
     ],
     data: [
       {
-        Id: 1,
+        Id: 5,
         Title: 'Project proposal',
-        Status: 'To Do',
+        Status: 'ToDo',
         Summary: 'Write project proposal for new client',
+        dueDate: '2024-02-15',
+        progress: 0,  // Not started
         uiState: {
           backgroundColor: '#ffffff',
           textColor: '#333333',
@@ -135,12 +136,14 @@ export const boardTemplates = {
         }
       },
       {
-        Id: 2,
+        Id: 6,
         Title: 'Client meeting',
-        Status: 'In Progress',
+        Status: 'InProgress',
         Summary: 'Prepare presentation for client meeting',
+        dueDate: '2024-02-01',
+        progress: 60,  // More than halfway
         uiState: {
-          backgroundColor: '#f8f9fa',
+          backgroundColor: '#ffffff',
           textColor: '#333333',
           isExpanded: true,
           isHighlighted: false,
@@ -148,14 +151,16 @@ export const boardTemplates = {
         }
       },
       {
-        Id: 3,
-        Title: 'Documentation',
+        Id: 7,
+        Title: 'Bug fixes',
         Status: 'Done',
-        Summary: 'Complete project documentation',
+        Summary: 'Fix reported bugs in the application',
+        dueDate: '2024-01-20',
+        progress: 100,  // Completed
         uiState: {
           backgroundColor: '#ffffff',
           textColor: '#333333',
-          isExpanded: true,
+          isExpanded: false,
           isHighlighted: false,
           customStyles: {}
         }
