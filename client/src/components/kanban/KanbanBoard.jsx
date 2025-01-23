@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { KanbanComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-kanban';
 import { extend } from '@syncfusion/ej2-base';
 import '@syncfusion/ej2-base/styles/material.css';
@@ -6,125 +6,338 @@ import '@syncfusion/ej2-react-kanban/styles/material.css';
 import { boardTemplates } from './constants';
 import { formatDateTime } from '../../utils/dateTime';
 import ProgressBar from '../common/ProgressBar';
-import DreamCardEditModal from '../modals/DreamCardEditModal';
+import InlineDateTimePicker from '../Shared/InlineDateTimePicker';
+import { FiPlus, FiChevronDown, FiChevronRight, FiMenu, FiTrash2 } from 'react-icons/fi';
 import './KanbanBoard.css';
+
+// Custom dialog template for editing cards
+const dialogTemplate = (props) => {
+  const [formData, setFormData] = useState(() => ({
+    ...props,
+    tasks: props.tasks || [],
+    uiState: props.uiState || {
+      backgroundColor: '#ffffff',
+      textColor: '#333333',
+      isExpanded: false,
+      isHighlighted: false,
+      customStyles: {}
+    }
+  }));
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+  const [draggedTask, setDraggedTask] = useState(null);
+
+  // Handle task-related actions
+  const handleTaskComplete = (taskId) => {
+    const newTasks = formData.tasks.map(task =>
+      task.id === taskId ? { ...task, completed: !task.completed } : task
+    );
+    setFormData(prev => ({ ...prev, tasks: newTasks }));
+  };
+
+  const handleTaskDateChange = (taskId, date) => {
+    const newTasks = formData.tasks.map(task =>
+      task.id === taskId ? { ...task, dueDate: date } : task
+    );
+    setFormData(prev => ({ ...prev, tasks: newTasks }));
+  };
+
+  const handleDragStart = (e, index) => {
+    setDraggedTask(formData.tasks[index]);
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.classList.add('dragging');
+  };
+
+  const handleDragEnd = (e) => {
+    e.target.classList.remove('dragging');
+    setDraggedTask(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (e, index) => {
+    e.preventDefault();
+    if (!draggedTask) return;
+
+    const tasks = [...formData.tasks];
+    const oldIndex = tasks.findIndex(t => t.id === draggedTask.id);
+    tasks.splice(oldIndex, 1);
+    tasks.splice(index, 0, draggedTask);
+    setFormData(prev => ({ ...prev, tasks }));
+
+    setDraggedTask(null);
+    setDragOverIndex(null);
+  };
+
+  // When the dialog is about to close with save
+  const handleSave = () => {
+    // Update the props with our form data
+    Object.assign(props, formData);
+  };
+
+  // Add save handler to dialog buttons
+  useEffect(() => {
+    const saveButton = document.querySelector('.e-primary.e-flat');
+    if (saveButton) {
+      saveButton.addEventListener('click', handleSave);
+      return () => saveButton.removeEventListener('click', handleSave);
+    }
+  }, [formData]);
+
+  return (
+    <div className="custom-dialog-content">
+      {/* Basic Info */}
+      <div className="form-row">
+        <label>Title:</label>
+        <input
+          type="text"
+          value={formData.Title || ''}
+          onChange={e => setFormData(prev => ({ ...prev, Title: e.target.value }))}
+        />
+      </div>
+
+      <div className="form-row">
+        <label>Summary:</label>
+        <textarea
+          value={formData.Summary || ''}
+          onChange={e => setFormData(prev => ({ ...prev, Summary: e.target.value }))}
+        />
+      </div>
+
+      <div className="form-row">
+        <label>Status:</label>
+        <select 
+          value={formData.Status || ''} 
+          onChange={e => setFormData(prev => ({ ...prev, Status: e.target.value }))}
+        >
+          {props.columns?.map(col => (
+            <option key={col.keyField} value={col.keyField}>
+              {col.headerText}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="form-row">
+        <label>Deadline:</label>
+        <InlineDateTimePicker
+          value={formData.dueDate}
+          onChange={date => setFormData(prev => ({ ...prev, dueDate: date }))}
+        />
+      </div>
+
+      {/* Tasks */}
+      <div className="tasks-section">
+        <h3>Tasks</h3>
+        <div className="tasks-container">
+          {(formData.tasks || []).map((task, index) => (
+            <div
+              key={task.id}
+              className="task-wrapper"
+              draggable={true}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+            >
+              <div className="task-drag-handle">
+                <FiMenu />
+              </div>
+              <div
+                className={`task-checkbox ${task.completed ? 'completed' : ''}`}
+                onClick={() => handleTaskComplete(task.id)}
+              />
+              <input
+                type="text"
+                value={task.name}
+                onChange={e => {
+                  const newTasks = [...formData.tasks];
+                  newTasks[index].name = e.target.value;
+                  setFormData(prev => ({ ...prev, tasks: newTasks }));
+                }}
+                placeholder="Task name..."
+              />
+              <InlineDateTimePicker
+                value={task.dueDate}
+                onChange={date => handleTaskDateChange(task.id, date)}
+                mode="compact"
+                allowClear={true}
+              />
+              <div className="task-actions">
+                <button className="task-button" onClick={() => {
+                  const newTasks = [...formData.tasks];
+                  newTasks.splice(index + 1, 0, {
+                    id: Date.now().toString(),
+                    name: '',
+                    completed: false,
+                    dueDate: null
+                  });
+                  setFormData(prev => ({ ...prev, tasks: newTasks }));
+                }}>
+                  <FiPlus />
+                </button>
+                <button className="task-button" onClick={() => {
+                  const newTasks = [...formData.tasks];
+                  newTasks.splice(index, 1);
+                  if (newTasks.length === 0) {
+                    newTasks.push({
+                      id: Date.now().toString(),
+                      name: '',
+                      completed: false,
+                      dueDate: null
+                    });
+                  }
+                  setFormData(prev => ({ ...prev, tasks: newTasks }));
+                }}>
+                  <FiTrash2 />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Advanced Section */}
+      <button
+        className="advanced-toggle"
+        onClick={() => setShowAdvanced(prev => !prev)}
+      >
+        {showAdvanced ? <FiChevronDown /> : <FiChevronRight />}
+        Advanced Options
+      </button>
+
+      {showAdvanced && (
+        <div className="advanced-section">
+          <div className="color-picker">
+            <label>Background:</label>
+            <input
+              type="color"
+              value={formData.uiState.backgroundColor}
+              onChange={e => setFormData(prev => ({
+                ...prev,
+                uiState: { ...prev.uiState, backgroundColor: e.target.value }
+              }))}
+            />
+          </div>
+          <div className="color-picker">
+            <label>Text Color:</label>
+            <input
+              type="color"
+              value={formData.uiState.textColor}
+              onChange={e => setFormData(prev => ({
+                ...prev,
+                uiState: { ...prev.uiState, textColor: e.target.value }
+              }))}
+            />
+          </div>
+          <div className="form-row">
+            <label>Notes:</label>
+            <textarea
+              value={formData.notes || ''}
+              onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder="Additional notes..."
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 // Custom template for Kanban cards
 const cardTemplate = (props) => {
   if (!props) return null;
   
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const cardStyle = {
-    backgroundColor: '#ffffff',
+    backgroundColor: props.uiState?.backgroundColor || '#ffffff',
+    color: props.uiState?.textColor || '#333333',
     cursor: 'pointer'
   };
 
   const formattedDateTime = formatDateTime(props.dueDate, props.dueTime);
   const isExpanded = props.uiState?.isExpanded !== false;  // Default to expanded if undefined
 
-  const handleSave = (updatedCard) => {
-    setEditModalOpen(false);
-    
-    // Update React state directly through setBoardData
-    props.onBoardDataChange(prev => prev.map(item => 
-      item.Id === updatedCard.Id ? { ...updatedCard, kanbanRef: props.kanbanRef } : item
-    ));
-
-    // Update SF's data and trigger persistence
+  const handleDoubleClick = (e) => {
+    e.stopPropagation();
     if (props.kanbanRef?.current) {
-      props.kanbanRef.current.updateCard({
-        ...updatedCard,
-        kanbanRef: props.kanbanRef,
-        onBoardDataChange: props.onBoardDataChange
-      });
+      props.kanbanRef.current.openDialog('Edit', props);
     }
   };
 
   return (
-    <>
-      <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
-           style={cardStyle}>
-        <div className="e-card-content">
-          {/* Header - Always visible */}
-          <div className="card-header">
-            <div className="header-row">
-              <div className="header-date">
-                {formattedDateTime}
-              </div>
-              <div className="header-progress">
-                <ProgressBar 
-                  value={props.progress || 0} 
-                  height="4px" 
-                  width="60px"
-                />
-              </div>
+    <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
+         style={cardStyle}
+         onDoubleClick={handleDoubleClick}>
+      <div className="e-card-content">
+        {/* Header - Always visible */}
+        <div className="card-header">
+          <div className="header-row">
+            <div className="header-date">
+              {formattedDateTime}
             </div>
-            <div className="header-row">
-              <div className="header-title">{props.Title}</div>
-              {isExpanded && (
-                <button 
-                  className="edit-button" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log('Opening modal for card:', props);
-                    setEditModalOpen(true);
-                  }}
-                  title="Edit card"
-                >
-                  ✎
-                </button>
-              )}
+            <div className="header-progress">
+              <ProgressBar 
+                value={props.progress || 0} 
+                height="4px" 
+                width="60px"
+              />
             </div>
           </div>
-          
-          {/* Body - Only visible when expanded */}
-          {isExpanded && (
-            <div className="card-body">
-              <div className="body-summary">{props.Summary}</div>
-            </div>
-          )}
+          <div className="header-row">
+            <div className="header-title">{props.Title}</div>
+          </div>
         </div>
+        
+        {/* Body - Only visible when expanded */}
+        {isExpanded && (
+          <div className="card-body">
+            <div className="body-summary">{props.Summary}</div>
+          </div>
+        )}
       </div>
-
-      {editModalOpen && (
-        <DreamCardEditModal 
-          card={props}
-          onClose={() => setEditModalOpen(false)}
-          onSave={handleSave}
-        />
-      )}
-    </>
+    </div>
   );
 };
 
 const KanbanBoard = ({ boardId }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [boardData, setBoardData] = useState([]);
   const kanbanRef = useRef(null);
   const template = boardTemplates[boardId];
+  
+  // Check for persisted data first
+  const persistedData = localStorage.getItem(`kanban_${boardId}`);
+  // Initialize data with persisted data or template
+  const initialData = persistedData ? 
+    JSON.parse(persistedData) : 
+    extend([], template.data, null, true);
 
-  // Initialize data
-  useEffect(() => {
-    setIsLoading(true);
-    try {
-      // Use extend to create a deep copy of the template data
-      const data = extend([], boardTemplates[boardId].data, null, true);
-      setBoardData(data);
-    } catch (error) {
-      console.error('Error initializing board data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [boardId]);
+  const [data, setData] = useState(initialData);
+
+  // Add kanbanRef to each card's props
+  const dataWithRef = data.map(card => ({
+    ...card,
+    kanbanRef
+  }));
 
   const handleCardClick = (args) => {
     const card = args.data;
     if (!card) return;
 
-    // Let SF handle selection
-    args.cancel = false;
+    // Check if it's a double click
+    if (args.originalEvent?.detail === 2) {
+      // Open the dialog
+      if (kanbanRef.current) {
+        kanbanRef.current.openDialog('Edit', card);
+      }
+      args.cancel = true;
+      return;
+    }
 
-    // Handle expansion
+    // Single click - handle expansion
     const updatedCard = {
       ...card,
       uiState: {
@@ -133,43 +346,13 @@ const KanbanBoard = ({ boardId }) => {
       }
     };
 
-    // Update React state
-    setBoardData(prev => prev.map(item => 
-      item.Id === updatedCard.Id ? updatedCard : item
-    ));
-
-    // Update SF's data
+    // Update Kanban's dataSource directly
     if (kanbanRef.current) {
-      kanbanRef.current.updateCard(updatedCard);
+      kanbanRef.current.dataSource = kanbanRef.current.dataSource.map(item =>
+        item.Id === updatedCard.Id ? updatedCard : item
+      );
     }
   };
-
-  const handleActionComplete = (args) => {
-    if (args.requestType === 'cardChange') {
-      setBoardData(prev => prev.map(item => 
-        item.Id === args.changedRecords[0].Id ? args.changedRecords[0] : item
-      ));
-    }
-  };
-
-  const handleCardDoubleClick = (e) => {
-    if (e) {
-      e.cancel = true;
-      e.preventDefaults?.();
-      e.stopPropagation?.();
-    }
-  };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  // Add kanbanRef to each card's props
-  const dataWithRef = boardData.map(card => ({
-    ...card,
-    kanbanRef,
-    onBoardDataChange: setBoardData
-  }));
 
   return (
     <KanbanComponent
@@ -181,12 +364,13 @@ const KanbanBoard = ({ boardId }) => {
         template: cardTemplate,
         headerField: "Title"
       }}
+      dialogSettings={{
+        template: dialogTemplate
+      }}
       cardClick={handleCardClick}
-      cardDoubleClick={handleCardDoubleClick}
-      actionComplete={handleActionComplete}
       allowDragAndDrop={true}
       enablePersistence={true}
-      persistenceKey={`kanban_${boardId}`}
+      persistencekey={`kanban_${boardId}`}
     >
       <ColumnsDirective>
         {template.columns.map(column => (
