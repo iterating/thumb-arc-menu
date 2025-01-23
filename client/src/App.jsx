@@ -8,6 +8,7 @@ import Mindset from './pages/Mindset';
 import Today from './pages/Today';
 import DreamBuilder from './pages/DreamBuilder';
 import Community from './pages/Community';
+import Settings from './pages/Settings';
 import './App.css';
 
 function NavigationBar({ activeTab, setActiveTab }) {
@@ -87,31 +88,27 @@ function App() {
       <MenuProvider>
         <div className={`app-container theme-${currentTheme}`}>
           <div className="content-area">
-            <div className="theme-selector">
-              <select 
-                value={currentTheme}
-                onChange={handleThemeChange}
-                className="theme-select"
-              >
-                {themes.map((theme) => (
-                  <option key={theme.value} value={theme.value}>
-                    {theme.text}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/mindset" element={<Mindset />} />
               <Route path="/today" element={<Today />} />
               <Route path="/dreambuilder" element={<DreamBuilder />} />
               <Route path="/community" element={<Community />} />
+              <Route 
+                path="/settings" 
+                element={
+                  <Settings 
+                    currentTheme={currentTheme}
+                    onThemeChange={handleThemeChange}
+                    themes={themes}
+                  />
+                } 
+              />
             </Routes>
           </div>
-          
-          <ActionBar />
           <NavigationBar activeTab={activeTab} setActiveTab={setActiveTab} />
+          <ThumbMenu />
+          <ActionBar />
         </div>
       </MenuProvider>
     </Router>
