@@ -7,7 +7,7 @@ import { boardTemplates } from './constants';
 import { formatDateTime } from '../../utils/dateTime';
 import ProgressBar from '../common/ProgressBar';
 import InlineDateTimePicker from '../Shared/InlineDateTimePicker';
-import { FiPlus, FiChevronDown, FiChevronRight, FiMenu, FiTrash2 } from 'react-icons/fi';
+import { FiPlus, FiChevronDown, FiChevronRight, FiMenu, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import './KanbanBoard.css';
 
 // Custom dialog template for editing cards
@@ -76,8 +76,12 @@ const dialogTemplate = (props) => {
 
   // When the dialog is about to close with save
   const handleSave = () => {
-    // Update the props with our form data
-    Object.assign(props, formData);
+    // Update the card in Kanban's dataSource directly
+    if (props.kanbanRef?.current) {
+      props.kanbanRef.current.dataSource = props.kanbanRef.current.dataSource.map(item =>
+        item.Id === props.Id ? { ...item, ...formData } : item
+      );
+    }
   };
 
   // Add save handler to dialog buttons
@@ -262,7 +266,7 @@ const cardTemplate = (props) => {
   const formattedDateTime = formatDateTime(props.dueDate, props.dueTime);
   const isExpanded = props.uiState?.isExpanded !== false;  // Default to expanded if undefined
 
-  const handleDoubleClick = (e) => {
+  const handleEditClick = (e) => {
     e.stopPropagation();
     if (props.kanbanRef?.current) {
       props.kanbanRef.current.openDialog('Edit', props);
@@ -271,8 +275,7 @@ const cardTemplate = (props) => {
 
   return (
     <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
-         style={cardStyle}
-         onDoubleClick={handleDoubleClick}>
+         style={cardStyle}>
       <div className="e-card-content">
         {/* Header - Always visible */}
         <div className="card-header">
@@ -290,6 +293,13 @@ const cardTemplate = (props) => {
           </div>
           <div className="header-row">
             <div className="header-title">{props.Title}</div>
+            <button 
+              className="edit-button"
+              onClick={handleEditClick}
+              aria-label="Edit card"
+            >
+              <FiEdit2 size={16} />
+            </button>
           </div>
         </div>
         
@@ -366,6 +376,10 @@ const KanbanBoard = ({ boardId }) => {
       }}
       dialogSettings={{
         template: dialogTemplate
+      }}
+      editsettings={{
+        allowEditing: true,
+        allowAdding: true
       }}
       cardClick={handleCardClick}
       allowDragAndDrop={true}
