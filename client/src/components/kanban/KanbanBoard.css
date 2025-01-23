@@ -40,11 +40,16 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
 }
 
 .header-progress {
     flex-shrink: 0;
     margin-left: 8px;
+    display: flex;
+    /* align-items: center; */
+    height: 20px;
 }
 
 .header-title {

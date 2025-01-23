@@ -33,13 +33,24 @@ const ProgressBar = ({
                 majorTicks: { height: 0 },
                 minorTicks: { height: 0 },
                 labelStyle: { font: { size: '0px' }},
+                ranges: [{
+                    start: 0,
+                    end: 100,
+                    startWidth: 4,
+                    endWidth: 4,
+                    color: '#e0e0e0',  // Background color
+                    roundedCornerRadius: 2
+                }],
                 pointers: [{
                     value: normalizedValue,
                     height: 4,
                     width: 4,
                     type: 'Bar',
                     roundedCornerRadius: 2,
-                    color: '#666'
+                    color: '#666',
+                    border: {
+                        width: 0
+                    }
                 }]
             }]}
         />
