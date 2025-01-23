@@ -7,6 +7,7 @@ import { boardTemplates } from './constants';
 import { formatDateTime } from '../../utils/dateTime';
 import ProgressBar from '../common/ProgressBar';
 import InlineDateTimePicker from '../Shared/InlineDateTimePicker';
+import DreamCardEditModal from '../modals/DreamCardEditModal';
 import { FiPlus, FiChevronDown, FiChevronRight, FiMenu, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import './KanbanBoard.css';
 
@@ -257,6 +258,8 @@ const dialogTemplate = (props) => {
 const cardTemplate = (props) => {
   if (!props) return null;
   
+  const [showEditModal, setShowEditModal] = useState(false);
+  
   const cardStyle = {
     backgroundColor: props.uiState?.backgroundColor || '#ffffff',
     color: props.uiState?.textColor || '#333333',
@@ -268,51 +271,64 @@ const cardTemplate = (props) => {
 
   const handleEditClick = (e) => {
     e.stopPropagation();
-    if (props.kanbanRef?.current) {
-      props.kanbanRef.current.openDialog('Edit', props);
-    }
+    setShowEditModal(true);
   };
 
   return (
-    <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
-         style={cardStyle}>
-      <div className="e-card-content">
-        {/* Header - Always visible */}
-        <div className="card-header">
-          <div className="header-row">
-            <div className="header-date">
-              {formattedDateTime}
+    <>
+      <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
+           style={cardStyle}>
+        <div className="e-card-content">
+          {/* Header - Always visible */}
+          <div className="card-header">
+            <div className="header-row">
+              <div className="header-date">
+                {formattedDateTime}
+              </div>
+              <div className="header-progress">
+                <ProgressBar 
+                  value={props.progress || 0} 
+                  height="4px" 
+                  width="60px"
+                />
+              </div>
             </div>
-            <div className="header-progress">
-              <ProgressBar 
-                value={props.progress || 0} 
-                height="4px" 
-                width="60px"
-              />
+            <div className="header-row">
+              <div className="header-title">{props.Title}</div>
+              {isExpanded && (
+                <button 
+                  className="edit-button"
+                  onClick={handleEditClick}
+                  aria-label="Edit card"
+                >
+                  <FiEdit2 size={16} />
+                </button>
+              )}
             </div>
           </div>
-          <div className="header-row">
-            <div className="header-title">{props.Title}</div>
-            {isExpanded && (
-              <button 
-                className="edit-button"
-                onClick={handleEditClick}
-                aria-label="Edit card"
-              >
-                <FiEdit2 size={16} />
-              </button>
-            )}
-          </div>
+          
+          {/* Body - Only visible when expanded */}
+          {isExpanded && (
+            <div className="card-body">
+              <div className="body-summary">{props.Summary}</div>
+            </div>
+          )}
         </div>
-        
-        {/* Body - Only visible when expanded */}
-        {isExpanded && (
-          <div className="card-body">
-            <div className="body-summary">{props.Summary}</div>
-          </div>
-        )}
       </div>
-    </div>
+
+      {showEditModal && (
+        <DreamCardEditModal
+          card={props}
+          onClose={() => setShowEditModal(false)}
+          onSave={(updatedCard) => {
+            if (props.kanbanRef?.current) {
+              props.kanbanRef.current.updateCard(updatedCard);
+            }
+            setShowEditModal(false);
+          }}
+        />
+      )}
+    </>
   );
 };
 
