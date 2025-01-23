@@ -293,13 +293,15 @@ const cardTemplate = (props) => {
           </div>
           <div className="header-row">
             <div className="header-title">{props.Title}</div>
-            <button 
-              className="edit-button"
-              onClick={handleEditClick}
-              aria-label="Edit card"
-            >
-              <FiEdit2 size={16} />
-            </button>
+            {isExpanded && (
+              <button 
+                className="edit-button"
+                onClick={handleEditClick}
+                aria-label="Edit card"
+              >
+                <FiEdit2 size={16} />
+              </button>
+            )}
           </div>
         </div>
         
