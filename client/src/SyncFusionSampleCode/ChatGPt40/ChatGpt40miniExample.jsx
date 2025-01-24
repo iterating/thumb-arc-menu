@@ -1,31 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   KanbanComponent,
   ColumnsDirective,
   ColumnDirective,
 } from '@syncfusion/ej2-react-kanban';
 
+const PERSISTENCE_KEY = 'kanbanData';
+
 const TestKanban = () => {
   const [data, setData] = useState([
-    {
-      Id: 1,
-      Title: 'Write a Book',
-      Status: 'Dreams',
-      DueDate: '2025-02-01',
-      Description: 'Finish the first draft.',
-      Tasks: [
-        { taskName: 'Outline chapters', dueDate: '2025-01-25', completed: false },
-        { taskName: 'Write introduction', dueDate: '2025-01-27', completed: true },
-      ],
-    },
-    {
-      Id: 2,
-      Title: 'Launch a Startup',
-      Status: 'Goals',
-      DueDate: '2025-03-01',
-      Description: 'Prepare pitch deck.',
-      Tasks: [],
-    },
+      {
+        Id: 1,
+        Title: 'Write a Book',
+        Status: 'Dreams',
+        DueDate: '2025-02-01',
+        Description: 'Finish the first draft.',
+        Tasks: [
+          { taskName: 'Outline chapters', dueDate: '2025-01-25', completed: false },
+          { taskName: 'Write introduction', dueDate: '2025-01-27', completed: true },
+        ],
+      },
+      {
+        Id: 2,
+        Title: 'Launch a Startup',
+        Status: 'Goals',
+        DueDate: '2025-03-01',
+        Description: 'Prepare pitch deck.',
+        Tasks: [],
+      },
   ]);
 
   const [modalData, setModalData] = useState({
@@ -192,6 +194,8 @@ const TestKanban = () => {
             setModalData(e.data);
           }
         }}
+        enablePersistence={true}
+        persistencekey="kanban_test"
       >
         <ColumnsDirective>
           <ColumnDirective headerText="Dreams" keyField="Dreams" />

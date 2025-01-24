@@ -143,5 +143,50 @@
     "timestamp": "2025-01-24T19:45:40.817Z",
     "type": "log",
     "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Props.Title is  Launch a Startup"
+  },
+  {
+    "timestamp": "2025-01-24T19:47:27.978Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Props.Title is  Launch a Startup"
+  },
+  {
+    "timestamp": "2025-01-24T19:47:43.088Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Props.Title is  Write a Book"
+  },
+  {
+    "timestamp": "2025-01-24T19:47:45.691Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Props.Title is  Launch a Startup"
+  },
+  {
+    "timestamp": "2025-01-24T19:47:48.275Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Props.Title is  Launch a Startup"
+  },
+  {
+    "timestamp": "2025-01-24T19:48:13.538Z",
+    "type": "error",
+    "message": "The above error occurred in the <TestKanban> component:\n\n    at TestKanban (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747905844:26:27)\n    at div\n    at div\n    at Home\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737747905844:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T19:49:52.475Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=8277b9fa:25099:26)\n    at div\n    at TestKanban (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737748192399:27:27)\n    at div\n    at div\n    at Home\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737748093432:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T19:50:00.607Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=8277b9fa:25099:26)\n    at div\n    at TestKanban (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737748192399:27:27)\n    at div\n    at div\n    at Home\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737748192399:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T19:51:29.594Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=8277b9fa:25099:26)\n    at div\n    at TestKanban (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737748192399:27:27)\n    at div\n    at div\n    at Home\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737748192399:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T19:51:54.105Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Props.Title is  Launch a Startup"
   }
 ]
