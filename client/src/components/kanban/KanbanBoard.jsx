@@ -12,6 +12,7 @@ import './KanbanBoard.css';
 
 // Custom dialog template for editing cards
 const dialogTemplate = (props) => {
+  console.log('Dialog props:', props);  // Debug log
   const [formData, setFormData] = useState(() => ({
     Id: props?.Id || Date.now(),
     Title: props?.Title || '',
@@ -53,9 +54,9 @@ const dialogTemplate = (props) => {
                   onChange={handleChange}
                 >
                   <option value="Dreams">Dreams</option>
-                  <option value="Todo">Todo</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Done">Done</option>
+                  <option value="Goals">Goals</option>
+                  <option value="Plans">Plans</option>
+                  <option value="Achievements">Achievements</option>
                 </select>
               </div>
             </td>
