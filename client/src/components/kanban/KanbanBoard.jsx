@@ -98,6 +98,49 @@ const dialogTemplate = (props) => {
               </div>
             </td>
           </tr>
+          <tr>
+            <td className="e-label">Tasks</td>
+            <td>
+              <div className="e-float-input e-control-wrapper">
+                <div className="task-list">
+                  {formData.tasks?.map((task, index) => (
+                    <div key={index} className="task-item">
+                      <input
+                        type="text"
+                        name={`tasks[${index}].description`}
+                        className="e-field"
+                        value={task.description || ''}
+                        onChange={(e) => {
+                          const newTasks = [...formData.tasks];
+                          newTasks[index] = { ...task, description: e.target.value };
+                          setFormData(prev => ({ ...prev, tasks: newTasks }));
+                        }}
+                      />
+                      <InlineDateTimePicker
+                        value={task.dueDate}
+                        onChange={date => {
+                          const newTasks = [...formData.tasks];
+                          newTasks[index] = { ...task, dueDate: date };
+                          setFormData(prev => ({ ...prev, tasks: newTasks }));
+                        }}
+                      />
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({
+                        ...prev,
+                        tasks: [...(prev.tasks || []), { description: '', dueDate: null }]
+                      }));
+                    }}
+                  >
+                    Add Task
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
