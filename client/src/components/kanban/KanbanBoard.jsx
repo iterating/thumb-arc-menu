@@ -120,149 +120,116 @@ const dialogTemplate = (props) => {
   }, [formData]);
 
   return (
-    <div className="custom-dialog-content">
-      {/* Basic Info */}
-      <div className="form-row">
-        <label>Title:</label>
-        <input
-          type="text"
-          value={formData.Title || ''}
-          onChange={e => setFormData(prev => ({ ...prev, Title: e.target.value }))}
-          placeholder="Enter title..."
-        />
-      </div>
-
-      <div className="form-row">
-        <label>Summary:</label>
-        <textarea
-          value={formData.Summary || ''}
-          onChange={e => setFormData(prev => ({ ...prev, Summary: e.target.value }))}
-          placeholder="Enter summary..."
-        />
-      </div>
-
-      <div className="form-row">
-        <label>Due Date:</label>
-        <InlineDateTimePicker
-          value={formData.dueDate}
-          onChange={date => setFormData(prev => ({ ...prev, dueDate: date }))}
-        />
-      </div>
-
-      {/* Tasks Section */}
-      <div className="tasks-section">
-        <h3>Tasks</h3>
-        <div className="tasks-container">
-          {(formData.tasks || []).map((task, index) => (
-            <div
-              key={task.id}
-              className="task-wrapper"
-              draggable={true}
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDrop={(e) => handleDrop(e, index)}
-            >
-              <div className="task-drag-handle">
-                <FiMenu />
+    <div>
+      <table>
+        <tbody>
+          <tr>
+            <td className="e-label">Title</td>
+            <td>
+              <div className="e-float-input e-control-wrapper">
+                <input
+                  type="text"
+                  name="Title"
+                  className="e-field"
+                  value={formData.Title || ''}
+                  onChange={e => setFormData(prev => ({ ...prev, Title: e.target.value }))}
+                />
               </div>
-              <div
-                className={`task-checkbox ${task.completed ? 'completed' : ''}`}
-                onClick={() => handleTaskComplete(task.id)}
-              />
-              <input
-                type="text"
-                value={task.name}
-                onChange={e => {
-                  const newTasks = [...formData.tasks];
-                  newTasks[index].name = e.target.value;
-                  setFormData(prev => ({ ...prev, tasks: newTasks }));
-                }}
-                placeholder="Task name..."
-              />
-              <InlineDateTimePicker
-                value={task.dueDate}
-                onChange={date => handleTaskDateChange(task.id, date)}
-                mode="compact"
-                allowClear={true}
-              />
-              <div className="task-actions">
-                <button className="task-button" onClick={() => {
-                  const newTasks = [...formData.tasks];
-                  newTasks.splice(index + 1, 0, {
-                    id: Date.now().toString(),
-                    name: '',
-                    completed: false,
-                    dueDate: null
-                  });
-                  setFormData(prev => ({ ...prev, tasks: newTasks }));
-                }}>
-                  <FiPlus />
-                </button>
-                <button className="task-button" onClick={() => {
-                  const newTasks = [...formData.tasks];
-                  newTasks.splice(index, 1);
-                  if (newTasks.length === 0) {
-                    newTasks.push({
-                      id: Date.now().toString(),
-                      name: '',
-                      completed: false,
-                      dueDate: null
-                    });
-                  }
-                  setFormData(prev => ({ ...prev, tasks: newTasks }));
-                }}>
-                  <FiTrash2 />
-                </button>
+            </td>
+          </tr>
+          <tr>
+            <td className="e-label">Summary</td>
+            <td>
+              <div className="e-float-input e-control-wrapper">
+                <textarea
+                  name="Summary"
+                  className="e-field"
+                  value={formData.Summary || ''}
+                  onChange={e => setFormData(prev => ({ ...prev, Summary: e.target.value }))}
+                />
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Advanced Section */}
-      <button
-        className="advanced-toggle"
-        onClick={() => setShowAdvanced(prev => !prev)}
-      >
-        {showAdvanced ? <FiChevronDown /> : <FiChevronRight />}
-        Advanced Options
-      </button>
-
-      {showAdvanced && (
-        <div className="advanced-section">
-          <div className="color-picker">
-            <label>Background:</label>
-            <input
-              type="color"
-              value={formData.uiState.backgroundColor}
-              onChange={e => setFormData(prev => ({
-                ...prev,
-                uiState: { ...prev.uiState, backgroundColor: e.target.value }
-              }))}
-            />
-          </div>
-          <div className="color-picker">
-            <label>Text Color:</label>
-            <input
-              type="color"
-              value={formData.uiState.textColor}
-              onChange={e => setFormData(prev => ({
-                ...prev,
-                uiState: { ...prev.uiState, textColor: e.target.value }
-              }))}
-            />
-          </div>
-          <div className="form-row">
-            <label>Notes:</label>
-            <textarea
-              value={formData.notes || ''}
-              onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Additional notes..."
-            />
-          </div>
-        </div>
-      )}
+            </td>
+          </tr>
+          <tr>
+            <td className="e-label">Due Date</td>
+            <td>
+              <div className="e-float-input e-control-wrapper">
+                <InlineDateTimePicker
+                  value={formData.dueDate}
+                  onChange={date => setFormData(prev => ({ ...prev, dueDate: date }))}
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td className="e-label">Tasks</td>
+            <td>
+              <div className="tasks-container">
+                {(formData.tasks || []).map((task, index) => (
+                  <div key={task.id} className="task-wrapper">
+                    <input
+                      type="text"
+                      className="e-field"
+                      value={task.name}
+                      onChange={e => {
+                        const newTasks = [...formData.tasks];
+                        newTasks[index].name = e.target.value;
+                        setFormData(prev => ({ ...prev, tasks: newTasks }));
+                      }}
+                    />
+                    <input
+                      type="checkbox"
+                      checked={task.completed}
+                      onChange={() => handleTaskComplete(task.id)}
+                    />
+                    <InlineDateTimePicker
+                      value={task.dueDate}
+                      onChange={date => handleTaskDateChange(task.id, date)}
+                      mode="compact"
+                    />
+                  </div>
+                ))}
+              </div>
+            </td>
+          </tr>
+          {showAdvanced && (
+            <>
+              <tr>
+                <td className="e-label">Background</td>
+                <td>
+                  <div className="e-float-input e-control-wrapper">
+                    <input
+                      type="color"
+                      className="e-field"
+                      value={formData.uiState.backgroundColor}
+                      onChange={e => setFormData(prev => ({
+                        ...prev,
+                        uiState: { ...prev.uiState, backgroundColor: e.target.value }
+                      }))}
+                    />
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td className="e-label">Text Color</td>
+                <td>
+                  <div className="e-float-input e-control-wrapper">
+                    <input
+                      type="color"
+                      className="e-field"
+                      value={formData.uiState.textColor}
+                      onChange={e => setFormData(prev => ({
+                        ...prev,
+                        uiState: { ...prev.uiState, textColor: e.target.value }
+                      }))}
+                    />
+                  </div>
+                </td>
+              </tr>
+            </>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };
@@ -386,9 +353,10 @@ const KanbanBoard = ({ boardId }) => {
       dialogSettings={{
         template: dialogTemplate.bind(this)
       }}
-      editsettings={{
+      editSettings={{
         allowEditing: true,
-        allowAdding: true
+        allowAdding: true,
+        mode: "Dialog"
       }}
       cardClick={handleCardClick}
       allowDragAndDrop={true}
