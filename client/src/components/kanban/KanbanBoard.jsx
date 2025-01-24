@@ -34,95 +34,53 @@ const dialogTemplate = (props) => {
   }));
 
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [dragOverIndex, setDragOverIndex] = useState(null);
-  const [draggedTask, setDraggedTask] = useState(null);
-
-  // Initialize empty task if none exist
-  useEffect(() => {
-    if (!formData.tasks || formData.tasks.length === 0) {
-      setFormData(prev => ({
-        ...prev,
-        tasks: [{
-          id: Date.now().toString(),
-          name: '',
-          completed: false,
-          dueDate: null
-        }]
-      }));
-    }
-  }, []);
-
-  // Handle task-related actions
-  const handleTaskComplete = (taskId) => {
-    const newTasks = formData.tasks.map(task =>
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    );
-    setFormData(prev => ({ ...prev, tasks: newTasks }));
-  };
-
-  const handleTaskDateChange = (taskId, date) => {
-    const newTasks = formData.tasks.map(task =>
-      task.id === taskId ? { ...task, dueDate: date } : task
-    );
-    setFormData(prev => ({ ...prev, tasks: newTasks }));
-  };
-
-  const handleDragStart = (e, index) => {
-    setDraggedTask(formData.tasks[index]);
-    e.dataTransfer.effectAllowed = 'move';
-    e.target.classList.add('dragging');
-  };
-
-  const handleDragEnd = (e) => {
-    e.target.classList.remove('dragging');
-    setDraggedTask(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDragOver = (e, index) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverIndex(index);
-  };
-
-  const handleDrop = (e, index) => {
-    e.preventDefault();
-    if (!draggedTask) return;
-
-    const tasks = [...formData.tasks];
-    const oldIndex = tasks.findIndex(t => t.id === draggedTask.id);
-    tasks.splice(oldIndex, 1);
-    tasks.splice(index, 0, draggedTask);
-    setFormData(prev => ({ ...prev, tasks }));
-
-    setDraggedTask(null);
-    setDragOverIndex(null);
-  };
-
-  // When the dialog is about to close with save
-  const handleSave = () => {
-    // Update the card in Kanban's dataSource directly
-    if (props.kanbanRef?.current) {
-      props.kanbanRef.current.dataSource = props.kanbanRef.current.dataSource.map(item =>
-        item.Id === props.Id ? { ...item, ...formData } : item
-      );
-      props.kanbanRef.current.refresh();
-    }
-  };
 
   // Add save handler to dialog buttons
   useEffect(() => {
     const saveButton = document.querySelector('.e-primary.e-flat');
     if (saveButton) {
-      saveButton.addEventListener('click', handleSave);
-      return () => saveButton.removeEventListener('click', handleSave);
+      saveButton.addEventListener('click', () => {
+        if (props.kanbanRef?.current) {
+          // Create a clean copy without the ref
+          const cleanData = { ...formData };
+          delete cleanData.kanbanRef;
+          
+          props.kanbanRef.current.dataSource = props.kanbanRef.current.dataSource.map(item =>
+            item.Id === cleanData.Id ? cleanData : item
+          );
+          props.kanbanRef.current.refresh();
+        }
+      });
     }
-  }, [formData]);
+  }, [formData, props]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   return (
-    <div>
+    <div className="e-kanban-dialog">
       <table>
         <tbody>
+          <tr>
+            <td className="e-label">Status</td>
+            <td>
+              <div className="e-float-input e-control-wrapper">
+                <select 
+                  name="Status" 
+                  className="e-field" 
+                  value={formData.Status}
+                  onChange={handleChange}
+                >
+                  <option value="Dreams">Dreams</option>
+                  <option value="Todo">Todo</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Done">Done</option>
+                </select>
+              </div>
+            </td>
+          </tr>
           <tr>
             <td className="e-label">Title</td>
             <td>
@@ -132,7 +90,7 @@ const dialogTemplate = (props) => {
                   name="Title"
                   className="e-field"
                   value={formData.Title || ''}
-                  onChange={e => setFormData(prev => ({ ...prev, Title: e.target.value }))}
+                  onChange={handleChange}
                 />
               </div>
             </td>
@@ -145,7 +103,7 @@ const dialogTemplate = (props) => {
                   name="Summary"
                   className="e-field"
                   value={formData.Summary || ''}
-                  onChange={e => setFormData(prev => ({ ...prev, Summary: e.target.value }))}
+                  onChange={handleChange}
                 />
               </div>
             </td>
@@ -161,73 +119,6 @@ const dialogTemplate = (props) => {
               </div>
             </td>
           </tr>
-          <tr>
-            <td className="e-label">Tasks</td>
-            <td>
-              <div className="tasks-container">
-                {(formData.tasks || []).map((task, index) => (
-                  <div key={task.id} className="task-wrapper">
-                    <input
-                      type="text"
-                      className="e-field"
-                      value={task.name}
-                      onChange={e => {
-                        const newTasks = [...formData.tasks];
-                        newTasks[index].name = e.target.value;
-                        setFormData(prev => ({ ...prev, tasks: newTasks }));
-                      }}
-                    />
-                    <input
-                      type="checkbox"
-                      checked={task.completed}
-                      onChange={() => handleTaskComplete(task.id)}
-                    />
-                    <InlineDateTimePicker
-                      value={task.dueDate}
-                      onChange={date => handleTaskDateChange(task.id, date)}
-                      mode="compact"
-                    />
-                  </div>
-                ))}
-              </div>
-            </td>
-          </tr>
-          {showAdvanced && (
-            <>
-              <tr>
-                <td className="e-label">Background</td>
-                <td>
-                  <div className="e-float-input e-control-wrapper">
-                    <input
-                      type="color"
-                      className="e-field"
-                      value={formData.uiState.backgroundColor}
-                      onChange={e => setFormData(prev => ({
-                        ...prev,
-                        uiState: { ...prev.uiState, backgroundColor: e.target.value }
-                      }))}
-                    />
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="e-label">Text Color</td>
-                <td>
-                  <div className="e-float-input e-control-wrapper">
-                    <input
-                      type="color"
-                      className="e-field"
-                      value={formData.uiState.textColor}
-                      onChange={e => setFormData(prev => ({
-                        ...prev,
-                        uiState: { ...prev.uiState, textColor: e.target.value }
-                      }))}
-                    />
-                  </div>
-                </td>
-              </tr>
-            </>
-          )}
         </tbody>
       </table>
     </div>
@@ -310,11 +201,10 @@ const KanbanBoard = ({ boardId }) => {
 
   const [data, setData] = useState(initialData);
 
-  // Add kanbanRef to each card's props
-  const dataWithRef = data.map(card => ({
-    ...card,
-    kanbanRef
-  }));
+  // Pass kanbanRef through context instead of adding to each card
+  const dialogTemplateWithRef = useCallback((props) => {
+    return dialogTemplate({ ...props, kanbanRef });
+  }, [kanbanRef]);
 
   const handleCardClick = (args) => {
     // Ignore double clicks - let SyncFusion handle those
@@ -344,14 +234,14 @@ const KanbanBoard = ({ boardId }) => {
     <KanbanComponent
       ref={kanbanRef}
       id={`board_${boardId}`}
-      dataSource={dataWithRef}
+      dataSource={data}
       keyField="Status"
       cardSettings={{ 
         template: cardTemplate,
         headerField: "Title"
       }}
       dialogSettings={{
-        template: dialogTemplate.bind(this)
+        template: dialogTemplateWithRef
       }}
       editsettings={{
         allowEditing: true,
