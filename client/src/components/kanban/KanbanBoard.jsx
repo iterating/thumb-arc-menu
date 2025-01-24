@@ -252,7 +252,9 @@ const KanbanBoard = ({ boardId }) => {
         headerField: "Title"
       }}
       dialogSettings={{
-        template: dialogTemplate.bind(this)
+        template: dialogTemplate.bind(this),
+        target: document.body,
+        zIndex: 10000
       }}
       editsettings={{
         allowEditing: true,
