@@ -1,127 +1,317 @@
 [
   {
-    "timestamp": "2025-01-23T20:20:35.381Z",
-    "type": "error",
-    "message": "The above error occurred in the <KanbanComponent2> component:\n\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737663522315:571:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737663522315:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737663522315:89:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T20:33:38.034Z",
-    "type": "error",
-    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737664416558:571:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737663522315:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737663522315:89:37)"
-  },
-  {
-    "timestamp": "2025-01-23T20:34:06.688Z",
-    "type": "error",
-    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737664427270:571:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737664427270:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737664427270:89:37)"
-  },
-  {
-    "timestamp": "2025-01-23T20:44:59.526Z",
-    "type": "error",
-    "message": "[vite] Failed to reload /src/components/kanban/KanbanBoard.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)"
-  },
-  {
-    "timestamp": "2025-01-23T20:51:57.263Z",
-    "type": "error",
-    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s editSettings editsettings \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737665517118:575:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737665450263:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737665450263:89:37)"
-  },
-  {
-    "timestamp": "2025-01-23T20:52:24.504Z",
-    "type": "error",
-    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s editSettings editsettings \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737665517118:575:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737665517118:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737665517118:89:37)"
-  },
-  {
-    "timestamp": "2025-01-23T21:01:37.762Z",
-    "type": "error",
-    "message": "[vite] Failed to reload /src/components/kanban/templates/KanbanCard.css. This could be due to syntax errors or importing non-existent modules. (see errors above)"
-  },
-  {
-    "timestamp": "2025-01-23T21:01:45.676Z",
-    "type": "error",
-    "message": "[vite] Failed to reload /src/components/kanban/templates/KanbanCard.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)"
-  },
-  {
-    "timestamp": "2025-01-23T21:03:14.493Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737666175936:31:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737666175936:597:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737665563462:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737665563462:89:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:10:27.852Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737666188554:31:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737666188554:597:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737666299654:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737666299654:89:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:15:11.878Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737666901285:31:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737666901285:597:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737666299654:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737666299654:89:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:21:58.742Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667215511:31:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667215511:597:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737667215511:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737667215511:89:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:22:06.698Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667215511:31:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667215511:597:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737667215511:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737667215511:89:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:22:14.890Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667215511:31:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667215511:597:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737667215511:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737667215511:89:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:24:08.300Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667407257:31:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667407257:597:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737667407257:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737667407257:89:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:30:29.366Z",
-    "type": "log",
-    "message": "[vite] server connection lost. Polling for restart..."
-  },
-  {
-    "timestamp": "2025-01-23T21:39:32.251Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667572957:31:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737667572957:597:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737668222682:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737668250455:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:41:16.600Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668339071:31:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668339071:597:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737668339071:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737668339071:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:43:28.409Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668597109:32:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668597109:609:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737668428699:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737668428699:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:45:55.297Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668732742:32:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668732742:620:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737668597109:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737668597109:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:46:02.771Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668732742:32:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668732742:620:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737668732742:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737668732742:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:46:21.976Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668732742:32:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668732742:620:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737668732742:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737668732742:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:46:35.026Z",
-    "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668732742:32:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737668732742:620:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737668732742:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737668732742:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
-  },
-  {
-    "timestamp": "2025-01-23T21:51:43.363Z",
+    "timestamp": "2025-01-23T22:16:09.426Z",
     "type": "log",
     "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
   },
   {
-    "timestamp": "2025-01-23T21:52:00.557Z",
+    "timestamp": "2025-01-23T22:16:10.860Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:16:13.579Z",
+    "type": "log",
+    "message": "Updated card: {\"Id\":2,\"Title\":\"Learn piano22\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30T00:00:00.000Z\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"tasks\":[{\"id\":\"1737670569427\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
+  },
+  {
+    "timestamp": "2025-01-23T22:20:29.935Z",
+    "type": "log",
+    "message": "[vite] server connection lost. Polling for restart..."
+  },
+  {
+    "timestamp": "2025-01-23T22:35:20.071Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:35:22.451Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:35:24.684Z",
+    "type": "log",
+    "message": "DreamCardEditModal - Saving data: {\"Id\":2,\"Title\":\"Learn piano2\",\"Status\":\"Dreams\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30T00:00:00.000Z\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"tasks\":[{\"id\":\"1737671720072\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
+  },
+  {
+    "timestamp": "2025-01-23T22:35:57.895Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:35:59.722Z",
+    "type": "log",
+    "message": "DreamCardEditModal - handleOverlayClick:"
+  },
+  {
+    "timestamp": "2025-01-23T22:37:07.909Z",
     "type": "error",
-    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737669083405:32:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737669083405:626:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737669083405:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737669083405:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s showToggleButton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737671827808:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737670659060:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737670659060:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T22:38:39.338Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:38:41.977Z",
+    "type": "error",
+    "message": "The above error occurred in the <KanbanComponent2> component:\n\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737671827808:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737670659060:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737670659060:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-23T22:39:00.384Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s showToggleButton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737671901638:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737671901638:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737671901638:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T22:39:36.603Z",
+    "type": "error",
+    "message": "The above error occurred in the <KanbanBoard> component:\n\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737671976529:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737670659060:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737670659060:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-23T22:39:46.055Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737671985980:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737670659060:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737670659060:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T22:39:55.631Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s showToggleButton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737671985980:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737671985980:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737671985980:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T22:40:15.981Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737672015890:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737671985980:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737671985980:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T22:40:34.485Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737672015890:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737672015890:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737672015890:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T22:41:08.287Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:41:10.749Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:41:12.584Z",
+    "type": "log",
+    "message": "DreamCardEditModal - Saving data: {\"Id\":2,\"Title\":\"Learn piano22\",\"Status\":\"Dreams\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30T00:00:00.000Z\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"kanbanRef\":{\"current\":null},\"tasks\":[{\"id\":\"1737672068288\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
+  },
+  {
+    "timestamp": "2025-01-23T22:49:16.070Z",
+    "type": "error",
+    "message": "The above error occurred in the <cardTemplate> component:\n\n    at cardTemplate\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737672554417:142:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737672051850:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737672051850:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-23T22:51:06.974Z",
+    "type": "error",
+    "message": "The above error occurred in the <cardTemplate> component:\n\n    at cardTemplate\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737672554417:142:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737672554417:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737672554417:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-23T22:51:17.122Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737672677024:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737672554417:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737672554417:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T22:54:16.049Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:54:17.724Z",
+    "type": "log",
+    "message": "DreamCardEditModal - handleOverlayClick:"
+  },
+  {
+    "timestamp": "2025-01-23T22:54:22.461Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:54:25.118Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:54:26.477Z",
+    "type": "log",
+    "message": "DreamCardEditModal - Saving data: {\"Id\":3,\"Title\":\"Weekly practice schedule2\",\"Status\":\"Plans\",\"Summary\":\"Create a weekly schedule for piano practice\",\"dueDate\":\"2024-02-01T00:00:00.000Z\",\"progress\":80,\"uiState\":{\"backgroundColor\":\"#ffffff\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"kanbanRef\":{\"current\":null},\"dueTime\":null,\"tasks\":[{\"id\":\"1737672862461\",\"name\":\"\",\"completed\":false,\"dueDate\":null}]}"
+  },
+  {
+    "timestamp": "2025-01-23T22:54:28.445Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-23T22:56:26.750Z",
+    "type": "error",
+    "message": "The above error occurred in the <KanbanComponent2> component:\n\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737672983528:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737672819131:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737672819131:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-23T22:59:41.295Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737673181240:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737673092806:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737673092806:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T23:04:39.004Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737673385511:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737673385511:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737673385511:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T23:06:33.245Z",
+    "type": "error",
+    "message": "The above error occurred in the <KanbanComponent2> component:\n\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737673587691:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737673503574:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737673503574:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-23T23:06:51.505Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737673611387:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737673503574:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737673503574:90:37)"
+  },
+  {
+    "timestamp": "2025-01-23T23:27:02.941Z",
+    "type": "log",
+    "message": "[vite] server connection lost. Polling for restart..."
+  },
+  {
+    "timestamp": "2025-01-24T00:04:52.127Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737677091887:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737674550526:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737674550526:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T00:04:54.665Z",
+    "type": "error",
+    "message": "[vite] Failed to reload /src/components/kanban/KanbanBoard.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)"
+  },
+  {
+    "timestamp": "2025-01-24T00:05:08.562Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737677106583:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737677106583:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737677106583:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T00:05:13.705Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737677106583:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737677106583:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737677106583:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T00:05:33.409Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737677106583:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737677106583:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737677106583:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T00:06:50.804Z",
+    "type": "log",
+    "message": "[vite] server connection lost. Polling for restart..."
+  },
+  {
+    "timestamp": "2025-01-24T00:07:40.945Z",
+    "type": "error",
+    "message": "The above error occurred in the <InlineDateTimePicker> component:\n\n    at InlineDateTimePicker (http://localhost:5173/src/components/shared/InlineDateTimePicker.jsx:50:3)\n    at div\n    at div\n    at dialogTemplate (http://localhost:5173/src/components/kanban/KanbanBoard.jsx:32:35)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx:626:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T00:10:48.964Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737677448058:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T00:19:29.780Z",
+    "type": "log",
+    "message": "[vite] server connection lost. Polling for restart..."
+  },
+  {
+    "timestamp": "2025-01-24T00:22:36.314Z",
+    "type": "error",
+    "message": "Warning: Received `%s` for a non-boolean attribute `%s`.\n\nIf you want to write it to the DOM, pass a string instead: %s=\"%s\" or %s={value.toString()}.\n\nIf you used to conditionally omit it with %s={condition && value}, pass %s={condition ? value : undefined} instead.%s false showtogglebutton showtogglebutton false showtogglebutton showtogglebutton showtogglebutton \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737677448058:172:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737677448058:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737677448058:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T00:26:30.748Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-24T00:26:35.229Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-24T00:26:40.576Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-24T00:31:17.160Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-24T00:31:33.253Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m DreamCardEditModal - card.tasks: undefined"
+  },
+  {
+    "timestamp": "2025-01-24T00:33:08.429Z",
+    "type": "error",
+    "message": "The above error occurred in the <Portal> component:\n\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737678767360:589:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737678649371:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737678649371:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T00:38:04.837Z",
+    "type": "error",
+    "message": "The above error occurred in the <Portal> component:\n\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737678884057:591:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737678767360:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737678767360:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T00:40:32.307Z",
+    "type": "error",
+    "message": "The above error occurred in the <Portal> component:\n\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737679164895:591:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737678884057:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737678884057:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T00:43:33.254Z",
+    "type": "error",
+    "message": "The above error occurred in the <Portal> component:\n\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737679387954:591:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737679255323:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737679255323:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T00:44:28.285Z",
+    "type": "error",
+    "message": "The above error occurred in the <Portal> component:\n\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737679413138:589:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737679413138:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737679413138:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T00:50:59.676Z",
+    "type": "log",
+    "message": "[vite] server connection lost. Polling for restart..."
+  },
+  {
+    "timestamp": "2025-01-24T01:21:55.670Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s editSettings editsettings \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737681715492:574:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737679468159:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737679468159:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T01:22:03.159Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s editSettings editsettings \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737681715492:574:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737681715492:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737681715492:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T01:22:33.392Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s editSettings editsettings \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737681715492:574:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737681715492:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737681715492:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T01:23:22.644Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s editSettings editsettings \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737681715492:574:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737681715492:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737681715492:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T01:24:10.387Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737681850298:574:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737681715492:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737681715492:90:37)"
+  },
+  {
+    "timestamp": "2025-01-24T01:24:33.210Z",
+    "type": "error",
+    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s editSettings editsettings \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737681868141:574:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737681868141:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737681868141:90:37)"
   }
 ]

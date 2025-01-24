@@ -7,26 +7,50 @@ import { boardTemplates } from './constants';
 import { formatDateTime } from '../../utils/dateTime';
 import ProgressBar from '../common/ProgressBar';
 import InlineDateTimePicker from '../Shared/InlineDateTimePicker';
-import DreamCardEditModal from '../modals/DreamCardEditModal';
 import { FiPlus, FiChevronDown, FiChevronRight, FiMenu, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import './KanbanBoard.css';
 
 // Custom dialog template for editing cards
 const dialogTemplate = (props) => {
   const [formData, setFormData] = useState(() => ({
-    ...props,
-    tasks: props.tasks || [],
-    uiState: props.uiState || {
+    Id: props?.Id || Date.now(),
+    Title: props?.Title || '',
+    Status: props?.Status || 'Dreams',
+    Summary: props?.Summary || '',
+    dueDate: props?.dueDate ? new Date(props?.dueDate) : null,
+    dueTime: props?.dueTime || null,
+    progress: props?.progress || 0,
+    uiState: props?.uiState || {
       backgroundColor: '#ffffff',
       textColor: '#333333',
       isExpanded: false,
       isHighlighted: false,
       customStyles: {}
-    }
+    },
+    tasks: (props?.tasks || []).map(task => ({
+      ...task,
+      dueDate: task.dueDate ? new Date(task.dueDate) : null
+    }))
   }));
+
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [draggedTask, setDraggedTask] = useState(null);
+
+  // Initialize empty task if none exist
+  useEffect(() => {
+    if (!formData.tasks || formData.tasks.length === 0) {
+      setFormData(prev => ({
+        ...prev,
+        tasks: [{
+          id: Date.now().toString(),
+          name: '',
+          completed: false,
+          dueDate: null
+        }]
+      }));
+    }
+  }, []);
 
   // Handle task-related actions
   const handleTaskComplete = (taskId) => {
@@ -82,6 +106,7 @@ const dialogTemplate = (props) => {
       props.kanbanRef.current.dataSource = props.kanbanRef.current.dataSource.map(item =>
         item.Id === props.Id ? { ...item, ...formData } : item
       );
+      props.kanbanRef.current.refresh();
     }
   };
 
@@ -103,6 +128,7 @@ const dialogTemplate = (props) => {
           type="text"
           value={formData.Title || ''}
           onChange={e => setFormData(prev => ({ ...prev, Title: e.target.value }))}
+          placeholder="Enter title..."
         />
       </div>
 
@@ -111,32 +137,19 @@ const dialogTemplate = (props) => {
         <textarea
           value={formData.Summary || ''}
           onChange={e => setFormData(prev => ({ ...prev, Summary: e.target.value }))}
+          placeholder="Enter summary..."
         />
       </div>
 
       <div className="form-row">
-        <label>Status:</label>
-        <select 
-          value={formData.Status || ''} 
-          onChange={e => setFormData(prev => ({ ...prev, Status: e.target.value }))}
-        >
-          {props.columns?.map(col => (
-            <option key={col.keyField} value={col.keyField}>
-              {col.headerText}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="form-row">
-        <label>Deadline:</label>
+        <label>Due Date:</label>
         <InlineDateTimePicker
           value={formData.dueDate}
           onChange={date => setFormData(prev => ({ ...prev, dueDate: date }))}
         />
       </div>
 
-      {/* Tasks */}
+      {/* Tasks Section */}
       <div className="tasks-section">
         <h3>Tasks</h3>
         <div className="tasks-container">
@@ -258,8 +271,6 @@ const dialogTemplate = (props) => {
 const cardTemplate = (props) => {
   if (!props) return null;
   
-  const [showEditModal, setShowEditModal] = useState(false);
-  
   const cardStyle = {
     backgroundColor: props.uiState?.backgroundColor || '#ffffff',
     color: props.uiState?.textColor || '#333333',
@@ -270,65 +281,52 @@ const cardTemplate = (props) => {
   const isExpanded = props.uiState?.isExpanded !== false;  // Default to expanded if undefined
 
   const handleEditClick = (e) => {
-    e.stopPropagation();
-    setShowEditModal(true);
+    // e.stopPropagation();
+    // if (props.kanbanRef?.current) {
+    //   props.kanbanRef.current.openDialog('Edit', props);
+    // }
   };
 
   return (
-    <>
-      <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
-           style={cardStyle}>
-        <div className="e-card-content">
-          {/* Header - Always visible */}
-          <div className="card-header">
-            <div className="header-row">
-              <div className="header-date">
-                {formattedDateTime}
-              </div>
-              <div className="header-progress">
-                <ProgressBar 
-                  value={props.progress || 0} 
-                  height="4px" 
-                  width="60px"
-                />
-              </div>
+    <div className={`card-template ${!isExpanded ? 'compact' : ''}`} 
+         style={cardStyle}>
+      <div className="e-card-content">
+        {/* Header - Always visible */}
+        <div className="card-header">
+          <div className="header-row">
+            <div className="header-date">
+              {formattedDateTime}
             </div>
-            <div className="header-row">
-              <div className="header-title">{props.Title}</div>
-              {isExpanded && (
-                <button 
-                  className="edit-button"
-                  onClick={handleEditClick}
-                  aria-label="Edit card"
-                >
-                  <FiEdit2 size={16} />
-                </button>
-              )}
+            <div className="header-progress">
+              <ProgressBar 
+                value={props.progress || 0} 
+                height="4px" 
+                width="60px"
+              />
             </div>
           </div>
-          
-          {/* Body - Only visible when expanded */}
-          {isExpanded && (
-            <div className="card-body">
-              <div className="body-summary">{props.Summary}</div>
-            </div>
-          )}
+          <div className="header-row">
+            <div className="header-title">{props.Title}</div>
+            {isExpanded && (
+              <button 
+                className="edit-button"
+                onClick={handleEditClick}
+                aria-label="Edit card"
+              >
+                <FiEdit2 size={16} />
+              </button>
+            )}
+          </div>
         </div>
+        
+        {/* Body - Only visible when expanded */}
+        {isExpanded && (
+          <div className="card-body">
+            <div className="body-summary">{props.Summary}</div>
+          </div>
+        )}
       </div>
-
-      {showEditModal && (
-        <DreamCardEditModal
-          card={props}
-          onClose={() => setShowEditModal(false)}
-          onSave={(updatedCard) => {
-            if (props.kanbanRef?.current) {
-              props.kanbanRef.current.updateCard(updatedCard);
-            }
-            setShowEditModal(false);
-          }}
-        />
-      )}
-    </>
+    </div>
   );
 };
 
@@ -355,17 +353,7 @@ const KanbanBoard = ({ boardId }) => {
     const card = args.data;
     if (!card) return;
 
-    // Check if it's a double click
-    if (args.originalEvent?.detail === 2) {
-      // Open the dialog
-      if (kanbanRef.current) {
-        kanbanRef.current.openDialog('Edit', card);
-      }
-      args.cancel = true;
-      return;
-    }
-
-    // Single click - handle expansion
+    // Only handle card expansion on single click
     const updatedCard = {
       ...card,
       uiState: {
