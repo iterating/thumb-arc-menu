@@ -192,14 +192,8 @@ const KanbanBoard = ({ boardId }) => {
   const kanbanRef = useRef(null);
   const template = boardTemplates[boardId];
   
-  // Check for persisted data first
-  const persistedData = localStorage.getItem(`kanban_${boardId}`);
-  // Initialize data with persisted data or template
-  const initialData = persistedData ? 
-    JSON.parse(persistedData) : 
-    extend([], template.data, null, true);
-
-  const [data, setData] = useState(initialData);
+  // Initialize with template data and let SyncFusion handle persistence
+  const [data] = useState(() => extend([], template.data, null, true));
 
   // Pass kanbanRef through context instead of adding to each card
   const dialogTemplateWithRef = useCallback((props) => {
