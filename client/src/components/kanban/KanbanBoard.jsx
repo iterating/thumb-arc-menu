@@ -353,7 +353,7 @@ const KanbanBoard = ({ boardId }) => {
       dialogSettings={{
         template: dialogTemplate.bind(this)
       }}
-      editSettings={{
+      editsettings={{
         allowEditing: true,
         allowAdding: true,
         mode: "Dialog"
