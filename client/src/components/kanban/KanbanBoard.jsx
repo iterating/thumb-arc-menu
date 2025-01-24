@@ -33,27 +33,6 @@ const dialogTemplate = (props) => {
     }))
   }));
 
-  const [showAdvanced, setShowAdvanced] = useState(false);
-
-  // Add save handler to dialog buttons
-  useEffect(() => {
-    const saveButton = document.querySelector('.e-primary.e-flat');
-    if (saveButton) {
-      saveButton.addEventListener('click', () => {
-        if (props.kanbanRef?.current) {
-          // Create a clean copy without the ref
-          const cleanData = { ...formData };
-          delete cleanData.kanbanRef;
-          
-          props.kanbanRef.current.dataSource = props.kanbanRef.current.dataSource.map(item =>
-            item.Id === cleanData.Id ? cleanData : item
-          );
-          props.kanbanRef.current.refresh();
-        }
-      });
-    }
-  }, [formData, props]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -195,11 +174,6 @@ const KanbanBoard = ({ boardId }) => {
   // Initialize with template data and let SyncFusion handle persistence
   const [data] = useState(() => extend([], template.data, null, true));
 
-  // Pass kanbanRef through context instead of adding to each card
-  const dialogTemplateWithRef = useCallback((props) => {
-    return dialogTemplate({ ...props, kanbanRef });
-  }, [kanbanRef]);
-
   const handleCardClick = (args) => {
     // Ignore double clicks - let SyncFusion handle those
     if (args.event && args.event.detail === 2) return;
@@ -231,18 +205,18 @@ const KanbanBoard = ({ boardId }) => {
       dataSource={data}
       keyField="Status"
       cardSettings={{ 
-        template: cardTemplate,
+        template: cardTemplate.bind(this),
         headerField: "Title"
       }}
       dialogSettings={{
-        template: dialogTemplateWithRef
+        template: dialogTemplate.bind(this)
       }}
       editsettings={{
         allowEditing: true,
         allowAdding: true,
         mode: "Dialog"
       }}
-      cardClick={handleCardClick}
+      cardClick={handleCardClick.bind(this)}
       allowDragAndDrop={true}
       enablePersistence={true}
       persistencekey={`kanban_${boardId}`}
