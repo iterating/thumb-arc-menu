@@ -438,7 +438,7 @@ const ArcMenu = () => {
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         cursor: pointer;
         font-size: 24px;
-        z-index: 9999;
+        z-index: 999;
         opacity: ${isClosing ? 0 : 1};
       `;
     });
@@ -764,7 +764,7 @@ const ArcMenu = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          zIndex: 9997,
+          zIndex: 997,
           pointerEvents: isActive ? 'auto' : 'none'
         }}
       />
@@ -777,7 +777,7 @@ const ArcMenu = () => {
           width: '100%',
           height: '100%',
           pointerEvents: 'none',
-          zIndex: 9998
+          zIndex: 998
         }}
       >
         <path

@@ -17,7 +17,7 @@ const ActionBar = () => {
         position: 'fixed', 
         bottom: 60,  // Just above the ArcMenu
         left: 10,
-        zIndex: 9999 
+        zIndex: 2000 
       }}>
         <button 
           className="action-item"
