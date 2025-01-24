@@ -350,6 +350,9 @@ const KanbanBoard = ({ boardId }) => {
   }));
 
   const handleCardClick = (args) => {
+    // Ignore double clicks - let SyncFusion handle those
+    if (args.event && args.event.detail === 2) return;
+    
     const card = args.data;
     if (!card) return;
 
@@ -381,7 +384,7 @@ const KanbanBoard = ({ boardId }) => {
         headerField: "Title"
       }}
       dialogSettings={{
-        template: dialogTemplate
+        template: dialogTemplate.bind(this)
       }}
       editsettings={{
         allowEditing: true,
