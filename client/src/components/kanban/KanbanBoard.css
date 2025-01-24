@@ -140,3 +140,41 @@
     /* border-top: 1px solid #eee; */
     padding-top: 8px;
 }
+
+/* Dialog footer buttons */
+.e-dialog .e-footer-content {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
+    padding: 1rem !important;
+}
+
+.e-dialog .e-footer-content .e-btn {
+    width: auto !important;
+    min-width: 80px !important;
+    margin: 0 !important;
+}
+
+/* Dialog content padding */
+.e-dialog .e-dlg-content {
+    padding: 1rem !important;
+}
+
+/* Dialog table layout */
+.e-dialog .e-dlg-content table {
+    width: 100%;
+}
+
+.e-dialog .e-dlg-content td {
+    padding: 8px;
+    vertical-align: top;
+}
+
+.e-dialog .e-dlg-content td.e-label {
+    width: 100px;
+    font-weight: 500;
+}
+
+.e-dialog .e-dlg-content .e-float-input {
+    width: 100%;
+}
