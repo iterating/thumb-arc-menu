@@ -5,7 +5,7 @@ import {
   ColumnDirective,
 } from '@syncfusion/ej2-react-kanban';
 
-const App = () => {
+const TestKanban = () => {
   const [data, setData] = useState([
     {
       Id: 1,
@@ -28,7 +28,14 @@ const App = () => {
     },
   ]);
 
-  const [modalData, setModalData] = useState(null);
+  const [modalData, setModalData] = useState({
+    Id: '',
+    Title: '',
+    Status: '',
+    DueDate: '',
+    Description: '',
+    Tasks: [],
+  });
 
   // Add a new task
   const handleAddTask = () => {
@@ -103,78 +110,88 @@ const App = () => {
   };
 
   // Edit modal template
-  const editTemplate = () => (
-    <div style={{ padding: '16px' }}>
-      <h3>Edit Card</h3>
-      <label>Card Name</label>
-      <input
-        type="text"
-        value={modalData?.Title || ''}
-        onChange={(e) => setModalData((prev) => ({ ...prev, Title: e.target.value }))}
-        style={{ width: '100%', marginBottom: '8px' }}
-      />
-      <label>Due Date</label>
-      <input
-        type="date"
-        value={modalData?.DueDate || ''}
-        onChange={(e) => setModalData((prev) => ({ ...prev, DueDate: e.target.value }))}
-        style={{ width: '100%', marginBottom: '8px' }}
-      />
-      <label>Description</label>
-      <textarea
-        value={modalData?.Description || ''}
-        onChange={(e) => setModalData((prev) => ({ ...prev, Description: e.target.value }))}
-        style={{ width: '100%', marginBottom: '16px' }}
-      ></textarea>
+  const dialogTemplate = (props) => {
+    console.log('Dialog Template Props:', props);
+    console.log('Props.Title is ', props.Title);
+    return (
+      <div style={{ padding: '16px' }}>
+        <h3>Edit Card</h3>
+        <label>Card Name</label>
+        <input
+          type="text"
+          value={props.Title || ''}
+          onChange={(e) => setModalData((prev) => ({ ...prev, Title: e.target.value }))}
+          style={{ width: '100%', marginBottom: '8px' }}
+        />
+        <label>Due Date</label>
+        <input
+          type="date"
+          value={props.DueDate || ''}
+          onChange={(e) => setModalData((prev) => ({ ...prev, DueDate: e.target.value }))}
+          style={{ width: '100%', marginBottom: '8px' }}
+        />
+        <label>Description</label>
+        <textarea
+          value={props.Description || ''}
+          onChange={(e) => setModalData((prev) => ({ ...prev, Description: e.target.value }))}
+          style={{ width: '100%', marginBottom: '16px' }}
+        ></textarea>
 
-      <label>Tasks</label>
-      {modalData?.Tasks?.map((task, index) => (
-        <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-          <input
-            type="text"
-            placeholder="Task Name"
-            value={task.taskName}
-            onChange={(e) => handleTaskChange(index, 'taskName', e.target.value)}
-            style={{ flex: 2, marginRight: '8px' }}
-          />
-          <input
-            type="date"
-            value={task.dueDate}
-            onChange={(e) => handleTaskChange(index, 'dueDate', e.target.value)}
-            style={{ flex: 1, marginRight: '8px' }}
-          />
-          <input
-            type="checkbox"
-            checked={task.completed}
-            onChange={(e) => handleTaskChange(index, 'completed', e.target.checked)}
-            style={{ marginRight: '8px' }}
-          />
-          <button onClick={() => handleRemoveTask(index)} style={{ flexShrink: 0 }}>-</button>
+        <label>Tasks</label>
+        {props.Tasks?.map((task, index) => (
+          <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+            <input
+              type="text"
+              placeholder="Task Name"
+              value={task.taskName || ''}
+              onChange={(e) => handleTaskChange(index, 'taskName', e.target.value)}
+              style={{ flex: 2, marginRight: '8px' }}
+            />
+            <input
+              type="date"
+              value={task.dueDate || ''}
+              onChange={(e) => handleTaskChange(index, 'dueDate', e.target.value)}
+              style={{ flex: 1, marginRight: '8px' }}
+            />
+            <input
+              type="checkbox"
+              checked={task.completed || false}
+              onChange={(e) => handleTaskChange(index, 'completed', e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            <button onClick={() => handleRemoveTask(index)} style={{ flexShrink: 0 }}>-</button>
+          </div>
+        ))}
+        <button onClick={handleAddTask} style={{ marginTop: '8px' }}>+ Add Task</button>
+
+        <div style={{ marginTop: '16px', textAlign: 'right' }}>
+          <button onClick={handleCancel} style={{ marginRight: '8px' }}>Cancel</button>
+          <button onClick={handleSave}>Save</button>
         </div>
-      ))}
-      <button onClick={handleAddTask} style={{ marginTop: '8px' }}>+ Add Task</button>
-
-      <div style={{ marginTop: '16px', textAlign: 'right' }}>
-        <button onClick={handleCancel} style={{ marginRight: '8px' }}>Cancel</button>
-        <button onClick={handleSave}>Save</button>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div>
       <h2>DreamBuilder Kanban Board</h2>
       <KanbanComponent
         dataSource={data}
+        keyField="Status"
         cardSettings={{
           headerField: 'Title',
           contentField: 'Description',
           template: cardTemplate,
         }}
         dialogSettings={{
-          template: editTemplate,
+          template: dialogTemplate,
         }}
-        cardDoubleClick={(e) => setModalData(e.data)}
+        cardDoubleClick={(e) => {
+          console.log('Card Double Click Event:', e);
+          if (e.data) {
+            setModalData(e.data);
+          }
+        }}
       >
         <ColumnsDirective>
           <ColumnDirective headerText="Dreams" keyField="Dreams" />
@@ -187,4 +204,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default TestKanban;

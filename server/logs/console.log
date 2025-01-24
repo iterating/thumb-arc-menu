@@ -1,42 +1,147 @@
 [
   {
-    "timestamp": "2025-01-24T02:20:07.308Z",
+    "timestamp": "2025-01-24T19:08:57.056Z",
     "type": "error",
-    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737685207211:352:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737685143437:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737685143437:90:37)"
+    "message": "The above error occurred in the <Portal> component:\n\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=8277b9fa:25099:26)\n    at KanbanBoard2 (http://localhost:5173/src/components/KanbanBoard2.jsx?t=1737745587907:29:25)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737745587907:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737745587907:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
   },
   {
-    "timestamp": "2025-01-24T02:20:33.671Z",
+    "timestamp": "2025-01-24T19:09:29.703Z",
     "type": "error",
-    "message": "Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s persistenceKey persistencekey \n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=2e8bbaa5:68843:26)\n    at KanbanBoard (http://localhost:5173/src/components/kanban/KanbanBoard.jsx?t=1737685207211:352:24)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737685207211:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=2e8bbaa5:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737685207211:90:37)"
+    "message": "The above error occurred in the <KanbanBoard2> component:\n\n    at KanbanBoard2 (http://localhost:5173/src/components/KanbanBoard2.jsx?t=1737745736944:29:25)\n    at div\n    at div\n    at DreamBuilder (http://localhost:5173/src/pages/DreamBuilder.jsx?t=1737745736944:27:37)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737745736944:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
   },
   {
-    "timestamp": "2025-01-24T03:25:30.503Z",
+    "timestamp": "2025-01-24T19:09:37.867Z",
+    "type": "error",
+    "message": "[vite] Failed to reload /src/components/KanbanBoard2.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)"
+  },
+  {
+    "timestamp": "2025-01-24T19:14:37.572Z",
+    "type": "error",
+    "message": "The above error occurred in the <StrictMode> component:\n\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T19:15:00.619Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog Template Props: {\"Id\":2,\"Title\":\"Launch a Startup\",\"Status\":\"Goals\",\"DueDate\":\"2025-03-01\",\"Description\":\"Prepare pitch deck.\",\"Tasks\":[]}"
+  },
+  {
+    "timestamp": "2025-01-24T19:15:03.083Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog Template Props: {\"Id\":1,\"Title\":\"Write a Book\",\"Status\":\"Dreams\",\"DueDate\":\"2025-02-01\",\"Description\":\"Finish the first draft.\",\"Tasks\":[{\"taskName\":\"Outline chapters\",\"dueDate\":\"2025-01-25\",\"completed\":false},{\"taskName\":\"Write introduction\",\"dueDate\":\"2025-01-27\",\"completed\":true}]}"
+  },
+  {
+    "timestamp": "2025-01-24T19:15:06.390Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog Template Props: {\"Id\":1,\"Title\":\"Write a Book\",\"Status\":\"Dreams\",\"DueDate\":\"2025-02-01\",\"Description\":\"Finish the first draft.\",\"Tasks\":[{\"taskName\":\"Outline chapters\",\"dueDate\":\"2025-01-25\",\"completed\":false},{\"taskName\":\"Write introduction\",\"dueDate\":\"2025-01-27\",\"completed\":true}]}"
+  },
+  {
+    "timestamp": "2025-01-24T19:15:09.646Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog Template Props: {\"Id\":2,\"Title\":\"Launch a Startup\",\"Status\":\"Goals\",\"DueDate\":\"2025-03-01\",\"Description\":\"Prepare pitch deck.\",\"Tasks\":[]}"
+  },
+  {
+    "timestamp": "2025-01-24T19:15:11.654Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog Template Props: {\"Id\":1,\"Title\":\"Write a Book\",\"Status\":\"Dreams\",\"DueDate\":\"2025-02-01\",\"Description\":\"Finish the first draft.\",\"Tasks\":[{\"taskName\":\"Outline chapters\",\"dueDate\":\"2025-01-25\",\"completed\":false},{\"taskName\":\"Write introduction\",\"dueDate\":\"2025-01-27\",\"completed\":true}]}"
+  },
+  {
+    "timestamp": "2025-01-24T19:15:56.705Z",
+    "type": "error",
+    "message": "The above error occurred in the <StrictMode> component:\n\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T19:16:10.307Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog Template Props: {\"Id\":2,\"Title\":\"Launch a Startup\",\"Status\":\"Goals\",\"DueDate\":\"2025-03-01\",\"Description\":\"Prepare pitch deck.\",\"Tasks\":[]}"
+  },
+  {
+    "timestamp": "2025-01-24T19:16:12.628Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog Template Props: {\"Id\":1,\"Title\":\"Write a Book\",\"Status\":\"Dreams\",\"DueDate\":\"2025-02-01\",\"Description\":\"Finish the first draft.\",\"Tasks\":[{\"taskName\":\"Outline chapters\",\"dueDate\":\"2025-01-25\",\"completed\":false},{\"taskName\":\"Write introduction\",\"dueDate\":\"2025-01-27\",\"completed\":true}]}"
+  },
+  {
+    "timestamp": "2025-01-24T19:19:30.459Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog Template Props: {\"Id\":2,\"Title\":\"Launch a Startup\",\"Status\":\"Goals\",\"DueDate\":\"2025-03-01\",\"Description\":\"Prepare pitch deck.\",\"Tasks\":[]}"
+  },
+  {
+    "timestamp": "2025-01-24T19:22:48.354Z",
+    "type": "error",
+    "message": "The above error occurred in the <StrictMode> component:\n\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T19:22:58.524Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Modal Data: null"
+  },
+  {
+    "timestamp": "2025-01-24T19:23:32.343Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Modal Data: {\"Id\":\"\",\"Title\":\"\",\"Status\":\"\",\"DueDate\":\"\",\"Description\":\"\",\"Tasks\":[]}"
+  },
+  {
+    "timestamp": "2025-01-24T19:27:29.719Z",
     "type": "log",
     "message": "[vite] server connection lost. Polling for restart..."
   },
   {
-    "timestamp": "2025-01-24T03:46:18.746Z",
+    "timestamp": "2025-01-24T19:35:38.541Z",
     "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog props: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"kanbanRef\":{\"current\":null}}"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Modal Data: {\"Id\":\"\",\"Title\":\"\",\"Status\":\"\",\"DueDate\":\"\",\"Description\":\"\",\"Tasks\":[]}"
   },
   {
-    "timestamp": "2025-01-24T03:47:01.694Z",
+    "timestamp": "2025-01-24T19:35:45.061Z",
     "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog props: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"kanbanRef\":{\"current\":null}}"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Modal Data: {\"Id\":\"\",\"Title\":\"\",\"Status\":\"\",\"DueDate\":\"\",\"Description\":\"\",\"Tasks\":[]}"
   },
   {
-    "timestamp": "2025-01-24T03:47:26.410Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog props: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":false,\"isHighlighted\":false,\"customStyles\":{}},\"kanbanRef\":{\"current\":null}}"
+    "timestamp": "2025-01-24T19:38:16.655Z",
+    "type": "error",
+    "message": "The above error occurred in the <dialogTemplate> component:\n\n    at dialogTemplate (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747481408:183:24)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=8277b9fa:25099:26)\n    at div\n    at TestKanban (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747481408:26:27)\n    at div\n    at div\n    at Home\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737747481408:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
   },
   {
-    "timestamp": "2025-01-24T03:47:30.013Z",
-    "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog props: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":true,\"isHighlighted\":false,\"customStyles\":{}},\"kanbanRef\":{\"current\":null}}"
+    "timestamp": "2025-01-24T19:38:49.903Z",
+    "type": "error",
+    "message": "The above error occurred in the <dialogTemplate> component:\n\n    at dialogTemplate (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747481408:183:24)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=8277b9fa:25099:26)\n    at div\n    at TestKanban (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747481408:26:27)\n    at div\n    at div\n    at Home\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737747481408:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
   },
   {
-    "timestamp": "2025-01-24T03:47:32.861Z",
+    "timestamp": "2025-01-24T19:41:14.946Z",
+    "type": "error",
+    "message": "[vite] Failed to reload /src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)"
+  },
+  {
+    "timestamp": "2025-01-24T19:41:21.417Z",
+    "type": "error",
+    "message": "[vite] Failed to reload /src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)"
+  },
+  {
+    "timestamp": "2025-01-24T19:41:33.656Z",
+    "type": "error",
+    "message": "The above error occurred in the <dialogTemplate> component:\n\n    at dialogTemplate (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747686156:167:47)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=8277b9fa:25099:26)\n    at div\n    at TestKanban (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747686156:26:27)\n    at div\n    at div\n    at Home\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737747686156:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T19:42:17.249Z",
+    "type": "error",
+    "message": "The above error occurred in the <dialogTemplate> component:\n\n    at dialogTemplate (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747729202:168:47)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=8277b9fa:25099:26)\n    at div\n    at TestKanban (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747729202:26:27)\n    at div\n    at div\n    at Home\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737747729202:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T19:44:33.542Z",
+    "type": "error",
+    "message": "The above error occurred in the <dialogTemplate> component:\n\n    at dialogTemplate (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747865183:168:42)\n    at div\n    at KanbanComponent2 (http://localhost:5173/node_modules/.vite/deps/@syncfusion_ej2-react-kanban.js?v=8277b9fa:25099:26)\n    at div\n    at TestKanban (http://localhost:5173/src/SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample.jsx?t=1737747865183:26:27)\n    at div\n    at div\n    at Home\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:5362:26)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6092:3)\n    at div\n    at div\n    at MenuProvider (http://localhost:5173/src/contexts/MenuContext.jsx:20:32)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:6035:13)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=8277b9fa:8074:3)\n    at App (http://localhost:5173/src/App.jsx?t=1737747865183:90:37)\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://reactjs.org/link/error-boundaries to learn more about error boundaries."
+  },
+  {
+    "timestamp": "2025-01-24T19:45:14.621Z",
     "type": "log",
-    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Dialog props: {\"Id\":2,\"Title\":\"Learn piano\",\"Status\":\"Goals\",\"Summary\":\"Take piano lessons and practice regularly\",\"dueDate\":\"2024-06-30\",\"dueTime\":\"2:30pm\",\"progress\":45,\"uiState\":{\"backgroundColor\":\"#f8f9fa\",\"textColor\":\"#333333\",\"isExpanded\":false,\"isHighlighted\":false,\"customStyles\":{}},\"kanbanRef\":{\"current\":null}}"
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Props.Title is  Launch a Startup"
+  },
+  {
+    "timestamp": "2025-01-24T19:45:24.277Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Props.Title is  Write a Book"
+  },
+  {
+    "timestamp": "2025-01-24T19:45:40.817Z",
+    "type": "log",
+    "message": "\u001b[2;38;2;124;124;124m%s\u001b[0m Props.Title is  Launch a Startup"
   }
 ]
