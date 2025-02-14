@@ -1,31 +1,51 @@
 {
   "name": "thumb-arc-menu",
-  "private": true,
-  "workspaces": [
-    "client",
-    "server"
-  ],
+  "type": "module",
   "scripts": {
-    "dev:client": "npm run dev -w client",
-    "dev:server": "npm run dev -w server",
-    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
-    "install:all": "npm install && npm install -w client && npm install -w server"
-  },
-  "devDependencies": {
-    "concurrently": "^8.2.2"
+    "dev:client": "cd client && vite",
+    "dev:server": "node server/src/server.js",
+    "dev": "concurrently \"pnpm run dev:server\" \"pnpm run dev:client\"",
+    "build": "cd client && vite build && mv dist ../dist",
+    "vercel-build": "cd client && vite build && mv dist ../dist",
+    "start": "node server/src/server.js",
+    "lint": "eslint .",
+    "preview": "cd client && vite preview"
   },
   "dependencies": {
-    "@syncfusion/ej2-base": "^28.1.33",
-    "@syncfusion/ej2-buttons": "^28.1.39",
-    "@syncfusion/ej2-calendars": "^28.1.39",
-    "@syncfusion/ej2-data": "^28.1.33",
-    "@syncfusion/ej2-dropdowns": "^28.1.39",
-    "@syncfusion/ej2-inputs": "^28.1.37",
-    "@syncfusion/ej2-layouts": "^28.1.33",
-    "@syncfusion/ej2-lists": "^28.1.37",
-    "@syncfusion/ej2-navigations": "^28.1.39",
-    "@syncfusion/ej2-popups": "^28.1.39",
-    "@syncfusion/ej2-react-base": "^28.1.38",
-    "@syncfusion/ej2-react-kanban": "^28.1.39"
+    "@syncfusion/ej2-base": "latest",
+    "@syncfusion/ej2-buttons": "latest",
+    "@syncfusion/ej2-calendars": "latest",
+    "@syncfusion/ej2-data": "latest",
+    "@syncfusion/ej2-dropdowns": "latest",
+    "@syncfusion/ej2-inputs": "latest",
+    "@syncfusion/ej2-layouts": "latest",
+    "@syncfusion/ej2-lists": "latest",
+    "@syncfusion/ej2-navigations": "latest",
+    "@syncfusion/ej2-popups": "latest",
+    "@syncfusion/ej2-react-base": "latest",
+    "@syncfusion/ej2-react-buttons": "latest",
+    "@syncfusion/ej2-react-kanban": "latest",
+    "@syncfusion/ej2-react-navigations": "latest",
+    "@syncfusion/ej2-react-splitbuttons": "latest",
+    "@vercel/node": "latest",
+    "cors": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "prop-types": "^15.8.1",
+    "react": "latest",
+    "react-calendar": "latest",
+    "react-dom": "latest",
+    "react-icons": "latest",
+    "react-router-dom": "latest",
+    "vite-plugin-react": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vercel/node": "latest",
+    "concurrently": "latest",
+    "nodemon": "latest",
+    "vite": "latest"
   }
 }

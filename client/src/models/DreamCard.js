@@ -1,4 +1,5 @@
 import { generateUuid } from '../utils/uuidUtils';
+import React from 'react';
 
 const DreamCard = {
   create: ({

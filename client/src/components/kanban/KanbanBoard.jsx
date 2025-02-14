@@ -6,7 +6,7 @@ import '@syncfusion/ej2-react-kanban/styles/material.css';
 import { boardTemplates } from './constants';
 import { formatDateTime } from '../../utils/dateTime';
 import ProgressBar from '../common/ProgressBar';
-import InlineDateTimePicker from '../Shared/InlineDateTimePicker';
+import InlineDateTimePicker from '../../components/shared/InlineDateTimePicker.jsx';
 import { FiPlus, FiChevronDown, FiChevronRight, FiMenu, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import './KanbanBoard.css';
 

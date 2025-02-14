@@ -1,4 +1,5 @@
 import TestKanban from '../SyncFusionSampleCode/ChatGPt40/ChatGpt40miniExample';
+import React from 'react';
 
 // Import required styles
 import '@syncfusion/ej2-base/styles/material.css';

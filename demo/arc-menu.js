@@ -15,21 +15,36 @@ export class ArcMenu {
         // Debug mode
         this.debug = this.config.debug;
         
-        // Add click handlers to action bar buttons - only trigger on quick taps
-        const actionMessages = {
-            '📱': 'Phone menu opened!',
-            '📍': 'Location services activated!',
-            '📷': 'Camera ready to snap!',
-            '⚙️': 'Settings panel opened!',
-            '➕': 'Ready to add new item!'
-        };
-        
+        // Consolidated button handlers with proper scoping
         actionBar.querySelectorAll('.action-item').forEach(button => {
-            button.addEventListener('click', (e) => {
-                if (!this.isActive) { // Only show alert if menu isn't active
-                    e.stopPropagation(); // Prevent event from bubbling
+            let pressTimer; // ✅ Properly scoped to each button
+
+            const handleTap = (e) => {
+                if (!this.isActive) {
+                    e.stopPropagation();
                     alert(actionMessages[button.textContent] || 'Button clicked!');
                 }
+            };
+
+            button.addEventListener('click', handleTap);
+            
+            button.addEventListener('touchstart', (e) => {
+                pressTimer = setTimeout(() => {
+                    pressTimer = null;
+                }, this.config.holdDuration);
+            });
+
+            button.addEventListener('touchend', (e) => {
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                } else {
+                    handleTap(e);
+                }
+                e.preventDefault();
+            });
+
+            button.addEventListener('touchcancel', () => {
+                clearTimeout(pressTimer);
             });
         });
         
@@ -65,7 +80,7 @@ export class ArcMenu {
         this.buttonSize = 50;         // Default button size
         this.minButtonSize = 30;      // Minimum button size when scaling down
         this.buttonPadding = 10;      // Minimum padding between buttons
-        this.goodPointCount = 0;
+        this.goodPointCount  = 0;
         this.badPointCount = 0;
         this.circleState = {
             centerX: null,

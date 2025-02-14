@@ -1,3 +1,5 @@
+import React from 'react';
+
 function Today() {
   return (
     <div className="page">

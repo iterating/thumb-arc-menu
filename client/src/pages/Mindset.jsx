@@ -1,3 +1,5 @@
+import React from 'react';
+
 function Mindset() {
   return (
     <div className="page">

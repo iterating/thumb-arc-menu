@@ -2,6 +2,7 @@
 //
 // The registration code and bugfix was added by Cascade 3.5 Sonnet.
 
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import * as React from 'react';

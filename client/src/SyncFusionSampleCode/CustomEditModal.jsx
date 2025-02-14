@@ -1,7 +1,6 @@
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import * as React from "react";
-import { useEffect, useRef, useState } from "react";
 import { extend } from '@syncfusion/ej2-base';
 import { KanbanComponent, ColumnsDirective, ColumnDirective } from "@syncfusion/ej2-react-kanban";
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';

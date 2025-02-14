@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import './ArcMenu.css';
-
 const ArcMenu = () => {
   // Potentially unused imports/hooks
   const location = useLocation();

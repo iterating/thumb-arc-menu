@@ -7,7 +7,7 @@ const ActionBar = () => {
 
   const handleCommand = (text) => {
     console.log('Received command:', text);
-    // Here you'll integrate with your AI processing
+    // Here you'll integrate with your  processing
   };
 
   return (
