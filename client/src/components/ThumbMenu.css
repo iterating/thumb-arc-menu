@@ -33,6 +33,12 @@
   width: 240px;
   height: 240px;
   pointer-events: none;
+  user-select: none;
+  cursor: grab;
+}
+
+.menu-items:active {
+  cursor: grabbing;
 }
 
 .menu-item {
@@ -49,10 +55,11 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: all 0.3s ease;
   pointer-events: auto;
   transform: scale(0);
   opacity: 0;
+  will-change: transform;
 }
 
 .menu-trigger.open ~ .menu-items .menu-item {
