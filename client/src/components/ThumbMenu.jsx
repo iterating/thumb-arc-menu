@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useMenu } from '../contexts/MenuContext';
 import './ThumbMenu.css';
@@ -11,6 +11,7 @@ function ThumbMenu() {
   const [startAngle, setStartAngle] = useState(0);
   const location = useLocation();
   const { menuConfigs } = useMenu();
+  const menuRef = useRef(null);
 
   // Get current page from path
   const currentPage = useMemo(() => {
@@ -63,47 +64,74 @@ function ThumbMenu() {
   }, []);
 
   // Handle rotation
-  const handleMouseDown = useCallback((e) => {
-    if (!isOpen) return;
-    
-    const menuRect = e.currentTarget.getBoundingClientRect();
+  const getAngleFromEvent = useCallback((e, menuRect) => {
     const centerX = menuRect.left + menuRect.width / 2;
     const centerY = menuRect.top + menuRect.height / 2;
-    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI;
+    const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+    const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+    return Math.atan2(clientY - centerY, clientX - centerX) * 180 / Math.PI;
+  }, []);
+
+  const handleRotationStart = useCallback((e) => {
+    if (!isOpen) return;
+
+    // Prevent default for both touch and mouse events
+    e.preventDefault();
+    
+    const menu = menuRef.current;
+    if (!menu) return;
+
+    const menuRect = menu.getBoundingClientRect();
+    const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+    const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+    const angle = getAngleFromEvent({ clientX, clientY }, menuRect);
     
     setIsDragging(true);
     setStartAngle(angle - rotation);
   }, [isOpen, rotation]);
 
-  const handleMouseMove = useCallback((e) => {
+  const handleRotationMove = useCallback((e) => {
     if (!isDragging) return;
+
+    // Prevent default for both touch and mouse events
+    e.preventDefault();
+
+    const menu = menuRef.current;
+    if (!menu) return;
+
+    const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+    const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+    const menuRect = menu.getBoundingClientRect();
+    const angle = getAngleFromEvent({ clientX, clientY }, menuRect);
     
-    const menuRect = e.currentTarget.getBoundingClientRect();
-    const centerX = menuRect.left + menuRect.width / 2;
-    const centerY = menuRect.top + menuRect.height / 2;
-    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI;
+    let newRotation = angle - startAngle;
+    newRotation = ((newRotation % 360) + 360) % 360;
     
-    setRotation(angle - startAngle);
+    setRotation(newRotation);
   }, [isDragging, startAngle]);
 
-  const handleMouseUp = useCallback(() => {
+  const handleRotationEnd = useCallback(() => {
     setIsDragging(false);
   }, []);
 
   // Add and remove event listeners
   useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mouseup', handleMouseUp);
-      document.addEventListener('mouseleave', handleMouseUp);
-    } else {
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('mouseleave', handleMouseUp);
-    }
-    return () => {
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('mouseleave', handleMouseUp);
+    const handleMove = (e) => {
+      e.preventDefault();
+      handleRotationMove(e);
     };
-  }, [isDragging, handleMouseUp]);
+
+    const menu = menuRef.current;
+    if (!menu) return;
+
+    menu.addEventListener('touchmove', handleMove, { passive: false });
+    menu.addEventListener('mousemove', handleMove);
+
+    return () => {
+      menu.removeEventListener('touchmove', handleMove);
+      menu.removeEventListener('mousemove', handleMove);
+    };
+  }, [handleRotationMove]);
 
   return (
     <div className="thumb-menu">
@@ -117,9 +145,11 @@ function ThumbMenu() {
       </button>
 
       <div 
+        ref={menuRef}
         className="menu-items"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
+        onMouseDown={handleRotationStart}
+        onTouchStart={handleRotationStart}
+        style={{ touchAction: 'none' }} // Prevent touch scrolling
       >
         {menuItems.map((item, index) => (
           <button

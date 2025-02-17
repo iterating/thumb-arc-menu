@@ -1,45 +1,70 @@
-import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
+import React, { useReducer, useRef, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import './ArcMenu.css';
-const ArcMenu = () => {
-  // Potentially unused imports/hooks
-  const location = useLocation();
 
-  // Core state we definitely need
-  const [isActive, setIsActive] = useState(false);
-  const [pathPoints, setPathPoints] = useState([]);
-  const [pointCount, setPointCount] = useState(0);
-  const [circleState, setCircleState] = useState({
+const ARC_MENU_CONFIG = {
+  BUTTON_SIZE: 50,
+  SAMPLE_DISTANCE: 5,
+  DEBUG_PATH: false,
+  DEBUG_ARC: true,
+  MAX_POINTS: 100,
+  MIN_MENU_ANGLE: Math.PI / 12,
+  EDGE_THRESHOLD: 150,
+  CLOSE_ANIMATION_MS: 1000,
+  DRAG_DELAY_MS: 150,
+  MIN_DRAG_DISTANCE: 10,
+  BUTTON_PADDING: 5
+};
+
+const initialState = {
+  isActive: false,
+  isClosing: false,
+  pathPoints: [],
+  pointCount: 0,
+  circleState: {
     centerX: null,
     centerY: null,
     radius: null,
     startAngle: null,
     endAngle: null
-  });
+  },
+  lockedCircleState: null
+};
 
-  // Potentially unused state
-  const [lockedCircleState, setLockedCircleState] = useState(null);
+function menuReducer(state, action) {
+  switch (action.type) {
+    case 'START_DRAG':
+      return {
+        ...state,
+        isActive: true,
+        pathPoints: [action.payload.startPoint]
+      };
+    case 'UPDATE_CIRCLE':
+      return {
+        ...state,
+        circleState: action.payload.circle
+      };
+    case 'LOCK_CIRCLE':
+      return {
+        ...state,
+        lockedCircleState: state.circleState
+      };
+    case 'CLEANUP':
+      return {
+        ...initialState,
+        isClosing: true
+      };
+    case 'RESET':
+      return initialState;
+    default:
+      return state;
+  }
+}
 
-  // Closing animation state
-  const [isClosing, setIsClosing] = useState(false);
+const ArcMenu = () => {
+  const [state, dispatch] = useReducer(menuReducer, initialState);
+  const { isActive, isClosing, circleState, lockedCircleState } = state;
 
-  // Core constants we definitely need
-  const BUTTON_SIZE = 50;
-  const SAMPLE_DISTANCE = 5;
-  const DEBUG_PATH = false;  // Toggle gray connecting path only
-  const DEBUG_ARC = true;  // Toggle orange arc path
-  const MAX_POINTS = 100;  // Maximum number of points to store
-  const MIN_MENU_ANGLE = Math.PI / 12;  // Minimum angle (in radians) to keep menu open (15 degrees)
-  const EDGE_THRESHOLD = 150;  // Distance from edge to consider "near edge" in pixels
-  const CLOSE_ANIMATION_MS = 1000;  // Closing animation duration in milliseconds
-  const DRAG_DELAY_MS = 150;  // Delay before considering it a drag
-  const MIN_DRAG_DISTANCE = 10;  // Minimum distance to move before considering it a drag
-
-  // Potentially unused constants
-  const MIN_BUTTON_SIZE = 30;
-  const BUTTON_PADDING = 5;
-
-  // Core refs we definitely need
   const touchStartRef = useRef({ x: 0, y: 0, time: 0, target: null });
   const isMouseDownRef = useRef(false);
   const lastPointRef = useRef(null);
@@ -47,7 +72,6 @@ const ArcMenu = () => {
   const connectingPathRef = useRef(null);
   const svgRef = useRef(null);
 
-  // Menu items
   const menuItems = [
     { icon: '🔍', label: 'Search', onClick: () => alert('Search clicked! Time to find something...') },
     { icon: '⭐', label: 'Favorite', onClick: () => alert('Added to favorites! Good choice!') },
@@ -56,12 +80,10 @@ const ArcMenu = () => {
     { icon: '📤', label: 'Share', onClick: () => alert('Share menu opened! Spread the word!') }
   ];
 
-  // Potentially unused helper functions
   const getDistance = useCallback((x1, y1, x2, y2) => {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }, []);
 
-  // Helper function to describe SVG arc path
   const describeArc = useCallback((x, y, radius, startAngle, endAngle) => {
     const angleDiff = Math.abs(endAngle - startAngle);
     const largeArcFlag = angleDiff > Math.PI ? 1 : 0;
@@ -77,7 +99,6 @@ const ArcMenu = () => {
     return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${x2} ${y2}`;
   }, []);
 
-  // Core circle calculation
   const fitCircleToPoints = useCallback((startPoint, currentPoint) => {
     if (!startPoint || !currentPoint) return null;
 
@@ -107,7 +128,6 @@ const ArcMenu = () => {
     };
   }, []);
 
-  // Helper function to clean SVG paths
   const cleanSvgPaths = useCallback(() => {
     if (connectingPathRef.current) {
       connectingPathRef.current.setAttribute('d', '');
@@ -117,120 +137,88 @@ const ArcMenu = () => {
     }
   }, []);
 
-  // Helper function to start cleanup animation
-  const cleanup = useCallback(() => {
-    cleanSvgPaths();
-    setIsClosing(true);
-    setIsActive(false);
-  }, [cleanSvgPaths]);
-
-  useEffect(() => {
-    return () => {
-      cleanSvgPaths();
-    };
-  }, [cleanSvgPaths]);
-
-  const handleMove = useCallback((e) => {
-    // If mouse isn't down but menu is active, close it (fixes micro-drag issue)
-    if (!isMouseDownRef.current && isActive) {
-      cleanup();
-      return;
-    }
-
-    if (!isActive) return;
+  const handleRotationMove = useCallback((e) => {
+    if (!isMouseDownRef.current || !isActive) return;
 
     const currentX = e.clientX ?? e.touches?.[0]?.clientX;
-    const rawY = e.clientY ?? e.touches?.[0]?.clientY;
+    const currentY = e.clientY ?? e.touches?.[0]?.clientY;
 
-    if (typeof currentX !== 'number' || typeof rawY !== 'number') return;
+    if (typeof currentX !== 'number' || typeof currentY !== 'number') return;
 
-    // Calculate how "open" the fan is based on distance to margin
-    const dx = currentX - touchStartRef.current.x;
-    const arcDirection = dx >= 0 ? 1 : -1;
-    
-    // Calculate margins and distances
-    const marginX = arcDirection > 0 ? 
-      window.innerWidth - BUTTON_SIZE / 2 - BUTTON_PADDING :  // Right margin
-      BUTTON_SIZE / 2 + BUTTON_PADDING;                       // Left margin
-    
-    // Clamp X position to margins
-    const clampedX = Math.min(
-      window.innerWidth - BUTTON_SIZE / 2 - BUTTON_PADDING,
-      Math.max(BUTTON_SIZE / 2 + BUTTON_PADDING, currentX)
+    const currentPoint = { x: currentX, y: currentY };
+    const lastPoint = lastPointRef.current || touchStartRef.current;
+    const distance = Math.sqrt(
+      Math.pow(currentX - lastPoint.x, 2) +
+      Math.pow(currentY - lastPoint.y, 2)
     );
 
-    // Calculate fan percentage based on available space in drag direction
-    const availableSpace = arcDirection > 0 ?
-      marginX - touchStartRef.current.x :  // Space to right margin
-      touchStartRef.current.x - marginX;   // Space to left margin
-    
-    const distanceMoved = arcDirection > 0 ?
-      clampedX - touchStartRef.current.x :  // Distance moved right
-      touchStartRef.current.x - clampedX;   // Distance moved left
-    
-    // Fan opens based on % of available space used
-    const percentToMargin = Math.min(1, Math.max(0, distanceMoved / availableSpace));
-    
-    // Make maxRise proportional to available space for consistent arc shape
-    const maxRise = Math.min(availableSpace * 0.5, window.innerHeight * 0.4);
-    const fanSpread = maxRise * percentToMargin;
-    
-    // Log fan spread percentage and related metrics
-    // console.log('Fan %:', Math.round(percentToMargin * 100) + '%', {
-    //   distanceMoved,
-    //   availableSpace,
-    //   startX: touchStartRef.current.x,
-    //   currentX: clampedX,
-    //   marginX,
-    //   maxRise,
-    //   fanSpread,
-    //   arcDirection
-    // });
-    
-    // Y position is purely based on fan spread, ignore mouse Y
-    const currentY = Math.max(BUTTON_SIZE / 2, touchStartRef.current.y - fanSpread);
-
-    if (currentY > window.innerHeight - BUTTON_SIZE / 2) {
-      return;
-    }
-
-    const currentPoint = { x: clampedX, y: currentY };
-    const lastPoint = lastPointRef.current || touchStartRef.current;
-    const distance = getDistance(currentX, currentY, lastPoint.x, lastPoint.y);
-    
-    if (distance >= SAMPLE_DISTANCE) {
-      // Log button movement details
-      // console.log('Buttons moving:', {
-      //   startX: touchStartRef.current.x,
-      //   startY: touchStartRef.current.y,
-      //   currentX,
-      //   currentY,
-      //   arcDirection,
-      //   dx,
-      //   distance
-      // });
+    if (distance >= ARC_MENU_CONFIG.SAMPLE_DISTANCE) {
       lastPointRef.current = currentPoint;
-      
-      // Only update circle state, skip path points for performance
       const circle = fitCircleToPoints(touchStartRef.current, currentPoint);
       if (circle) {
-        setCircleState(circle);
+        dispatch({ type: 'UPDATE_CIRCLE', payload: { circle } });
       }
     }
-  }, [isActive, getDistance, circleState]);
+  }, [isActive]);
 
-  // Core event handlers
+  const handleInteractionStart = useCallback((e) => {
+    const point = e.touches?.[0] || e;
+    if (!point) return;
+
+    touchStartRef.current = { 
+      x: point.clientX, 
+      y: point.clientY,
+      time: Date.now(),
+      target: e.target
+    };
+    isMouseDownRef.current = true;
+
+    // Debounced interaction start
+    const timer = setTimeout(() => {
+      if (!isMouseDownRef.current) return;
+
+      const currentPoint = e.touches?.[0] || e;
+      const distance = Math.sqrt(
+        Math.pow(currentPoint.clientX - touchStartRef.current.x, 2) +
+        Math.pow(currentPoint.clientY - touchStartRef.current.y, 2)
+      );
+
+      if (distance >= ARC_MENU_CONFIG.MIN_DRAG_DISTANCE || Date.now() - touchStartRef.current.time >= ARC_MENU_CONFIG.DRAG_DELAY_MS) {
+        dispatch({ type: 'START_DRAG', payload: { startPoint: touchStartRef.current } });
+
+        const startPoint = touchStartRef.current;
+        const centerX = startPoint.x + 300;
+        const centerY = window.innerHeight + 300;
+        const radius = Math.sqrt(
+          Math.pow(startPoint.x - centerX, 2) + 
+          Math.pow(startPoint.y - centerY, 2)
+        );
+        const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
+        
+        dispatch({ type: 'UPDATE_CIRCLE', payload: { circle: {
+          centerX,
+          centerY,
+          radius,
+          startAngle,
+          endAngle: startAngle
+        } } });
+      }
+    }, ARC_MENU_CONFIG.DRAG_DELAY_MS);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     const handleTouchMove = (e) => {
       if (!isActive) return;
       e.preventDefault();
-      handleMove(e.touches[0]);
+      handleRotationMove(e.touches[0]);
     };
 
     const handleMouseMove = (e) => {
       if (!isActive || !isMouseDownRef.current) return;
       e.preventDefault();
-      handleMove(e);
+      handleRotationMove(e);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -240,7 +228,7 @@ const ArcMenu = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [isActive, handleMove]);
+  }, [isActive, handleRotationMove]);
 
   useEffect(() => {
     const handleTouchEnd = () => {
@@ -254,22 +242,22 @@ const ArcMenu = () => {
         
         if (currentPoint) {
           // Check if we dragged far enough angle-wise
-          const hasMinAngle = dragAngle >= MIN_MENU_ANGLE;
+          const hasMinAngle = dragAngle >= ARC_MENU_CONFIG.MIN_MENU_ANGLE;
           
           // Check if we released near the appropriate edge based on drag direction
           const dx = currentPoint.x - touchStartRef.current.x;
           const isRightDrag = dx >= 0;
           const isNearEdge = isRightDrag ? 
-            (currentPoint.x >= window.innerWidth - EDGE_THRESHOLD) : 
-            (currentPoint.x <= EDGE_THRESHOLD);
+            (currentPoint.x >= window.innerWidth - ARC_MENU_CONFIG.EDGE_THRESHOLD) : 
+            (currentPoint.x <= ARC_MENU_CONFIG.EDGE_THRESHOLD);
 
           if (hasMinAngle || isNearEdge) {
-            setLockedCircleState(circleState);
+            dispatch({ type: 'LOCK_CIRCLE' });
           } else {
-            cleanup();
+            dispatch({ type: 'CLEANUP' });
           }
         } else {
-          cleanup();
+          dispatch({ type: 'CLEANUP' });
         }
       }
     };
@@ -285,22 +273,22 @@ const ArcMenu = () => {
         
         if (currentPoint) {
           // Check if we dragged far enough angle-wise
-          const hasMinAngle = dragAngle >= MIN_MENU_ANGLE;
+          const hasMinAngle = dragAngle >= ARC_MENU_CONFIG.MIN_MENU_ANGLE;
           
           // Check if we released near the appropriate edge based on drag direction
           const dx = currentPoint.x - touchStartRef.current.x;
           const isRightDrag = dx >= 0;
           const isNearEdge = isRightDrag ? 
-            (currentPoint.x >= window.innerWidth - EDGE_THRESHOLD) : 
-            (currentPoint.x <= EDGE_THRESHOLD);
+            (currentPoint.x >= window.innerWidth - ARC_MENU_CONFIG.EDGE_THRESHOLD) : 
+            (currentPoint.x <= ARC_MENU_CONFIG.EDGE_THRESHOLD);
 
           if (hasMinAngle || isNearEdge) {
-            setLockedCircleState(circleState);
+            dispatch({ type: 'LOCK_CIRCLE' });
           } else {
-            cleanup();
+            dispatch({ type: 'CLEANUP' });
           }
         } else {
-          cleanup();
+          dispatch({ type: 'CLEANUP' });
         }
       }
     };
@@ -312,7 +300,7 @@ const ArcMenu = () => {
       document.removeEventListener('touchend', handleTouchEnd);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isActive, circleState, cleanup]);
+  }, [isActive, circleState, lockedCircleState]);
 
   useEffect(() => {
     const handleMouseDownOutside = (e) => {
@@ -347,37 +335,31 @@ const ArcMenu = () => {
       //   distanceFromCenter,
       //   radius: lockedCircleState.radius,
       //   diff: Math.abs(distanceFromCenter - lockedCircleState.radius),
-      //   threshold: BUTTON_SIZE
+      //   threshold: ARC_MENU_CONFIG.BUTTON_SIZE
       // });
       
       // If click is outside the arc's radius, close the menu
-      if (Math.abs(distanceFromCenter - lockedCircleState.radius) > BUTTON_SIZE) {
+      if (Math.abs(distanceFromCenter - lockedCircleState.radius) > ARC_MENU_CONFIG.BUTTON_SIZE) {
         // Log menu closure due to outside click
         // console.log('Closing menu due to outside mousedown');
-        cleanup();
+        dispatch({ type: 'CLEANUP' });
       }
     };
 
     document.addEventListener('mousedown', handleMouseDownOutside);
     return () => document.removeEventListener('mousedown', handleMouseDownOutside);
-  }, [lockedCircleState, isClosing, cleanup]);
+  }, [lockedCircleState, isClosing]);
 
-  // Handle the closing animation completion
   useEffect(() => {
     if (isClosing) {
       const timer = setTimeout(() => {
         // Reset all state after animation
-        setIsClosing(false);
-        setLockedCircleState(null);
-        setPathPoints([]);
-        setPointCount(0);
-        setCircleState({});
-      }, CLOSE_ANIMATION_MS);
+        dispatch({ type: 'RESET' });
+      }, ARC_MENU_CONFIG.CLOSE_ANIMATION_MS);
       return () => clearTimeout(timer);
     }
   }, [isClosing]);
 
-  // Update button positions based on either active drag or locked state
   useEffect(() => {
     if (!isActive && !lockedCircleState && !isClosing) return;
 
@@ -385,7 +367,7 @@ const ArcMenu = () => {
     
     // Safety check - if no valid state during animation, force cleanup
     if (!currentState?.endAngle || !currentState?.startAngle) {
-      cleanup();
+      dispatch({ type: 'CLEANUP' });
       return;
     }
 
@@ -422,12 +404,12 @@ const ArcMenu = () => {
 
       button.style.cssText = `
         position: fixed;
-        width: ${BUTTON_SIZE}px;
-        height: ${BUTTON_SIZE}px;
+        width: ${ARC_MENU_CONFIG.BUTTON_SIZE}px;
+        height: ${ARC_MENU_CONFIG.BUTTON_SIZE}px;
         left: ${isClosing ? touchStartRef.current.x : pos.x}px;
         top: ${isClosing ? touchStartRef.current.y : pos.y}px;
         transform: scale(${pos.scale});
-        transition: ${isClosing ? `all ${CLOSE_ANIMATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)` : 'none'};
+        transition: ${isClosing ? `all ${ARC_MENU_CONFIG.CLOSE_ANIMATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)` : 'none'};
         pointer-events: ${isClosing ? 'none' : 'auto'};
         background: white;
         border-radius: 50%;
@@ -441,10 +423,9 @@ const ArcMenu = () => {
         opacity: ${isClosing ? 0 : 1};
       `;
     });
-  }, [isActive, pathPoints, circleState, lockedCircleState, isClosing, cleanup]);
+  }, [isActive, lockedCircleState, isClosing]);
 
-  // Update SVG path
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isActive || !circleState.centerX) {
       cleanSvgPaths();
       return;
@@ -455,13 +436,13 @@ const ArcMenu = () => {
     if (!path || !arcPath) return;
 
     // Only draw paths if we're active and have points
-    if (pathPoints.length > 0) {
-      const pathD = pathPoints
+    if (state.pathPoints.length > 0) {
+      const pathD = state.pathPoints
         .map((point, i) => `${i === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
         .join(' ');
       path.setAttribute('d', pathD);
 
-      if (DEBUG_ARC && circleState.centerX) {
+      if (ARC_MENU_CONFIG.DEBUG_ARC && circleState.centerX) {
         const { centerX, centerY, radius, startAngle, endAngle } = circleState;
         const arcD = describeArc(centerX, centerY, radius, startAngle, endAngle);
         arcPath.setAttribute('d', arcD);
@@ -469,7 +450,7 @@ const ArcMenu = () => {
     } else {
       cleanSvgPaths();
     }
-  }, [isActive, pathPoints, circleState, cleanSvgPaths]);
+  }, [isActive, state.pathPoints, circleState, cleanSvgPaths]);
 
   return (
     <>
@@ -480,117 +461,8 @@ const ArcMenu = () => {
           pointerEvents: isActive ? 'none' : 'auto',
           transition: 'opacity 0.2s'
         }}
-        onTouchStart={(e) => {
-          const touch = e.touches[0];
-          if (!touch) return;
-
-          touchStartRef.current = { 
-            x: touch.clientX, 
-            y: touch.clientY,
-            time: Date.now(),
-            target: e.target
-          };
-          isMouseDownRef.current = true;
-          
-          // Start a timer to check for long press
-          setTimeout(() => {
-            if (!isMouseDownRef.current) return; // Don't start if released
-            
-            const currentTouch = e.touches[0];
-            if (!currentTouch) return;
-            
-            const distance = Math.sqrt(
-              Math.pow(currentTouch.clientX - touchStartRef.current.x, 2) +
-              Math.pow(currentTouch.clientY - touchStartRef.current.y, 2)
-            );
-            
-            // If we've moved enough or held long enough, start drag
-            if (distance >= MIN_DRAG_DISTANCE || Date.now() - touchStartRef.current.time >= DRAG_DELAY_MS) {
-              // Log touch movement threshold details
-              // console.log('Touch movement threshold met:', {
-              //   startX: touchStartRef.current.x,
-              //   startY: touchStartRef.current.y,
-              //   currentX: currentTouch.clientX,
-              //   currentY: currentTouch.clientY,
-              //   distance,
-              //   timeDiff: Date.now() - touchStartRef.current.time
-              // });
-              setIsActive(true);
-              setPathPoints([touchStartRef.current]);
-
-              const startPoint = touchStartRef.current;
-              const centerX = startPoint.x + 300;
-              const centerY = window.innerHeight + 300;
-              
-              const radius = Math.sqrt(
-                Math.pow(startPoint.x - centerX, 2) + 
-                Math.pow(startPoint.y - centerY, 2)
-              );
-              const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-              
-              setCircleState({
-                centerX,
-                centerY,
-                radius,
-                startAngle,
-                endAngle: startAngle
-              });
-            }
-          }, DRAG_DELAY_MS);
-        }}
-        onMouseDown={(e) => {
-          // Log action bar mouse down event
-          // console.log('Action bar mouse down');
-          touchStartRef.current = { 
-            x: e.clientX, 
-            y: e.clientY,
-            time: Date.now(),
-            target: e.target
-          };
-          isMouseDownRef.current = true;
-          
-          // Start a timer to check for long press
-          setTimeout(() => {
-            if (!isMouseDownRef.current) return; // Don't start if released
-            
-            const distance = Math.sqrt(
-              Math.pow(e.clientX - touchStartRef.current.x, 2) +
-              Math.pow(e.clientY - touchStartRef.current.y, 2)
-            );
-            
-            // If we've moved enough or held long enough, start drag
-            if (distance >= MIN_DRAG_DISTANCE || Date.now() - touchStartRef.current.time >= DRAG_DELAY_MS) {
-              // Log movement threshold details
-              // console.log('Movement threshold met:', {
-              //   startX: touchStartRef.current.x,
-              //   startY: touchStartRef.current.y,
-              //   currentX: e.clientX,
-              //   currentY: e.clientY,
-              //   distance,
-              //   timeDiff: Date.now() - touchStartRef.current.time
-              // });
-              setIsActive(true);
-              setPathPoints([touchStartRef.current]);
-
-              const startPoint = touchStartRef.current;
-              const centerX = startPoint.x + 300;
-              const centerY = window.innerHeight + 300;
-              const radius = Math.sqrt(
-                Math.pow(startPoint.x - centerX, 2) + 
-                Math.pow(startPoint.y - centerY, 2)
-              );
-              const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX);
-              
-              setCircleState({
-                centerX,
-                centerY,
-                radius,
-                startAngle,
-                endAngle: startAngle
-              });
-            }
-          }, DRAG_DELAY_MS);
-        }}
+        onTouchStart={handleInteractionStart}
+        onMouseDown={handleInteractionStart}
       >
         <button 
           className="action-item"
@@ -604,7 +476,7 @@ const ArcMenu = () => {
               );
               
               // If it was a quick tap without much movement, handle the click
-              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+              if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
                 // console.log('Button clicked!');
               }
@@ -625,7 +497,7 @@ const ArcMenu = () => {
               );
               
               // If it was a quick tap without much movement, handle the click
-              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+              if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
                 // console.log('Button clicked!');
               }
@@ -646,7 +518,7 @@ const ArcMenu = () => {
               );
               
               // If it was a quick tap without much movement, handle the click
-              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+              if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
                 // console.log('Button clicked!');
               }
@@ -667,7 +539,7 @@ const ArcMenu = () => {
               );
               
               // If it was a quick tap without much movement, handle the click
-              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+              if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
                 // console.log('Button clicked!');
               }
@@ -688,7 +560,7 @@ const ArcMenu = () => {
               );
               
               // If it was a quick tap without much movement, handle the click
-              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+              if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
                 // console.log('Button clicked!');
               }
@@ -709,7 +581,7 @@ const ArcMenu = () => {
               );
               
               // If it was a quick tap without much movement, handle the click
-              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+              if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
                 // console.log('Button clicked!');
               }
@@ -730,7 +602,7 @@ const ArcMenu = () => {
               );
               
               // If it was a quick tap without much movement, handle the click
-              if (timeDiff < DRAG_DELAY_MS && distance < MIN_DRAG_DISTANCE) {
+              if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
                 // console.log('Button clicked!');
               }
@@ -747,7 +619,7 @@ const ArcMenu = () => {
           key={index}
           className="arc-menu-button"
           onClick={(e) => {
-            cleanup();
+            dispatch({ type: 'CLEANUP' });
             button.onClick(e);
           }}
         >
@@ -786,7 +658,7 @@ const ArcMenu = () => {
             stroke: 'rgba(255, 255, 255, 0.3)',
             strokeWidth: 2,
             filter: 'drop-shadow(0 0 2px rgba(0, 0, 0, 0.3))',
-            opacity: DEBUG_PATH ? (isActive ? 1 : 0) : 0,
+            opacity: ARC_MENU_CONFIG.DEBUG_PATH ? (isActive ? 1 : 0) : 0,
             transition: 'opacity 0.2s'
           }}
         />
@@ -797,7 +669,7 @@ const ArcMenu = () => {
             stroke: '#FF6B00',
             strokeWidth: 3,
             strokeDasharray: '8,4',
-            opacity: DEBUG_ARC ? (isActive ? 1 : 0) : 0,
+            opacity: ARC_MENU_CONFIG.DEBUG_ARC ? (isActive ? 1 : 0) : 0,
             filter: 'drop-shadow(0 0 3px rgba(255, 107, 0, 0.5))'
           }}
         />
