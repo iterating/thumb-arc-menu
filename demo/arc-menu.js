@@ -1,5 +1,5 @@
 // ArcMenu class to handle the thumb arc interaction
-export class ArcMenu {
+class ArcMenu {
     constructor(actionBar, config = {}) {
         // Store references to DOM elements
         this.actionBar = actionBar;
@@ -14,7 +14,15 @@ export class ArcMenu {
 
         // Debug mode
         this.debug = this.config.debug;
-        
+                // Consolidated button handlers with proper scoping
+                const actionMessages = {
+                    '📱': 'Phone menu opened!',
+                    '📍': 'Location services activated!',
+                    '📷': 'Camera ready to snap!',
+                    '⚙️': 'Settings panel opened!',
+                    '➕': 'Ready to add new item!'
+                };
+                
         // Consolidated button handlers with proper scoping
         actionBar.querySelectorAll('.action-item').forEach(button => {
             let pressTimer; // ✅ Properly scoped to each button
@@ -48,21 +56,21 @@ export class ArcMenu {
             });
         });
         
-        // Add click handlers to action bar buttons
-        actionBar.querySelectorAll('.action-item').forEach(button => {
-            button.addEventListener('touchstart', () => {
-                pressTimer = setTimeout(() => {
-                    pressTimer = null;
-                }, this.config.holdDuration);
-            });
-            button.addEventListener('touchend', (e) => {
-                // Only show alert if it was a quick tap (no hold timer)
-                if (!pressTimer) {
-                    alert(actionMessages[button.textContent] || 'Button clicked!');
-                }
-                e.preventDefault(); // Prevent any default button behavior
-            });
-        });
+        // Remove duplicate event listener logic
+        // actionBar.querySelectorAll('.action-item').forEach(button => {
+        //     button.addEventListener('touchstart', () => {
+        //         pressTimer = setTimeout(() => {
+        //             pressTimer = null;
+        //         }, this.config.holdDuration);
+        //     });
+        //     button.addEventListener('touchend', (e) => {
+        //         // Only show alert if it was a quick tap (no hold timer)
+        //         if (!pressTimer) {
+        //             alert(actionMessages[button.textContent] || 'Button clicked!');
+        //         }
+        //         e.preventDefault(); // Prevent any default button behavior
+        //     });
+        // });
 
         this.arcMenu = document.getElementById('arc-menu');
         this.isActive = false;

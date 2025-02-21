@@ -1,5 +1,5 @@
 // ArcMenu class to handle the thumb arc interaction
-export class ArcMenu {
+ class ArcMenu {
     constructor(actionBar, config = {}) {
         // Store references to DOM elements
         this.actionBar = actionBar;
@@ -157,7 +157,7 @@ export class ArcMenu {
         
         // Sample menu items (can be customized)
         this.menuItems = [
-            { icon: '🔍', label: 'Search', onClick: () => alert('Search clicked! Time to find something...') },
+            { icon: '🔍', label: 'Search', onClick: () => alert('Search! Time to find something...') },
             { icon: '⭐', label: 'Favorite', onClick: () => alert('Added to favorites! Good choice!') },
             { icon: '✏️', label: 'Edit', onClick: () => alert('Edit mode activated! Make your changes...') },
             { icon: '🗑️', label: 'Delete', onClick: () => alert('Delete selected! Gone but not forgotten...') },

@@ -8,7 +8,7 @@ const ARC_MENU_CONFIG = {
   DEBUG_PATH: false,
   DEBUG_ARC: true,
   MAX_POINTS: 100,
-  MIN_MENU_ANGLE: Math.PI / 12,
+  MIN_MENU_ANGLE: Math.PI / 20,
   EDGE_THRESHOLD: 150,
   CLOSE_ANIMATION_MS: 1000,
   DRAG_DELAY_MS: 150,
@@ -478,7 +478,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
-                // console.log('Button clicked!');
+                console.log('Button clicked!');
               }
             }
           }}
@@ -499,7 +499,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
-                // console.log('Button clicked!');
+                console.log('Button clicked!');
               }
             }
           }}
@@ -520,7 +520,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
-                // console.log('Button clicked!');
+                console.log('Button clicked!');
               }
             }
           }}
@@ -541,7 +541,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
-                // console.log('Button clicked!');
+                console.log('Button clicked!');
               }
             }
           }}
@@ -562,7 +562,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
-                // console.log('Button clicked!');
+                console.log('Button clicked!');
               }
             }
           }}
@@ -583,7 +583,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
-                // console.log('Button clicked!');
+                console.log('Button clicked!');
               }
             }
           }}
@@ -604,7 +604,7 @@ const ArcMenu = () => {
               // If it was a quick tap without much movement, handle the click
               if (timeDiff < ARC_MENU_CONFIG.DRAG_DELAY_MS && distance < ARC_MENU_CONFIG.MIN_DRAG_DISTANCE) {
                 // Handle button click
-                // console.log('Button clicked!');
+                console.log('Button clicked!');
               }
             }
           }}
